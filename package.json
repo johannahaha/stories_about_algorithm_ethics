@@ -1,0 +1,24 @@
+{
+  "name": "git_algorithmic_bias_webpage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johannahaha/orientierungsprojekt.git"
+  },
+  "author": "johanna hartmann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/johannahaha/orientierungsprojekt/issues"
+  },
+  "homepage": "https://github.com/johannahaha/orientierungsprojekt#readme",
+  "dependencies": {
+    "@vue/cli": "^4.5.9",
+    "uuid": "^8.3.2",
+    "vue": "^2.6.12"
+  }
+}
