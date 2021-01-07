@@ -2,7 +2,8 @@
     <div> 
         <h1 @click="showInformation = true">Bamf geht los </h1>
         <div v-if="!showInformation"></div>
-        <Information v-if="showInformation" v-bind:informations="informations" />
+        <!-- <Information v-if="showInformation" v-bind:informations="informations" /> -->
+        <Scene> </Scene>
     
     </div>
     
@@ -10,11 +11,13 @@
 
 <script>
 import Information from "./Information.vue";
+import Scene from "./Scene.vue"
 
 export default {
     name: "Bamf",
     components: {
-        Information
+        //Information,
+        Scene
     },
     data() {
         return { 

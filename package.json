@@ -18,7 +18,9 @@
   "homepage": "https://github.com/johannahaha/orientierungsprojekt#readme",
   "dependencies": {
     "@vue/cli": "^4.5.9",
+    "three": "^0.124.0",
     "uuid": "^8.3.2",
-    "vue": "^2.6.12"
+    "vue": "^2.6.12",
+    "vue-gl": "^0.22.1"
   }
 }
