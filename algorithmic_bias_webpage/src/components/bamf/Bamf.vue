@@ -1,10 +1,8 @@
 <template>
     <div> 
-        <h1 @click="showInformation = true">Bamf geht los </h1>
-        <div v-if="!showInformation"></div>
+        <h1 v-if="showInformation">Bamf geht los </h1>
         <!-- <Information v-if="showInformation" v-bind:informations="informations" /> -->
         <Scene> </Scene>
-    
     </div>
     
 </template>
