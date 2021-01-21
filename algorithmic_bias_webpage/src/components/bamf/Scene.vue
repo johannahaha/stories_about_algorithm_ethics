@@ -5,6 +5,8 @@
 </template>
 
 <script>
+"use strict";
+
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Curves } from 'three/examples//jsm/curves/CurveExtras.js';
@@ -17,7 +19,6 @@ let scene, renderer, controls;
 let firstLoop = true;
 
 let direction = new THREE.Vector3(0,0,0);
-if (firstLoop) {console.log("very first direction ",direction);}
 let binormal = new THREE.Vector3();
 let normal = new THREE.Vector3();
 let position = new THREE.Vector3();
@@ -35,6 +36,9 @@ let guiParameters;
 export default {
   name: 'Scene',
   methods: {
+    getJsonFile (fileName) {
+        this.currentJsonFile = require('@/assets/' + fileName + '.json')
+    },
     initPath: function() {
         //SPLINE
         sampleClosedSpline = new THREE.CatmullRomCurve3( [
@@ -80,9 +84,6 @@ export default {
 			cameraHelper.visible = cameraHelperOn;
 			cameraEye.visible = cameraHelperOn;
     },
-    setScale: function(mesh) {
-      //mesh.scale.set(guiParameters.scale, guiParameters.scale, guiParameters.scale);
-    },
     init: function() {
         let container = document.getElementById('container');
         if (firstLoop) {console.log("beginning direction ",direction);}
@@ -111,7 +112,8 @@ export default {
         const boxGeo = new THREE.BoxBufferGeometry(10,10,10);
         const boxMat = new THREE.MeshPhongMaterial({color:0x00ff00});
         box = new THREE.Mesh(boxGeo,boxMat);
-        let info = new InformationElement(box,new THREE.Vector3(-40,0,40));
+        let fontJson = this.getJsonFile("helvetiker_regular.typeface");
+        let info = new InformationElement(box,new THREE.Vector3(-40,0,40),fontJson);
         info.addToScene(scene);
         //scene.add(info);
 
@@ -147,7 +149,7 @@ export default {
         renderer.setSize(container.clientWidth, container.clientHeight);
         container.appendChild(renderer.domElement);
 
-        controls = new OrbitControls(camera, renderer.domElement);
+        controls = new OrbitControls(overviewCamera, renderer.domElement);
 
         const gui = new GUI( { width: 300 } );
         // get the default value 
@@ -207,6 +209,9 @@ export default {
         if (firstLoop) {console.log("t ",t);}
         tubeGeometry.parameters.path.getTangentAt( t, direction );
         const offset = 15;
+
+        //the bug is somewhere at the tangente, that sets the wrong direction. It works differently if the tube is in 3D
+        // so if one Z value is changed.
         
         if (firstLoop) {console.log("binormal ",binormal);}
         if (firstLoop) {console.log("direction ",direction);}

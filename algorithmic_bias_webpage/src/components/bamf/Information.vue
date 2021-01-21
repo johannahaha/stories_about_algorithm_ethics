@@ -1,7 +1,7 @@
 <template>
     <div>
         <h5>Hello</h5>
-        <div> {{currentInfo}} </div>
+        <!--<div> {{currentInfo}} </div> -->
     </div>
 </template>
 
@@ -22,16 +22,16 @@ export default {
     },
     methods: {
         handleScroll (event) {
-            activeId += 1;
-            console.log(activeId);
+            //activeId += 1;
+            //console.log(activeId);
         // Any code to be executed when the window is scrolled
         }
-    },
-    computed: {
-        currentInfo: function(){
-            console.log(this.informations.filter(i => i.id === activeId).text);
-            return this.informations.filter(i => i.id === activeId).text;
-        }
-    }
+    }//,
+    //computed: {
+        //currentInfo: function(){
+            //console.log(this.informations.filter(i => i.id === activeId).text);
+            //return this.informations.filter(i => i.id === activeId).text;
+        //}
+    //}
 }
 </script>
