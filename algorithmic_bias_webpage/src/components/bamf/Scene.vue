@@ -112,9 +112,8 @@ export default {
         const boxGeo = new THREE.BoxBufferGeometry(10,10,10);
         const boxMat = new THREE.MeshPhongMaterial({color:0x00ff00});
         box = new THREE.Mesh(boxGeo,boxMat);
-        let fontJson = this.getJsonFile("helvetiker_regular.typeface");
-        let info = new InformationElement(box,new THREE.Vector3(-40,0,40),fontJson);
-        info.addToScene(scene);
+        let info = new InformationElement(scene,box,new THREE.Vector3(-40,0,40));
+        info.init()//.then(info.addToScene(scene));
         //scene.add(info);
 
         // FLOOR

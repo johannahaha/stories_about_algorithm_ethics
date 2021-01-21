@@ -3,20 +3,26 @@
 import * as THREE from "three";
 
 class InformationElement    {
-    constructor(mesh,position,fontJson,content = "Das ist eine neue Information über das Bamf"){
+    constructor(scene,mesh,position,content = "Das ist eine neue Information über das Bamf"){
+        this.scene = scene;
         this.mesh = mesh;
         this.position = position;
-        this.fontJson = fontJson;
         this.content = content;
 
         this.mesh.position.x = position.x;
         this.mesh.position.y = position.y;
         this.mesh.position.z = position.z;
-        
-        let text = this.setupFont();
-        console.log("constructor text");
-        this.text = text;
+    
+    }
 
+    init(scene){
+        this.loadFont()
+        .then(font => this.setupText(font))
+        .then(text => {
+            console.log("constructor text", text)
+            this.scene.add(text);
+        })
+        .catch(err => console.log("Error during loading Font; ", err));
     }
 
     addToScene(scene){
@@ -28,50 +34,36 @@ class InformationElement    {
     }
 
     async loadFont() {
-        //let loaded Font = await 
+        try{
+            const manager = new THREE.LoadingManager();
+            manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+                console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+            };
 
+            manager.onLoad = function ( ) {
+                console.log( 'Loading complete!');
+            };
+
+
+            manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+                console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+            };
+
+            manager.onError = function ( url ) {
+                console.log( 'There was an error loading ' + url );
+            };
+            const loader = new THREE.FontLoader(manager);
+            let loadedFont = await loader.loadAsync('/threeAssets/helvetiker_regular.typeface.json');
+            return loadedFont;
+        }
+        catch (err){  
+            console.error('ERROR: ', err.message);
+        }
     }
-    setupFont(){
+
+    setupText(pLoadedFont){
         let text;
-        const manager = new THREE.LoadingManager();
-        manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
-            console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-        };
-
-        manager.onLoad = function ( ) {
-            console.log( 'Loading complete!');
-        };
-
-
-        manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
-            console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-        };
-
-        manager.onError = function ( url ) {
-            console.log( 'There was an error loading ' + url );
-        };
-
-        //load fonts
-        const loader = new THREE.FontLoader(manager);
-        let loadedFont;
-        console.log("lets load the font");
-		loader.load( '/threeAssets/helvetiker_regular.typeface.json',
-        //loader.load(this.fontJson, 
-            //onLoad callback
-            function ( font ) {
-                console.log("loading font...");
-                //loadedFont = font;
-            },
-            
-            // onProgress callback
-            function ( xhr ) {
-                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-            },
-            
-            // onError callback
-            function ( err ) {
-                console.log( 'An error happened' );
-        });
+        //this.loadFont().then( pLoadedFont => {
         const color = 0xffffff;
         const matLite = new THREE.MeshBasicMaterial( {
             color: color,
@@ -80,9 +72,9 @@ class InformationElement    {
             side: THREE.DoubleSide
         } );
         const message = "Das ist eine neue Information über das Bamf";
-        console.log("font",loadedFont);
+        console.log("font",pLoadedFont);
 
-        const shapes = loadedFont.generateShapes( message, 1000 );
+        const shapes = pLoadedFont.generateShapes( message, 1000 );
         console.log("shapes",shapes);
 
         const geometry = new THREE.ShapeBufferGeometry( shapes );
@@ -98,6 +90,26 @@ class InformationElement    {
 
         console.log("returned text:", text);
         return text;
+        //}).catch((err) =>
+        //    console.log("Error during loading Font; ", err));
+        // console.log("lets load the font");
+		// loader.load( '/threeAssets/helvetiker_regular.typeface.json',
+        // //loader.load(this.fontJson, 
+        //     //onLoad callback
+        //     function ( font ) {
+        //         console.log("loading font...");
+        //         //loadedFont = font;
+        //     },
+            
+        //     // onProgress callback
+        //     function ( xhr ) {
+        //         console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+        //     },
+            
+        //     // onError callback
+        //     function ( err ) {
+        //         console.log( 'An error happened' );
+        // });
             
     }
 
