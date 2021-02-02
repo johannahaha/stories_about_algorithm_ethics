@@ -12,10 +12,18 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Curves } from 'three/examples//jsm/curves/CurveExtras.js';
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
 
+//MY CLASSES
 import { InformationElement } from './InformationElement.js';
+import { PathCoordinates } from './PathCoordinates';
+
+//HELPER
+import {BufferGeometryUtils} from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import {VertexTangentsHelper} from 'three/examples/jsm/helpers/VertexTangentsHelper.js';
+import {VertexNormalsHelper} from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
 
 //VARIABLES
-let scene, renderer, controls;
+let scene, renderer
+let overviewControls, informationControls;
 let firstLoop = true;
 
 let direction = new THREE.Vector3(0,0,0);
@@ -23,61 +31,95 @@ let binormal = new THREE.Vector3();
 let normal = new THREE.Vector3();
 let position = new THREE.Vector3();
 let lookAt = new THREE.Vector3();
-let camera, cameraHelper, cameraEye, overviewCamera;
+let camera, cameraHelper, cameraEye, overviewCamera, informationCamera;
 let cameraHelperOn = true;
 let lookAhead = true;
+let frame;
 
-let tubeGeometry, mesh, parent, sampleClosedSpline;
+let helperTubeGeometry, pathGeometry, mesh, parent, spline;
 
 let box;
 
 let guiParameters;
 
+let informationsPhase = false;
+
 export default {
   name: 'Scene',
   methods: {
-    getJsonFile (fileName) {
-        this.currentJsonFile = require('@/assets/' + fileName + '.json')
-    },
-    initPath: function() {
+    initPath: function(path) {
         //SPLINE
-        sampleClosedSpline = new THREE.CatmullRomCurve3( [
-          new THREE.Vector3( -40, 0, -40 ),
-          new THREE.Vector3( -40, 0, 40 ),
-          new THREE.Vector3( -40, 0, 140 ),
-          new THREE.Vector3( 40, 0, 40 ),
-          new THREE.Vector3( 40, 0, -40 )]);
+        // spline = new THREE.CatmullRomCurve3( [
+        //   new THREE.Vector3( -40, 0, -40 ),
+        //   new THREE.Vector3( -40, 0, 40 ),
+        //   new THREE.Vector3( -40, 0, 140 ),
+        //   new THREE.Vector3( 40, 0, 40 ),
+        //   new THREE.Vector3( 40, 0, -40 )]);
+        spline = [];
+        console.log("path",path);
+        path.forEach(v => {
+            spline.push(v);
+        });
+        console.log(spline);
+        //spline = pathCoordinates
         
-        sampleClosedSpline.curveType = 'catmullrom';
-        //sampleClosedSpline.closed = true;
+        spline.curveType = 'catmullrom';
+        spline.closed = true;
+        console.log("spline", spline);
 
 				if ( mesh !== undefined ) {
-
 					parent.remove( mesh );
 					mesh.geometry.dispose();
+        }
+        
+        //TUBE GEOMETRY
+				const extrudePath = spline;
+        helperTubeGeometry = new THREE.TubeBufferGeometry( extrudePath, 50, 2, 10, false );
+        BufferGeometryUtils.computeTangents(helperTubeGeometry); //for helper function
+        console.log("tube geo", helperTubeGeometry);
 
+        //EXTRUDE GEOMETRY
+        const extrudeSettings = {
+					steps: 100,
+					bevelEnabled: false,
+					extrudePath: spline
+				};
+
+        //
+				const points = [], sides = 3;
+				for ( let i = 0; i < sides; i ++ ) {
+					const radius = 3;
+					const a = 2 * i / sides * Math.PI;
+					points.push( new THREE.Vector2( Math.cos( a ) * radius, Math.sin( a ) * radius ) );
 				}
-				const extrudePath = sampleClosedSpline;
-				tubeGeometry = new THREE.TubeBufferGeometry( extrudePath, 100, 1, 10, false );
 
-        // 3D shape
+				const shape = new THREE.Shape( points );
+        pathGeometry = new THREE.ExtrudeBufferGeometry( shape, extrudeSettings );
+        //BufferGeometryUtils.computeTangents(pathGeometry); //for helper function
+        console.log(pathGeometry);
+
+        //MATERIAL
         const material = new THREE.MeshPhongMaterial( 
-          { color: 0xffffff } );
+          { color: 0xb00000 } );
         const wireframeMaterial = new THREE.MeshBasicMaterial( 
           { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
         
-        mesh = new THREE.Mesh( tubeGeometry, material );
-				const wireframe = new THREE.Mesh( tubeGeometry, wireframeMaterial );
-				mesh.add( wireframe );
+        mesh = new THREE.Mesh( pathGeometry, material );
+				//const wireframe = new THREE.Mesh( helperTubeGeometry, wireframeMaterial );
+        //mesh.add( wireframe );
 
         mesh.scale.set(4, 4, 4);
-				parent.add( mesh );
-    },
-    addExtrude: function(){
-      tubeGeometry = new THREE.BufferGeometry().setFromPoints( sampleClosedSpline);
+        console.log("mesh",mesh);
 
-      //const material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
-      this.addGeometry(tubeGeometry);
+        //HELPERS
+        // let helper = new VertexTangentsHelper( mesh, 10, 0x00ffff, 2 );
+        // parent.add(helper);
+
+        // let helper2 = new VertexNormalsHelper( mesh, 4, 0xff00ff, 2 );
+        // parent.add(helper2);
+
+
+				parent.add( mesh );
     },
     animateCamera: function() {
       console.log("animate camera called");
@@ -87,6 +129,7 @@ export default {
     init: function() {
         let container = document.getElementById('container');
         if (firstLoop) {console.log("beginning direction ",direction);}
+
         //SCENE
         scene = new THREE.Scene();
         scene.background = new THREE.Color('#f43df1');
@@ -96,29 +139,36 @@ export default {
         overviewCamera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.01, 10000 );
         overviewCamera.position.set( -50, 50, 200 );
         
+        //path following camera
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.y = 5;
-        //camera.lookAt( 0, 0, 0 );
 
-         //LIGHT
-        const light = new THREE.AmbientLight( 0x404040 ); // soft white light 
+        //camera when an information is seen
+        informationCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        const light = new THREE.DirectionalLight( 0xffffff, 0.7 );
+        light.position.set( 1, 1, 0 ).normalize();
         scene.add( light );
 
-        const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-        scene.add( directionalLight );    
+        const light2 = new THREE.DirectionalLight( 0xff5566, 0.4 );
+        light2.position.set( -3, -1, 0 ).normalize();
+        scene.add( light2 );
+
+        scene.add(new THREE.AmbientLight(0xffffff,0.3))     
+
+        //SVG path
 
 
-        //INFORMATION CUBE 
+        //INFORMATION ELEMENT 
         const boxGeo = new THREE.BoxBufferGeometry(10,10,10);
         const boxMat = new THREE.MeshPhongMaterial({color:0x00ff00});
         box = new THREE.Mesh(boxGeo,boxMat);
-        let info = new InformationElement(scene,box,new THREE.Vector3(-40,0,40));
-        info.init()//.then(info.addToScene(scene));
-        //scene.add(info);
+        let info = new InformationElement(scene,new THREE.Vector3(-40,0,40),box);
+        info.init()
 
         // FLOOR
         //same as other geometry
-        let planeGeometry = new THREE.PlaneBufferGeometry(1000, 1000);
+        let planeGeometry = new THREE.PlaneBufferGeometry(10000, 10000);
         let planeMaterial = new THREE.MeshPhongMaterial({ color: 0x261F26, depthWrite: false });
         let planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
         planeMesh.rotation.x = -Math.PI / 2;
@@ -133,8 +183,10 @@ export default {
         cameraHelper = new THREE.CameraHelper( camera );
         scene.add( cameraHelper );
 
-        this.initPath();
-        //this.addExtrude();
+
+        const path = new PathCoordinates();
+        const pathVertices = path.init();
+        this.initPath(pathVertices);
         
         // debug camera
 				cameraEye = new THREE.Mesh( new THREE.SphereBufferGeometry( 5 ), new THREE.MeshBasicMaterial( { color: 0xdddddd } ) );
@@ -148,18 +200,19 @@ export default {
         renderer.setSize(container.clientWidth, container.clientHeight);
         container.appendChild(renderer.domElement);
 
-        controls = new OrbitControls(overviewCamera, renderer.domElement);
+        //CONTROLS
+        overviewControls = new OrbitControls(overviewCamera, renderer.domElement);
+        informationControls = new OrbitControls(camera,renderer.domElement);
 
+        //GUI
         const gui = new GUI( { width: 300 } );
-        // get the default value 
         guiParameters = {
-         //material: icosaMaterial.color.getHex(),
           animationView: true
         };
 
 				gui.add(guiParameters,'animationView' ).onChange( function () {
 
-          controls.update();
+          overviewControls.update();
 					//this.animateCamera();
 
 				} );
@@ -176,61 +229,94 @@ export default {
 
 			},
     animate: function() {
-        requestAnimationFrame(this.animate);
-        //this.mesh.rotation.x += 0.01;
-        //this.mesh.rotation.y += 0.02;
-        controls.update();
-        this.render();
-        renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
-        //renderer.render(scene, camera);
+        try{
+          frame = requestAnimationFrame(this.animate);
+          //this.render();
+          if (informationsPhase){
+            informationControls.update();
+            renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
+          }
+          else{
+            this.followPath();
+            overviewControls.update();
+            renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
+            if (position.z >= 500.0){
+              informationsPhase = true;
+              let info2 = new InformationElement(scene,position,box,"Die zweite Info");
+              info2.init();
+            }
+          }
+        }
+        catch(err){
+          cancelAnimationFrame(frame);
+          console.log("animation error", err);
+        }
+        //renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
     },
     render: function() {
-      // animate camera along spline
-        if (firstLoop) {console.log("direction ",direction);}
-				const time = Date.now();
-				const looptime = 20 * 2000;
-				const t = ( time % looptime ) / looptime;
-        if (firstLoop) {console.log("tubeGeometry: ",tubeGeometry.parameters);}
-				tubeGeometry.parameters.path.getPointAt( t, position );
-				position.multiplyScalar( 4);
+        console.log("old render function");
+        //controls.update();
+        //renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
+				//renderer.render( scene, camera );
 
-				// interpolation
+    },
+    followPath: function (){
+        // animate camera along spline
+        //if (firstLoop) {console.log("direction ",direction);}
+        const time = Date.now();
+        //if (firstLoop) {console.log("time: ",time);}
+        const looptime = 20 * 2000;
+        const t = ( time % looptime ) / looptime;
+        //if (firstLoop) {console.log("t: ",t);}
+        //if (firstLoop) {console.log("helperTubeGeometry: ",helperTubeGeometry.parameters);}
+        helperTubeGeometry.parameters.path.getPointAt( t, position );
+        position.multiplyScalar( 4);
 
-				const segments = tubeGeometry.tangents.length;
-				const pickt = t * segments;
-				const pick = Math.floor( pickt );
+        // interpolation
+
+        const segments = helperTubeGeometry.tangents.length;
+        //if (firstLoop) {console.log("tangenten: ",helperTubeGeometry.tangents);}
+        const pickt = t * segments;
+        const pick = Math.floor( pickt );
+        //if (firstLoop) {console.log("pick: ",pick);}
         const pickNext = ( pick + 1 ) % segments;
 
-				binormal.subVectors( tubeGeometry.binormals[ pickNext ], tubeGeometry.binormals[ pick ] );
-        binormal.multiplyScalar( pickt - pick ).add( tubeGeometry.binormals[ pick ] );
-    
+        //if (firstLoop) {console.log("binormals: ",helperTubeGeometry.binormals);}
+        binormal.subVectors( helperTubeGeometry.binormals[ pickNext ], helperTubeGeometry.binormals[ pick ] );
+        binormal.multiplyScalar( pickt - pick ).add( helperTubeGeometry.binormals[ pick ] );
+
         //tangente copied into direction
-        if (firstLoop) {console.log("t ",t);}
-        tubeGeometry.parameters.path.getTangentAt( t, direction );
+        //if (firstLoop) {console.log("t ",t);}
+        helperTubeGeometry.parameters.path.getTangentAt( t, direction );
         const offset = 15;
 
         //the bug is somewhere at the tangente, that sets the wrong direction. It works differently if the tube is in 3D
         // so if one Z value is changed.
-        
-        if (firstLoop) {console.log("binormal ",binormal);}
-        if (firstLoop) {console.log("direction ",direction);}
 
-        normal.copy( binormal ).cross(direction);
+        //if (firstLoop) {console.log("binormal ",binormal);}
+        //if (firstLoop) {console.log("direction ",direction);}
+
+        //normal.copy( binormal ).cross(direction);
+
+        //if the spine is not 3d (on one y level), this is always the normal.
+        normal.x = 0;
+        normal.y = 1;
+        normal.z = 0;
         //normal.copy(binormal);
 
-				// we move on a offset on its binormal
-				position.add( normal.clone().multiplyScalar( offset ) );
+        // we move on a offset on its binormal
+        position.add( normal.clone().multiplyScalar( offset ) );
 
-				camera.position.copy( position );
-				cameraEye.position.copy( position );
+        camera.position.copy( position );
+        cameraEye.position.copy( position );
 
-				// using arclength for stablization in look ahead
+        // using arclength for stablization in look ahead
 
-				tubeGeometry.parameters.path.getPointAt( ( t + 30 / tubeGeometry.parameters.path.getLength() ) % 1, lookAt );
-				lookAt.multiplyScalar( 4);
+        helperTubeGeometry.parameters.path.getPointAt( ( t + 30 / helperTubeGeometry.parameters.path.getLength() ) % 1, lookAt );
+        lookAt.multiplyScalar( 4);
 
-				// camera orientation 2 - up orientation via normal
-				if ( !lookAhead ){ 
+        // camera orientation 2 - up orientation via normal
+        if ( !lookAhead ){ 
           lookAt.copy( position ).add( direction );
         }
         camera.matrix.lookAt( camera.position, lookAt, normal );
@@ -240,15 +326,10 @@ export default {
           console.log("end position: ",position);
           firstLoop = false;
         }
-      
+
         //console.log(camera);
 
-				cameraHelper.update();
-
-        //controls.update();
-        renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
-				//renderer.render( scene, camera );
-
+        cameraHelper.update();
     }
   },
   mounted() {

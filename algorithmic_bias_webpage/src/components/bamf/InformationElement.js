@@ -3,7 +3,7 @@
 import * as THREE from "three";
 
 class InformationElement    {
-    constructor(scene,mesh,position,content = "Das ist eine neue Information über das Bamf"){
+    constructor(scene,position,mesh,content = "Das ist eine neue Information über das Bamf"){
         this.scene = scene;
         this.mesh = mesh;
         this.position = position;
@@ -15,22 +15,14 @@ class InformationElement    {
     
     }
 
-    init(scene){
+    init(){
         this.loadFont()
         .then(font => this.setupText(font))
         .then(text => {
-            console.log("constructor text", text)
             this.scene.add(text);
+            this.scene.add(this.mesh);
         })
-        .catch(err => console.log("Error during loading Font; ", err));
-    }
-
-    addToScene(scene){
-        //this.text.position.x = this.mesh.position.x;
-        //this.text.position.y = this.mesh.position.y;
-        //this.text.position.z = this.mesh.position.z; 
-        scene.add(this.mesh);
-        scene.add(this.text);
+        .catch(err => console.log("Error during Initialization of Information Element; ", err));
     }
 
     async loadFont() {
@@ -71,46 +63,25 @@ class InformationElement    {
             opacity: 0.4,
             side: THREE.DoubleSide
         } );
-        const message = "Das ist eine neue Information über das Bamf";
-        console.log("font",pLoadedFont);
 
-        const shapes = pLoadedFont.generateShapes( message, 1000 );
-        console.log("shapes",shapes);
+        const shapes = pLoadedFont.generateShapes(this.content, 10);
 
         const geometry = new THREE.ShapeBufferGeometry( shapes );
 
         geometry.computeBoundingBox();
 
-        const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
+        //const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
 
-        geometry.translate( xMid, 0, 0 );
+        //geometry.translate( xMid, 0, 0 );
 
         text = new THREE.Mesh( geometry, matLite ); 
-        console.log("text created", text);
 
-        console.log("returned text:", text);
+        text.position.x = this.position.x;
+        text.position.y = this.position.y;
+        text.position.z = this.position.z;
+
+        //console.log("returned text:", text);
         return text;
-        //}).catch((err) =>
-        //    console.log("Error during loading Font; ", err));
-        // console.log("lets load the font");
-		// loader.load( '/threeAssets/helvetiker_regular.typeface.json',
-        // //loader.load(this.fontJson, 
-        //     //onLoad callback
-        //     function ( font ) {
-        //         console.log("loading font...");
-        //         //loadedFont = font;
-        //     },
-            
-        //     // onProgress callback
-        //     function ( xhr ) {
-        //         console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-        //     },
-            
-        //     // onError callback
-        //     function ( err ) {
-        //         console.log( 'An error happened' );
-        // });
-            
     }
 
 }
