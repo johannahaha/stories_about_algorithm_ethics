@@ -3,15 +3,15 @@
 import * as THREE from "three";
 import {SVGLoader} from 'three/examples/jsm/loaders/SVGLoader.js';
 
-class PathCoordinates {
+class PathLoader {
     constructor(){
         this.vertices = [];
     }
 
     init(){
-        this.loadSvg()
+        return this.loadSvg()
         .then(data => {
-            console.log(" I am in the then");
+            console.log(" I am in the path then", data);
             this.createBorder(data)})
         .catch(err => console.log("Error during Initialization of SVG; ", err));
     }
@@ -37,6 +37,7 @@ class PathCoordinates {
             };
             const loader = new SVGLoader(manager);
             let loadedSvgData = await loader.loadAsync('/threeAssets/border.svg');
+            //console.log("I loaded this", svgData);
             return loadedSvgData;
         }
 
@@ -66,7 +67,19 @@ class PathCoordinates {
             if (shapes.length ===1){
                 const shape = shapes[0];
                 const geometry = new THREE.ShapeGeometry( shape );
+                console.log(geometry);
+                let switchedVertices = [];
+                geometry.vertices.forEach(v => {
+                    v.z = v.y;
+                    v.y = 0;
+                    switchedVertices.push(v);
+                })
+                geometry.vertices = switchedVertices;
                 this.vertices = geometry.vertices;
+                console.log("vertices", this.vertices);
+
+
+                return this.vertices;
             }
             else{
                 console.log("shape length is not one");
@@ -96,4 +109,4 @@ class PathCoordinates {
 
 
 }    
-export {PathCoordinates}
+export {PathLoader}

@@ -1,5 +1,7 @@
 <template>
     <div>
+        <div v-if="!preloading" id="container"> </div> 
+        <div v-else> loading .....</div>
         <div id="container"></div> 
     </div>    
 </template>
@@ -14,7 +16,7 @@ import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
 
 //MY CLASSES
 import { InformationElement } from './InformationElement.js';
-import { PathCoordinates } from './PathCoordinates';
+import { PathLoader } from './PathLoader.js';
 
 //HELPER
 import {BufferGeometryUtils} from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -37,6 +39,7 @@ let lookAhead = true;
 let frame;
 
 let helperTubeGeometry, pathGeometry, mesh, parent, spline;
+let pathVertices;
 
 let box;
 
@@ -46,8 +49,23 @@ let informationsPhase = false;
 
 export default {
   name: 'Scene',
+  data: function(){
+    return{
+      preloading: false
+    }
+  },
   methods: {
-    initPath: function(path) {
+    preLoadData: function (){
+      let path = new PathLoader();
+      return path.init()
+        .then((res) => {
+            console.log("I am in the scene then");
+            pathVertices = path.getVertices();
+            console.log(pathVertices);
+            })
+        .catch(() => console.log("Error initializung Path Cooridnates"));
+    },
+    initPath: function(pathVertices) {
         //SPLINE
         // spline = new THREE.CatmullRomCurve3( [
         //   new THREE.Vector3( -40, 0, -40 ),
@@ -56,8 +74,8 @@ export default {
         //   new THREE.Vector3( 40, 0, 40 ),
         //   new THREE.Vector3( 40, 0, -40 )]);
         spline = [];
-        console.log("path",path);
-        path.forEach(v => {
+        console.log("path",pathVertices);
+        pathVertices.forEach(v => {
             spline.push(v);
         });
         console.log(spline);
@@ -157,7 +175,7 @@ export default {
         scene.add(new THREE.AmbientLight(0xffffff,0.3))     
 
         //SVG path
-
+        this.initPath(pathVertices);
 
         //INFORMATION ELEMENT 
         const boxGeo = new THREE.BoxBufferGeometry(10,10,10);
@@ -182,11 +200,6 @@ export default {
         parent.add(camera);
         cameraHelper = new THREE.CameraHelper( camera );
         scene.add( cameraHelper );
-
-
-        const path = new PathCoordinates();
-        const pathVertices = path.init();
-        this.initPath(pathVertices);
         
         // debug camera
 				cameraEye = new THREE.Mesh( new THREE.SphereBufferGeometry( 5 ), new THREE.MeshBasicMaterial( { color: 0xdddddd } ) );
@@ -333,8 +346,13 @@ export default {
     }
   },
   mounted() {
-      this.init();
-      this.animate();
+      this.preLoadData()
+      .then(()=> {
+        this.init();
+        this.preloading = true;
+      })
+      .then(()=> console.log("Let's go, animation"))
+      .then(()=> this.animate());
   }
 }
 </script>
