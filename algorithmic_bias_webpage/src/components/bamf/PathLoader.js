@@ -65,20 +65,27 @@ class PathLoader {
             const shapes = path.toShapes( true );
 
             if (shapes.length ===1){
+                //create shape of svg points
                 const shape = shapes[0];
                 const geometry = new THREE.ShapeGeometry( shape );
                 console.log(geometry);
                 let switchedVertices = [];
-                geometry.vertices.forEach(v => {
+                for (let i =0; i < geometry.vertices.length; i=i+2){
+                    let v = geometry.vertices[i];
+                //geometry.vertices.forEach(v => {
                     v.z = v.y;
                     v.y = 0;
+                    v.multiplyScalar(3);
                     switchedVertices.push(v);
-                })
+                }//)
                 geometry.vertices = switchedVertices;
-                this.vertices = geometry.vertices;
-                console.log("vertices", this.vertices);
 
-
+                //set center of vertices to zero with bounding box
+                let mesh = new THREE.Mesh(geometry,new THREE.Material());
+                mesh.geometry.computeBoundingBox();
+                let bb = mesh.geometry.boundingBox;
+                mesh.geometry.translate(-bb.max.x/2,0,-bb.max.z/2);
+                this.vertices = mesh.geometry.vertices;
                 return this.vertices;
             }
             else{
