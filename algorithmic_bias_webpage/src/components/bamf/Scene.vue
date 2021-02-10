@@ -1,6 +1,13 @@
 <template>
     <div>
         <div v-if="!preloading" id="container"> </div> 
+        <div id="instructions">
+          <span style="font-size:36px">Click to play</span>
+          <br /><br />
+          Move: WASD<br/>
+          Jump: SPACE<br/>
+          Look: MOUSE
+        </div>
         <div id="container"></div> 
     </div>    
 </template>
@@ -10,7 +17,8 @@
 
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
+//import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
+import { PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls.js';
 //import { Curves } from 'three/examples//jsm/curves/CurveExtras.js';
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
 
@@ -93,15 +101,16 @@ export default {
         
         spline.curveType = 'catmullrom';
         spline.closed = true;
-        console.log("spline", spline);
+        console.log("spline here", spline);
 
-				if ( mesh !== undefined ) {
-					parent.remove( mesh );
-					mesh.geometry.dispose();
-          console.log("mesh was disposed");
-        }
+				// if ( mesh !== undefined ) {
+				// 	parent.remove( mesh );
+				// 	mesh.geometry.dispose();
+        //   console.log("mesh was disposed");
+        // }
 
         //segments need to be at least spline.length/2 for a smooth followPath
+        console.log("calculating segments...");
         let segments = Math.floor(spline.points.length/2);
         console.log("segments",segments);
         
@@ -234,10 +243,31 @@ export default {
         //CONTROLS
         overviewControls = new OrbitControls(overviewCamera, renderer.domElement);
         
-        informationControls = new FirstPersonControls(camera,renderer.domElement);
-        informationControls.onMouseDown = () => {
-          t += 0.0005;
-        }
+        // informationControls = new FirstPersonControls(camera,renderer.domElement);
+        // informationControls.onMouseDown = () => {
+        //   t += 0.0005;
+        // }
+
+        informationControls = new PointerLockControls(camera,renderer.domElement);
+        let menu = document.querySelector("#instructions");
+
+        menu.addEventListener( 'click', function () {
+
+					informationControls.lock();
+
+				} );
+
+        informationControls.addEventListener( 'lock', function () {
+          console.log("mouse captured");
+          menu.style.display = 'none';
+
+        } );
+
+        informationControls.addEventListener( 'unlock', function () {
+
+          menu.style.display = 'block';
+
+        } );
 
 
         //informationControls = new OrbitControls(camera,renderer.domElement);
@@ -343,7 +373,7 @@ export default {
         cameraHelper.update();
 
         if (isMoving){
-          t += 0.00003;
+          //t += 0.00003;
           if (pick == 20){
             this.manageInformation(1);
           }
@@ -415,11 +445,40 @@ export default {
 <style scoped>
 
 #container {
-  height: 80vh;
+  height: 100vh;
 }
 
 #home{
     margin: 0;
 }
+
+#instructions {
+				width: 100vw;
+				height: 100vh;
+
+				display: -webkit-box;
+				display: -moz-box;
+				display: box;
+
+				-webkit-box-orient: horizontal;
+				-moz-box-orient: horizontal;
+				box-orient: horizontal;
+
+				-webkit-box-pack: center;
+				-moz-box-pack: center;
+				box-pack: center;
+
+				-webkit-box-align: center;
+				-moz-box-align: center;
+				box-align: center;
+
+				color: red;
+				text-align: center;
+				font-family: Arial;
+				font-size: 14px;
+				line-height: 24px;
+
+				cursor: pointer;
+			}
 </style>
 

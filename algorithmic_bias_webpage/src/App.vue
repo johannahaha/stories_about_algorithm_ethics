@@ -1,5 +1,5 @@
 <template>
-  <div id="nav">
+  <div>
     <Header></Header>
     <router-view/>
   </div>
@@ -19,6 +19,10 @@ export default{
 </script>
 
 <style>
+html,body{
+  margin:0;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -27,15 +31,13 @@ export default{
   color: #2c3e50;
   margin:0;
   overflow: hidden;
+  position: relative;
 }
 
 #home{
   margin:0;
 }
 
-#nav {
-  padding: 0.5rem;
-}
 
 #nav a {
   font-weight: bold;

@@ -19,6 +19,5 @@ export default {
 #home{
     text-align: center;
     color: #2d305a;
-    margin-top: 60px;
 }
 </style>

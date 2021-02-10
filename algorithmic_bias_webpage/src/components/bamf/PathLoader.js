@@ -72,16 +72,16 @@ class PathLoader {
                 let switchedVertices = [];
                 let normals = [];
 
+                //create mesh for translating and adjusting vertices
                 let mesh = new THREE.Mesh(geometry,new THREE.Material());
                 
                 let positionAttribute = mesh.geometry.getAttribute( 'position' );
                 console.log("pos attribute",positionAttribute);
 
                 let localVertex = new THREE.Vector3();
-                //const globalVertex = new THREE.Vector3();
 
                 for ( let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex ++ ) {
-                    localVertex.fromBufferAttribute( positionAttribute, vertexIndex );
+                    localVertex.fromBufferAttribute( positionAttribute, vertexIndex ).multiplyScalar(3);
                     switchedVertices.push(localVertex.x);
                     switchedVertices.push(0);
                     switchedVertices.push(localVertex.y);
@@ -89,32 +89,16 @@ class PathLoader {
                     normals.push(0);
                     normals.push(1);
                     normals.push(0);
-                    //console.log(vertexIndex,localVertex);
-                    //localVertex.setZ(localVertex.getY(vertexIndex));
-                    //localVertex.setY(0);
 
-                    //globalVertex.copy( localVertex ).applyMatrix4( mesh.matrixWorld );
-                    //globalVertex.multiplyScalar(3);
-                    //switchedVertices.push(localVertex);
                 }
-                //mesh.geometry.setAttribute("position",switchedVertices);
+
                 mesh.geometry.setAttribute("position",new THREE.Float32BufferAttribute( switchedVertices, 3 ))
                 mesh.geometry.setAttribute("normal", THREE.Float32BufferAttribute( normals, 3 ))
-                //mesh.geometry.setAttribute("normal",normals);
-                //mesh.geometry.computeVertexNormals();
+
                 console.log(mesh.geometry);
-                // for (let i =0; i < geometry.vertices.length; i=i+2){
-                //     let v = geometry.vertices[i];
-                // //geometry.vertices.forEach(v => {
-                //     v.z = v.y;
-                //     v.y = 0;
-                //     v.multiplyScalar(3);
-                //     switchedVertices.push(v);
-                // }//)
-                // geometry.vertices = switchedVertices;
+
 
                 //set center of vertices to zero with bounding box
-                //let mesh = new THREE.Mesh(geometry,new THREE.Material());
                 mesh.geometry.computeBoundingBox();
                 let bb = mesh.geometry.boundingBox;
                 console.log("bb",bb);
@@ -126,7 +110,8 @@ class PathLoader {
                     let v = localVertex.fromBufferAttribute( positionAttribute, vertexIndex )
                     this.vertices.push(new THREE.Vector3(v.x,v.y,v.z));
                 }    
-                //this.vertices = mesh.geometry.vertices;
+
+
                 return this.vertices;
             }
             else{
