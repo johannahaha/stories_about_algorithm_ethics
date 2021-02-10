@@ -11,7 +11,7 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
-import { Curves } from 'three/examples//jsm/curves/CurveExtras.js';
+//import { Curves } from 'three/examples//jsm/curves/CurveExtras.js';
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
 
 //MY CLASSES
@@ -21,8 +21,8 @@ import {InfoFontLoader} from './InfoFontLoader.js';
 
 //HELPERS
 import {BufferGeometryUtils} from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import {VertexTangentsHelper} from 'three/examples/jsm/helpers/VertexTangentsHelper.js';
-import {VertexNormalsHelper} from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
+//import {VertexTangentsHelper} from 'three/examples/jsm/helpers/VertexTangentsHelper.js';
+//import {VertexNormalsHelper} from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
 
 //VARIABLES
 let scene, renderer
@@ -39,7 +39,7 @@ let lookAhead = true;
 let frame;
 
 //camera
-let camera, cameraHelper, cameraEye, overviewCamera, informationCamera;
+let camera, cameraHelper, cameraEye, overviewCamera; 
 let cameraHelperOn = true;
 
 let helperTubeGeometry;
@@ -64,7 +64,7 @@ export default {
     preLoadPath: function (){
       let path = new PathLoader();
       return path.init()
-        .then((res) => {
+        .then(() => {
           console.log("I am in the scene then");
           pathVertices = path.getVertices();
           console.log(pathVertices);
@@ -98,10 +98,12 @@ export default {
 				if ( mesh !== undefined ) {
 					parent.remove( mesh );
 					mesh.geometry.dispose();
+          console.log("mesh was disposed");
         }
 
         //segments need to be at least spline.length/2 for a smooth followPath
-        let segments = spline.points.length/2
+        let segments = Math.floor(spline.points.length/2);
+        console.log("segments",segments);
         
         //TUBE HELPER GEOMETRY
         helperTubeGeometry = new THREE.TubeBufferGeometry( spline, segments, 2, 10, false );
@@ -131,8 +133,8 @@ export default {
         //MATERIAL
         const material = new THREE.MeshPhongMaterial( 
           { color: 0xb00000 } );
-        const wireframeMaterial = new THREE.MeshBasicMaterial( 
-          { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
+        // const wireframeMaterial = new THREE.MeshBasicMaterial( 
+        //   { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
         
         let mesh = new THREE.Mesh( pathGeometry, material );
         
@@ -261,6 +263,7 @@ export default {
 				} );
 
         window.addEventListener( 'resize', this.onWindowResize, false );
+        console.log("done with init");
 
     },
     onWindowResize: function() {
@@ -340,7 +343,7 @@ export default {
         cameraHelper.update();
 
         if (isMoving){
-          //t += 0.00003;
+          t += 0.00003;
           if (pick == 20){
             this.manageInformation(1);
           }
@@ -382,7 +385,7 @@ export default {
             //camera.quaternion.setFromRotationMatrix( camera.matrix,camera.rotation.order );
           }
           else{
-            informationControls.update();
+            //informationControls.update();
             overviewControls.update();
             this.followPath(true);
           }
@@ -397,13 +400,13 @@ export default {
   mounted() {
       //TO DO: when there is an error, it is still looping through the other thens
       this.preLoadPath()
-      .then(res => this.preLoadFont())
-      .then(res=> {
+      .then(() => this.preLoadFont())
+      .then(()=> {
         this.init();
         this.preloading = true;
       })
-      .then(res=> console.log("Let's go, animation"))
-      .then(res=> this.animate())
+      .then(()=> console.log("Let's go, animation"))
+      .then(()=> this.animate())
       .catch(() => "Error during mounting");
   }
 }
@@ -414,4 +417,9 @@ export default {
 #container {
   height: 80vh;
 }
+
+#home{
+    margin: 0;
+}
 </style>
+

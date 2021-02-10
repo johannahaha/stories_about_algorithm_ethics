@@ -1,26 +1,47 @@
 {
-  "name": "git_algorithmic_bias_webpage",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "algorithmic_bias_version_3",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/johannahaha/orientierungsprojekt.git"
-  },
-  "author": "johanna hartmann",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/johannahaha/orientierungsprojekt/issues"
-  },
-  "homepage": "https://github.com/johannahaha/orientierungsprojekt#readme",
   "dependencies": {
-    "@vue/cli": "^4.5.9",
-    "three": "^0.124.0",
-    "uuid": "^8.3.2",
-    "vue": "^2.6.12",
-    "vue-gl": "^0.22.1"
-  }
+    "core-js": "^3.6.5",
+    "three": "^0.125.2",
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.0-0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^7.0.0-0",
+    "node-sass": "^5.0.0",
+    "sass-loader": "^11.0.1"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

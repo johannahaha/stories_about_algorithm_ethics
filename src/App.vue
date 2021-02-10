@@ -25,10 +25,16 @@ export default{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  margin:0;
+  overflow: hidden;
+}
+
+#home{
+  margin:0;
 }
 
 #nav {
-  padding: 30px;
+  padding: 0.5rem;
 }
 
 #nav a {
@@ -40,3 +46,4 @@ export default{
   color: #42b983;
 }
 </style>
+

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import Information from "./Information.vue";
+//import Information from "./Information.vue";
 import Scene from "./Scene.vue"
 
 export default {

@@ -21,11 +21,11 @@ export default {
         window.removeEventListener('scroll', this.handleScroll);
     },
     methods: {
-        handleScroll (event) {
+        //handleScroll (event) {
             //activeId += 1;
             //console.log(activeId);
         // Any code to be executed when the window is scrolled
-        }
+        //}
     }//,
     //computed: {
         //currentInfo: function(){

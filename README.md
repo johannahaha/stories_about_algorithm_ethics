@@ -1,4 +1,4 @@
-# algorithmic_bias_webpage
+# algorithmic_bias_version_3
 
 ## Project setup
 ```
