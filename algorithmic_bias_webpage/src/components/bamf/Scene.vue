@@ -18,7 +18,7 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 //import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
-import { PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls.js';
+//import { PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls.js';
 //import { Curves } from 'three/examples//jsm/curves/CurveExtras.js';
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
 
@@ -26,6 +26,7 @@ import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
 import { InformationElement } from './InformationElement.js';
 import { PathLoader } from './PathLoader.js';
 import {InfoFontLoader} from './InfoFontLoader.js';
+import {PlayerControls} from './PlayerControls.js'
 
 //HELPERS
 import {BufferGeometryUtils} from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -39,11 +40,11 @@ let overviewControls, informationControls;
 //follow path
 let firstLoop = true;
 let direction = new THREE.Vector3(0,0,0);
-let binormal = new THREE.Vector3();
+// let binormal = new THREE.Vector3();
 let normal = new THREE.Vector3();
 let position = new THREE.Vector3();
-let lookAt = new THREE.Vector3();
-let lookAhead = true;
+// let lookAt = new THREE.Vector3();
+// let lookAhead = false;
 let frame;
 
 //camera
@@ -59,7 +60,7 @@ let box;
 let guiParameters;
 
 let informationsPhase = false;
-let t = 0;
+//let t = 0;
 
 export default {
   name: 'Scene',
@@ -248,7 +249,8 @@ export default {
         //   t += 0.0005;
         // }
 
-        informationControls = new PointerLockControls(camera,renderer.domElement);
+        //informationControls = new PointerLockControls(camera,renderer.domElement);
+        informationControls = new PlayerControls(camera,renderer.domElement,helperTubeGeometry,cameraEye,cameraHelper);
         let menu = document.querySelector("#instructions");
 
         menu.addEventListener( 'click', function () {
@@ -268,6 +270,8 @@ export default {
           menu.style.display = 'block';
 
         } );
+
+        console.log("control set up done");
 
 
         //informationControls = new OrbitControls(camera,renderer.domElement);
@@ -304,82 +308,82 @@ export default {
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
 			},
-    followPath: function (isMoving){
-        // animate camera along spline
-        if (firstLoop) {console.log("direction ",direction);}
-        //if (firstLoop) {console.log("t: ",t);}
-        //if (firstLoop) {console.log("helperTubeGeometry: ",helperTubeGeometry.parameters);}
-        helperTubeGeometry.parameters.path.getPointAt( t, position );
-        position.multiplyScalar( 4);
+    // followPath: function (isMoving){
+    //     // animate camera along spline
+    //     if (firstLoop) {console.log("direction ",direction);}
+    //     //if (firstLoop) {console.log("t: ",t);}
+    //     //if (firstLoop) {console.log("helperTubeGeometry: ",helperTubeGeometry.parameters);}
+    //     helperTubeGeometry.parameters.path.getPointAt( t, position );
+    //     position.multiplyScalar( 4);
 
-        // interpolation
+    //     // interpolation
 
-        const segments = helperTubeGeometry.tangents.length;
-        //if (firstLoop) {console.log("tangenten: ",helperTubeGeometry.tangents);}
-        const pickt = t * segments;
-        const pick = Math.floor( pickt );
+    //     const segments = helperTubeGeometry.tangents.length;
+    //     //if (firstLoop) {console.log("tangenten: ",helperTubeGeometry.tangents);}
+    //     const pickt = t * segments;
+    //     const pick = Math.floor( pickt );
       
-        //if (firstLoop) {console.log("pick: ",pick);}
-        const pickNext = ( pick + 1 ) % segments;
+    //     //if (firstLoop) {console.log("pick: ",pick);}
+    //     const pickNext = ( pick + 1 ) % segments;
 
-        //if (firstLoop) {console.log("binormals: ",helperTubeGeometry.binormals);}
-        binormal.subVectors( helperTubeGeometry.binormals[ pickNext ], helperTubeGeometry.binormals[ pick ] );
-        binormal.multiplyScalar( pickt - pick ).add( helperTubeGeometry.binormals[ pick ] );
+    //     //if (firstLoop) {console.log("binormals: ",helperTubeGeometry.binormals);}
+    //     binormal.subVectors( helperTubeGeometry.binormals[ pickNext ], helperTubeGeometry.binormals[ pick ] );
+    //     binormal.multiplyScalar( pickt - pick ).add( helperTubeGeometry.binormals[ pick ] );
 
-        //tangente copied into direction
-        //if (firstLoop) {console.log("t ",t);}
-        helperTubeGeometry.parameters.path.getTangentAt( t, direction );
-        const offset = 15;
+    //     //tangente copied into direction
+    //     //if (firstLoop) {console.log("t ",t);}
+    //     helperTubeGeometry.parameters.path.getTangentAt( t, direction );
+    //     const offset = 15;
 
-        //the bug is somewhere at the tangente, that sets the wrong direction. It works differently if the tube is in 3D
-        // so if one Z value is changed.
+    //     //the bug is somewhere at the tangente, that sets the wrong direction. It works differently if the tube is in 3D
+    //     // so if one Z value is changed.
 
-        //if (firstLoop) {console.log("binormal ",binormal);}
-        //if (firstLoop) {console.log("direction ",direction);}
+    //     //if (firstLoop) {console.log("binormal ",binormal);}
+    //     //if (firstLoop) {console.log("direction ",direction);}
 
-        //normal.copy( binormal ).cross(direction);
+    //     //normal.copy( binormal ).cross(direction);
 
-        //if the spine is not 3d (on one y level), this is always the normal.
-        normal.x = 0;
-        normal.y = 1;
-        normal.z = 0;
-        //normal.copy(binormal);
+    //     //if the spine is not 3d (on one y level), this is always the normal.
+    //     normal.x = 0;
+    //     normal.y = 1;
+    //     normal.z = 0;
+    //     //normal.copy(binormal);
 
-        // we move on a offset on its binormal
-        position.add( normal.clone().multiplyScalar( offset ) );
+    //     // we move on a offset on its binormal
+    //     position.add( normal.clone().multiplyScalar( offset ) );
 
-        camera.position.copy( position );
-        cameraEye.position.copy( position );
+    //     camera.position.copy( position );
+    //     cameraEye.position.copy( position );
 
-        // using arclength for stablization in look ahead
+    //     // using arclength for stablization in look ahead
 
-        helperTubeGeometry.parameters.path.getPointAt( ( t + 30 / helperTubeGeometry.parameters.path.getLength() ) % 1, lookAt );
-        lookAt.multiplyScalar( 4);
+    //     helperTubeGeometry.parameters.path.getPointAt( ( t + 30 / helperTubeGeometry.parameters.path.getLength() ) % 1, lookAt );
+    //     lookAt.multiplyScalar( 4);
 
-        // camera orientation 2 - up orientation via normal
-        if ( !lookAhead ){ 
-          lookAt.copy( position ).add( direction );
-        }
-        camera.matrix.lookAt( camera.position, lookAt, normal );
-        camera.quaternion.setFromRotationMatrix( camera.matrix,camera.rotation.order );
+    //     // camera orientation 2 - up orientation via normal
+    //     if ( !lookAhead ){ 
+    //       lookAt.copy( position ).add( direction );
+    //     }
+    //     camera.matrix.lookAt( camera.position, lookAt, normal );
+    //     camera.quaternion.setFromRotationMatrix( camera.matrix,camera.rotation.order );
 
-        if (firstLoop) {
-          console.log("end position: ",position);
-          firstLoop = false;
-        }
+    //     if (firstLoop) {
+    //       console.log("end position: ",position);
+    //       firstLoop = false;
+    //     }
 
-        //console.log(camera);
+    //     //console.log(camera);
 
-        cameraHelper.update();
+    //     cameraHelper.update();
 
-        if (isMoving){
-          //t += 0.00003;
-          if (pick == 20){
-            this.manageInformation(1);
-          }
-        }
+    //     if (isMoving){
+    //       //t += 0.00003;
+    //       if (pick == 20){
+    //         this.manageInformation(1);
+    //       }
+    //     }
 
-    },
+    // },
     manageInformation: function(info){
       informationsPhase = true
       if (info === 1){
@@ -406,18 +410,19 @@ export default {
         try{
           frame = requestAnimationFrame(this.animate);
           if (informationsPhase){
-            informationControls.update();
+            //informationControls.update();
             overviewControls.update();
-            this.followPath(false);
+            //this.followPath(false);
             // informationControls.update();
             // overviewControls.update();
             // camera.matrix.lookAt( camera.position, lookAt, normal );
             //camera.quaternion.setFromRotationMatrix( camera.matrix,camera.rotation.order );
           }
           else{
+            informationControls.moveForward();
             //informationControls.update();
             overviewControls.update();
-            this.followPath(true);
+            //this.followPath(true);
           }
           renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
         }
