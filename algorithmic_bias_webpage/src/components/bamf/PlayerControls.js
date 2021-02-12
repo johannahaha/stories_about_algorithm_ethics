@@ -1,26 +1,23 @@
-//part of the code are from this three.js class
-//https://github.com/mrdoob/three.js/blob/master/examples/jsm/controls/PointerLockControls.js
+//part of the code are from this class
+//https://github.com/within-unlimited/under-neon-lights/blob/master/release/src/mouse-controls.js
 
 import {
 	EventDispatcher,
 	Vector3,
 	Vector2,
-	Clock
+	Clock,
+	Euler
 } from 'three';
 
 const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cameraHelper ) {
+	if ( domElement === document ) console.error( 'PlayerControls: "document" should not be used as the target "domElement". Please use "renderer.domElement" instead.' );
+
 	console.log("instantiating player controls");
     this.domElement = domElement;
 	this.isLocked = false;
 	this.helperTubeGeometry = helperGeo;
-
-	//vertical angle restriction
-	// this.minPolarAngle = 0; // radians
-	// this.maxPolarAngle = Math.PI; // radians
-
-	// //horizontal angle restriction
-	// this.minAzimuthAngle = 0; // radians
-	// this.maxAzimuthAngle = Math.PI; // radians
+	this.enabled = false;
+	this.segment;
 
 	//
 	// internals
@@ -28,22 +25,24 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
 	let scope = this;
 
-	let changeEvent = { type: 'change' };
-	let lockEvent = { type: 'lock' };
-	let unlockEvent = { type: 'unlock' };
+	//this.domElement = domElement || window;
+	//this.domElement.isWindow = !domElement;
 
-	// let movementX, movementY;
-
-	// let euler = new Euler( 0, 0, 0, 'YXZ' );
-	// let PI_2 = Math.PI / 2;
-
-	// let rotationAngle = 0;
-	// let quaternion = new Quaternion();
-	// let up = new Vector3(0,1,0);
-
+	camera.rotation.reorder( 'YXZ' );
 	const mouse = new Vector2();
-	const target = new Vector2();
-	const windowHalf = new Vector2( scope.domElement.offsetWidth / 2, scope.domElement.offsetHeight / 2 );
+	//const target = new Vector2();
+	const destination = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
+	destination.reorder( 'YXZ' );
+	let drag = 0.66;
+	let scale = 1;
+	// eslint-disable-next-line no-unused-vars
+	let dragging = false;
+	//console.log(dragging);
+	var HALF_PI = Math.PI / 2;
+
+
+
+	const windowSize = new Vector2( scope.domElement.offsetWidth, scope.domElement.offsetHeight);
 
 
 	const clock = new Clock();
@@ -56,87 +55,94 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	let firstLoop = true;
 	let direction = new Vector3(0,0,0);
 	let binormal = new Vector3();
-	let normal = new Vector3();
-	let position = new Vector3();
+	this.normal = new Vector3();
+	this.position = new Vector3();
 	let lookAt = new Vector3();
 	let lookAhead = false;
 	let t=0;
 
 
-	//let width = window.innerWidth;
-	//let height = windown.innerHeight;
-	//let vec = new Vector3();
+	//TODO: onTouchMove for mobile devices
+	function onPointerMove( e ) {
 
-	function onMouseMove( event ) {
+		if ( scope.enabled === false ) return;
+
+		console.log("dragging mouse..");
+		e.preventDefault();
+
+		let x = e.clientX;
+		let y = e.clientY;
+
+		let dx = (x - mouse.x) / windowSize.x;
+		let dy = (y - mouse.y) / windowSize.y;
+
+		destination.y += dx * scale;
+		destination.x += dy * scale;
+
+		mouse.set(x, y);
+
 
         //console.log(mouseIsMoving);
-		if ( scope.isLocked === false ) return;
+		// if ( scope.enabled === false ) return;
 
-		mouse.x = ( event.clientX - windowHalf.x );
-		mouse.y = ( event.clientY - windowHalf.y );
+		// e.preventDefault();
 
-		console.log(event);
+		// mouse.x = ( e.clientX - windowHalf.x );
+		// mouse.y = ( e.clientY - windowHalf.y );
+
+		//ClientX not working in lock mode
 		// movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 		// movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 		// console.log(movementY);
 
-		//X falls between A and B, and you would like Y to fall between C and D, you can apply the following linear transform:
-
-		//Y = (X-A)/(B-A) * (D-C) + C
-		//rotationAngle = (movementX-0)/(width-0)*(Math.PI-0)+0
-		//console.log("anlge",rotationAngle);
-		//calcEuler();
-
-		scope.dispatchEvent( changeEvent );
-
-	}
-	// function calcEuler(){
-	// 	euler.setFromQuaternion( camera.quaternion );
-
-	// 	euler.y -= movementX * 0.002;
-	// 	euler.x -= movementY * 0.002;
-
-	// 	euler.x = Math.max( PI_2 - scope.maxPolarAngle, Math.min( PI_2 - scope.minPolarAngle, euler.x ) );
-	// 	//euler.y = Math.max( PI_2 - scope.maxAzimuthAngle, Math.min( PI_2 - scope.minAzimuthAngle, euler.x ) );
-
-
-	// 	camera.quaternion.setFromEuler( euler );
-	// }
-
-	function onPointerlockChange() {
-
-		if ( scope.domElement.ownerDocument.pointerLockElement === scope.domElement ) {
-
-			scope.dispatchEvent( lockEvent );
-
-			scope.isLocked = true;
-
-		} else {
-
-			scope.dispatchEvent( unlockEvent );
-
-			scope.isLocked = false;
-
-		}
-
 	}
 
-	function onPointerlockError() {
+	function onPointerDown ( e ) {
 
-		console.error( 'THREE.PointerLockControls: Unable to use Pointer Lock API' );
+		//e.preventDefault();
 
+		console.log("mouse is down");
+	
+		mouse.set(e.clientX, e.clientY);
+	
+		scope.domElement.ownerDocument.addEventListener('pointermove', onPointerMove, false);
+		scope.domElement.ownerDocument.addEventListener('pointerup', onPointerUp, false);
+		dragging = true;
+	}
+
+	function onPointerUp ( e ) {
+		e.preventDefault();
+		scope.domElement.ownerDocument.removeEventListener('pointermove', onPointerMove, false);
+		scope.domElement.ownerDocument.removeEventListener('pointerup', onPointerUp, false);
+		
+		dragging = false;
+	}
+
+	function rotateCam(){
+		if ( scope.enabled === false ) return;
+
+		let dx = clamp(destination.x, - HALF_PI, HALF_PI);
+		let dy = destination.y;
+		let dz =  clamp(destination.z, - HALF_PI, HALF_PI);
+	
+		camera.rotation.x += ( dx - camera.rotation.x ) * drag;
+		camera.rotation.y += ( dy - camera.rotation.y ) * drag;
+		camera.rotation.z += ( dz - camera.rotation.z ) * drag;
 	}
 
 	function followPath(){
+		if ( scope.enabled === false ) return;
+
+		//using delta to make animation more smooth
 		delta = clock.getDelta();
 
-		t = speed * delta;
+		t += speed * delta;
         // animate camera along spline
         //if (firstLoop) {console.log("direction ",direction);}
         //if (firstLoop) {console.log("t: ",t);}
         //if (firstLoop) {console.log("helperTubeGeometry: ",helperTubeGeometry.parameters);}
-        scope.helperTubeGeometry.parameters.path.getPointAt( t, position );
-        position.multiplyScalar( 4);
+        scope.helperTubeGeometry.parameters.path.getPointAt( t, scope.position );
+        scope.position.multiplyScalar( 4);
 
         // interpolation
 
@@ -144,6 +150,7 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
         //if (firstLoop) {console.log("tangenten: ",scope.helperTubeGeometry.tangents);}
         const pickt = t * segments;
         const pick = Math.floor( pickt );
+		scope.segment = pick;
       
         //if (firstLoop) {console.log("pick: ",pick);}
         const pickNext = ( pick + 1 ) % segments;
@@ -166,16 +173,18 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
         //normal.copy( binormal ).cross(direction);
 
         //if the spine is not 3d (on one y level), this is always the normal.
-        normal.x = 0;
-        normal.y = 1;
-        normal.z = 0;
+        scope.normal.x = 0;
+        scope.normal.y = 1;
+        scope.normal.z = 0;
         //normal.copy(binormal);
 
         // we move on a offset on its binormal
-        position.add( normal.clone().multiplyScalar( offset ) );
+        scope.position.add( scope.normal.clone().multiplyScalar( offset ) );
 
-        camera.position.copy( position );
-        cameraEye.position.copy( position );
+		//camera.rotation.y = -camRotationY;
+
+        camera.position.copy( scope.position );
+        cameraEye.position.copy( scope.position );
 
         // using arclength for stablization in look ahead
 
@@ -184,29 +193,47 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
         // camera orientation 2 - up orientation via normal
         if ( !lookAhead ){ 
-          lookAt.copy( position ).add( direction );
+          lookAt.copy( scope.position ).add( direction );
         }
-        camera.matrix.lookAt( camera.position, lookAt, normal );
+        camera.matrix.lookAt( camera.position, lookAt, scope.normal );
         camera.quaternion.setFromRotationMatrix( camera.matrix,camera.rotation.order );
-		//camera.position.applyQuaternion( quaternion.setFromAxisAngle(up,rotationAngle)); // The positive y-axis
 		
-		target.x = (1 - mouse.x) * 0.002;
-		target.y = (1 - mouse.y) * 0.002;
-		//console.log(target);
-		camera.rotation.x += 0.05 * (target.y - camera.rotation.x);
-		camera.rotation.y += 0.05 * (target.x - camera.rotation.y);
+		
+		// target.x = (1 - mouse.x) * 0.002;
+		// target.y = (1 - mouse.y) * 0.002;
+
+		// //camRotationX += 0.05 * (target.y - camera.rotation.x);
+		// camRotationY += 0.05 * (target.x - camera.rotation.y);
+		// console.log(camRotationY);
+		// if(camRotationY >= 0.45){
+		// 	camRotationY = 0.45;
+		// } 
+		// if(camRotationY <= -0.45){
+		// 	camRotationY = -0.45;
+		// } 
+		
+		// //camera.rotation.x = camRotationX;
+		// camera.rotation.y = camRotationY;
+
+		rotateCam();
+		
 		//camera.quaternion.setFromEuler( euler );
 
 		//calcEuler();
 		
 
         if (firstLoop) {
-          console.log("end position: ",position);
+          console.log("end position: ",scope.position);
           firstLoop = false;
         }
 
         //console.log(camera);
         cameraHelper.update();
+
+		//when pick is 20
+		
+		//stop following path
+		//tell scene to establish info element
 
         // if (isMoving){
         //   //t += 0.00003;
@@ -216,69 +243,64 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
         // }
 
 	}	
-	this.moveForward = function () {
 
-		// move forward parallel to the xz-plane
-		// assumes camera.up is y-up
+	function clamp(v, min, max) {
+		return Math.min(Math.max(v, min), max);
+	}
 
-		//vec.setFromMatrixColumn( camera.matrix, 0 );
-
-		//vec.crossVectors( camera.up, vec );
-
-		followPath();
-
-		//camera.position.addScaledVector( vec, distance );
-
+	this.update = function (isMoving){
+		if (isMoving){
+			followPath();
+		}
+		else{
+			rotateCam();
+		}
 	};
+
+	// this.moveForward = function () {
+
+	// 	// move forward parallel to the xz-plane
+	// 	// assumes camera.up is y-up
+
+	// 	//vec.setFromMatrixColumn( camera.matrix, 0 );
+
+	// 	//vec.crossVectors( camera.up, vec );
+
+	// 	followPath();
+
+	// 	//camera.position.addScaledVector( vec, distance );
+
+	// };
 
 	this.handleResize = function () {
 		console.log("resizing controls");
-		if ( scope.domElement === document ) {
-
-			windowHalf.x = window.innerWidth / 2;
-			windowHalf.y = window.innerHeight / 2;
-
-		} else {
-			console.log("in the else");
-			windowHalf.x = scope.domElement.offsetWidth / 2;
-			windowHalf.y = scope.domElement.offsetHeight / 2;
-			console.log(windowHalf.x);
-		}
-
-	};
-
-	this.lock = function () {
-
-		scope.domElement.requestPointerLock();
-
-	};
-
-	this.unlock = function () {
-
-		scope.domElement.ownerDocument.exitPointerLock();
-
+		windowSize.x = scope.domElement.offsetWidth;
+		windowSize.y = scope.domElement.offsetHeight;
+		console.log(windowSize.x);
 	};
 
 	this.connect = function () {
 
-		scope.domElement.ownerDocument.addEventListener( 'mousemove', onMouseMove );
-		scope.domElement.ownerDocument.addEventListener( 'pointerlockchange', onPointerlockChange );
-		scope.domElement.ownerDocument.addEventListener( 'pointerlockerror', onPointerlockError );
+		scope.domElement.addEventListener( 'pointerdown', onPointerDown, false );
+		scope.domElement.addEventListener( 'resize', this.handleResize );
+		console.log("connected event listeners");
+		scope.enabled = true;
+	
 
 	};
 
 	this.dispose = function () {
 
-		scope.domElement.ownerDocument.removeEventListener( 'mousemove', onMouseMove );
-		scope.domElement.ownerDocument.removeEventListener( 'pointerlockchange', onPointerlockChange );
-		scope.domElement.ownerDocument.removeEventListener( 'pointerlockerror', onPointerlockError );
+		scope.domElement.removeEventListener( 'pointerdown', onPointerDown, false );
+		scope.domElement.removeEventListener( 'resize', this.handleResize );
 
 	};
 
 	this.handleResize();
-	this.connect();
+	//this.connect();
 
 }
+
 
 PlayerControls.prototype = Object.create( EventDispatcher.prototype );
 PlayerControls.prototype.constructor = PlayerControls;

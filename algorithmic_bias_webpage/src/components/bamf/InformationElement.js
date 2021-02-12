@@ -25,7 +25,7 @@ class InformationElement    {
         //.catch(err => console.log("Error during Initialization of Information Element; ", err));
         let text = this.setupText(this.font);
         this.scene.add(text);
-        this.scene.add(this.mesh);
+        //this.scene.add(this.mesh);
     }
 
     // async loadFont() {
@@ -72,19 +72,23 @@ class InformationElement    {
         const geometry = new THREE.ShapeBufferGeometry( shapes );
 
         geometry.computeBoundingBox();
+        geometry.scale(0.5,0.5,0.5);
 
-        //const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
+        const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
 
-        //geometry.translate( xMid, 0, 0 );
+        geometry.translate( xMid, 0, 0 );
 
         text = new THREE.Mesh( geometry, matLite ); 
 
         text.position.x = this.position.x;
         text.position.y = this.position.y;
         text.position.z = this.position.z;
-
         //console.log("returned text:", text);
         return text;
+    }
+
+    onClick(){
+        
     }
 
 }
