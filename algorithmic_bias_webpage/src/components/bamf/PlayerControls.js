@@ -133,6 +133,15 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	function followPath(){
 		if ( scope.enabled === false ) return;
 
+		const segments = scope.helperTubeGeometry.tangents.length;
+        //if (firstLoop) {console.log("tangenten: ",scope.helperTubeGeometry.tangents);}
+		let	pickt = t * segments;
+		let	pick = Math.floor( pickt );
+
+		scope.segment = pick;
+        //if (firstLoop) {console.log("pick: ",pick);}
+        const pickNext = ( pick + 1 ) % segments;
+
 		//using delta to make animation more smooth
 		delta = clock.getDelta();
 
@@ -145,15 +154,6 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
         scope.position.multiplyScalar( 4);
 
         // interpolation
-
-        const segments = scope.helperTubeGeometry.tangents.length;
-        //if (firstLoop) {console.log("tangenten: ",scope.helperTubeGeometry.tangents);}
-        const pickt = t * segments;
-        const pick = Math.floor( pickt );
-		scope.segment = pick;
-      
-        //if (firstLoop) {console.log("pick: ",pick);}
-        const pickNext = ( pick + 1 ) % segments;
 
         //if (firstLoop) {console.log("binormals: ",helperTubeGeometry.binormals);}
         binormal.subVectors( scope.helperTubeGeometry.binormals[ pickNext ], scope.helperTubeGeometry.binormals[ pick ] );
@@ -250,12 +250,28 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
 	this.update = function (isMoving){
 		if (isMoving){
+			// if (!clock.running) {
+			// 	clock.start();
+			// }
+			
 			followPath();
 		}
 		else{
+			if (clock.running) {
+				clock.stop();
+			}
 			rotateCam();
 		}
 	};
+
+	this.stop = function (){
+		clock.stop();
+		console.log(clock);
+	}
+
+	this.start = function (){
+		clock.start();
+	}
 
 	// this.moveForward = function () {
 

@@ -9,6 +9,12 @@
           Look: MOUSE
         </div>
         <button id="pause"> pause </button>
+        <transition 
+            @enter="enterInfo"
+            @leave="leaveInfo"> 
+            <div class="info" v-if="infoElement2" @click="stopInfo">The test has a accurary of 85%</div> 
+        </transition>
+        
         <div id="container"></div> 
     </div>    
 </template>
@@ -17,6 +23,7 @@
 "use strict";
 
 import * as THREE from "three";
+import {gsap} from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 //import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
 //import { PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls.js';
@@ -55,25 +62,85 @@ let helperTubeGeometry;
 let pathVertices;
 let font;
 
-//let currentSegment = 0;
-
 let box;
 
 let guiParameters;
 
 let informationsPhase = false;
-let infoSegments = [20,40];
+let infoSegments = [2,5];
+let infoSegmentsDone = [];
 let infoPos = new THREE.Vector3();
-//let t = 0;
+
+//TODO: resizing
+let windowSize; 
 
 export default {
   name: 'Scene',
   data: function(){
     return{
-      preloading: true
+      preloading: true,
+      infoElement2: false
     }
   },
   methods: {
+    //GSAP transitions
+    beforeEnterInfo(el) {
+      gsap.set(el, {
+        scaleX: 0,
+        scaleY: 0,
+        opacity: 0
+      })
+    },
+    enterInfo(el,done){
+         gsap.to(".info",{
+            duration: 1,
+            scaleX: 1,
+            scaleY: 1,
+            opacity:1,
+            y: windowSize.y/2,
+            x: windowSize.x/4,
+            onComplete: done
+        })
+    },
+    stopInfo(){
+        if(informationsPhase){
+            if (this.infoElement2){
+                 this.infoElement2 = false;
+            }
+        console.log("clicked on elem");
+        }
+    },
+    leaveInfo(){
+        gsap.to(".info",{
+            duration: 1,
+            scaleX: 0,
+            scaleY: 0,
+            opacity: 0,
+            onComplete: this.stopInformationPhase,
+        })
+    },
+    camToObject: function(object){
+
+        let aabb = new THREE.Box3().setFromObject( object );
+        let center = aabb.getCenter( new THREE.Vector3() );
+        //var size = aabb.getSize( new THREE.Vector3() );
+
+        gsap.to( camera.position, {
+            duration: 1,
+            ease: "power4",
+            x: center.x,
+            y: center.y,
+            z: center.z + 50, // maybe adding even more offset depending on your model
+            onUpdate: function() {
+                camera.lookAt( center );
+                cameraHelper.update();
+                cameraEye.position.copy( camera.position );
+                //console.log("camera moved up");
+            }
+        });  
+    },
+
+    //THREE js
     preLoadPath: function (){
       let path = new PathLoader();
       return path.init()
@@ -246,15 +313,12 @@ export default {
         renderer.setSize(container.clientWidth, container.clientHeight);
         container.appendChild(renderer.domElement);
 
+        windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
+
         //CONTROLS
         overviewControls = new OrbitControls(overviewCamera, renderer.domElement);
         
-        // controls = new FirstPersonControls(camera,renderer.domElement);
-        // controls.onMouseDown = () => {
-        //   t += 0.0005;
-        // }
 
-        //controls = new PointerLockControls(camera,renderer.domElement);
         camera.rotation.order = 'YXZ';
         controls = new PlayerControls(camera,renderer.domElement,helperTubeGeometry,cameraEye,cameraHelper);
         let menu = document.querySelector("#instructions");
@@ -280,6 +344,12 @@ export default {
 
 		gui.add(guiParameters,'animationView' ).onChange( function () {
 			overviewControls.update();
+            if(guiParameters.animationView){
+                controls.start();
+            }
+            else{
+                controls.stop();
+            }
 			//this.animateCamera();
 		} );
 
@@ -295,25 +365,52 @@ export default {
 		renderer.setSize( window.innerWidth, window.innerHeight );
 
 	},
-
+    stopInformationPhase: function(){
+        controls.start();
+        controls.update(true);
+        informationsPhase = false;
+        console.log("informationPhase stopped.")
+    },
     // },
     manageInformation: function(info){
-      informationsPhase = true
-		if (info === infoSegments[0]){
+        informationsPhase = true
+
+        //FIRST INFO ELEMENT
+		if (info === infoSegmentsDone[0]){
 			console.log("infoPhase 1");
-			console.log("camera", camera);
-			console.log("controls",controls);
 
 			//setting info Position
-			infoPos = (new THREE.Vector3( 0, 0, -30 )).applyQuaternion( camera.quaternion ).add( camera.position );
-			let info2 = new InformationElement(scene,font,infoPos,box,"Dialect recognition is an important thing");
-			info2.init();
-      }
+            let lastCam = new THREE.Camera();
+            lastCam.copy(camera);
+           
+            infoPos = (new THREE.Vector3( 0, 0, -30 )).applyQuaternion( camera.quaternion ).add( camera.position );
+            infoPos.y = 50;
+            let info2 = new InformationElement(scene,font,infoPos,box,"Dialect recognition is an important thing");
+            info2.init();
+
+            this.camToObject(info2.getText());
+
+            console.log(lastCam.position);
+            gsap.to( camera.position,{
+                delay: 2,
+                duration: 2,
+                ease: "power4",
+                x: lastCam.position.x,
+                y: lastCam.position.y,
+                z: lastCam.position.z,
+                onComplete: this.stopInformationPhase
+            })
+        }
+
+        else if (info === infoSegmentsDone[1]){
+            console.log("window",windowSize);
+            this.infoElement2 = true;
+        }
     },    
     animateCamera: function() {
-      console.log("animate camera called");
-			cameraHelper.visible = cameraHelperOn;
-			cameraEye.visible = cameraHelperOn;
+        console.log("animate camera called");
+        cameraHelper.visible = cameraHelperOn;
+        cameraEye.visible = cameraHelperOn;
     },
     animate: function() {
 		try{
@@ -326,11 +423,14 @@ export default {
 			else{
 				controls.update(true);
 				console.log(controls.segment);
-				if (infoSegments.includes(controls.segment)){
-					this.manageInformation(controls.segment);
+                if (infoSegments[0] === controls.segment){
+                    let info = infoSegments.shift();
+                    infoSegmentsDone.push(info)
+                    console.log(infoSegments);
+                    controls.stop();
+					this.manageInformation(info);
 				}
 				overviewControls.update();
-				//this.followPath(true);
 			}
 			renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
 		}
@@ -359,6 +459,7 @@ export default {
 
 #container {
   height: 100vh;
+  position: relative;
 }
 
 #home{
@@ -366,23 +467,37 @@ export default {
 }
 
 #instructions {
-				width: 100vw;
-				height: 100vh;
-				display: flex;
-				justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
 
-				color: red;
-				text-align: center;
-				font-family: Arial;
-				font-size: 14px;
-				line-height: 24px;
+    color: red;
+    text-align: center;
+    font-family: Arial;
+    font-size: 14px;
+    line-height: 24px;
 
-				cursor: pointer;
-			}
+    cursor: pointer;
+}
 
 #pause{
   background: none;
   margin: 0;
+}
+
+.info{
+    position: absolute;
+    color: #ffffff;
+	width: 100%;
+	padding: 1rem;
+	box-sizing: border-box;
+	text-align: center;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	z-index: 1;
 }
 </style>
 

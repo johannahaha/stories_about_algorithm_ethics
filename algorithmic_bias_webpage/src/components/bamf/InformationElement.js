@@ -24,6 +24,7 @@ class InformationElement    {
         //})
         //.catch(err => console.log("Error during Initialization of Information Element; ", err));
         let text = this.setupText(this.font);
+        this.text = text;
         this.scene.add(text);
         //this.scene.add(this.mesh);
     }
@@ -85,6 +86,10 @@ class InformationElement    {
         text.position.z = this.position.z;
         //console.log("returned text:", text);
         return text;
+    }
+
+    getText(){
+        return this.text;
     }
 
     onClick(){
