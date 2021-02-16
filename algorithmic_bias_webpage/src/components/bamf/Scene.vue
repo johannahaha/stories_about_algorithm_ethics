@@ -7,12 +7,16 @@
           Move: WASD<br/>
           Jump: SPACE<br/>
           Look: MOUSE
+          <!-- <ul v-for="(info, id) in informations" :key="id">
+            <li>{{info.text}}</li>
+          </ul> -->
+          <p>{{informations[1].text}}</p>
         </div>
         <button id="pause"> pause </button>
         <transition 
             @enter="enterInfo"
             @leave="leaveInfo"> 
-            <div class="info" v-if="infoElement2" @click="stopInfo">The test has a accurary of 85%</div> 
+            <div class="info" v-if="infoElement2" @click="stopInfo">{{informations[1].text}}</div> 
         </transition>
         
         <div id="container"></div> 
@@ -76,6 +80,11 @@ let windowSize;
 
 export default {
   name: 'Scene',
+  props: {
+    informations:{
+      type: Array
+    }
+  },
   data: function(){
     return{
       preloading: true,
@@ -385,7 +394,8 @@ export default {
            
             infoPos = (new THREE.Vector3( 0, 0, -30 )).applyQuaternion( camera.quaternion ).add( camera.position );
             infoPos.y = 50;
-            let info2 = new InformationElement(scene,font,infoPos,box,"Dialect recognition is an important thing");
+            let text = this.informations[0].text;
+            let info2 = new InformationElement(scene,font,infoPos,box,text);
             info2.init();
 
             this.camToObject(info2.getText());

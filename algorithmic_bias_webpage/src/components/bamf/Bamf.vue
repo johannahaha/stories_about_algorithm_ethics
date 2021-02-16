@@ -2,7 +2,7 @@
     <div> 
         <h1 v-if="showInformation">Bamf geht los </h1>
         <!-- <Information v-if="showInformation" v-bind:informations="informations" /> -->
-        <Scene> </Scene>
+        <Scene v-bind:informations="informations"> </Scene>
     </div>
     
 </template>
