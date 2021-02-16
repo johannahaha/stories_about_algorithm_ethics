@@ -3,64 +3,43 @@
 import * as THREE from "three";
 
 class InformationElement    {
-    constructor(scene,font,position,mesh,content = "Das ist eine neue Information über das Bamf"){
+    constructor(scene,font,position,content = "Das ist eine neue Information über das Bamf",isImage){
         this.scene = scene;
         this.font = font;
         this.position = position;
-        this.mesh = mesh;
         this.content = content;
+        if (isImage){
+            this.imgPath = content;
+        }
+        this.isImage = isImage;
+        console.log(this);
 
-        this.mesh.position.x = position.x;
-        this.mesh.position.y = position.y;
-        this.mesh.position.z = position.z;
     }
 
     init(){
-        //this.loadFont()
-        //.then(font => this.setupText(font))
-        //.then(text => {
-        //    this.scene.add(text);
-        //    this.scene.add(this.mesh);
-        //})
-        //.catch(err => console.log("Error during Initialization of Information Element; ", err));
-        let text = this.setupText(this.font);
-        this.text = text;
-        this.scene.add(text);
-        //this.scene.add(this.mesh);
+        //ADD TEXT
+        if(this.isImage){
+            console.log("it is an image");
+            this.obj = this.setupImage();
+        }
+        else {            
+            console.log("it is not an image");
+            this.obj = this.setupText(this.font);
+        }
+
+        this.scene.add(this.obj);
+
+        //BOUNDING BOX for clicking
+        this.bbox = new THREE.BoxHelper(this.obj, 0xffff00);
+        this.bbox.material.visible = false;
+        this.scene.add(this.bbox);
+
     }
-
-    // async loadFont() {
-    //     try{
-    //         const manager = new THREE.LoadingManager();
-    //         manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
-    //             console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-    //         };
-
-    //         manager.onLoad = function ( ) {
-    //             console.log( 'Loading complete!');
-    //         };
-
-
-    //         manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
-    //             console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-    //         };
-
-    //         manager.onError = function ( url ) {
-    //             console.log( 'There was an error loading ' + url );
-    //         };
-    //         const loader = new THREE.FontLoader(manager);
-    //         let loadedFont = await loader.loadAsync('/threeAssets/helvetiker_regular.typeface.json');
-    //         return loadedFont;
-    //     }
-    //     catch (err){  
-    //         console.error('ERROR: ', err.message);
-    //     }
-    // }
 
     setupText(pLoadedFont){
         let text;
         //this.loadFont().then( pLoadedFont => {
-        const color = 0xffffff;
+        const color = 0xDAD7DC;
         const matLite = new THREE.MeshBasicMaterial( {
             color: color,
             transparent: true,
@@ -88,13 +67,52 @@ class InformationElement    {
         return text;
     }
 
-    getText(){
-        return this.text;
+    getMeshObject(){
+        return this.obj;
+    }
+
+    setupImage(){
+        console.log("loading image");
+        const manager = new THREE.LoadingManager();
+            manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+                console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+            };
+
+            manager.onLoad = function ( ) {
+                console.log( 'Loading complete!');
+            };
+
+
+            manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+                console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+            };
+
+            manager.onError = function ( url ) {
+                console.log( 'There was an error loading ' + url );
+            };
+        const loader = new THREE.TextureLoader(manager);
+        const material = new THREE.MeshBasicMaterial({
+            map: loader.load(this.imgPath),
+          });
+
+        const box = new THREE.BoxGeometry(4,3,0.2);
+        box.scale(5,5,5);
+        let img = new THREE.Mesh(box, material);
+
+        img.position.x = this.position.x;
+        img.position.y = this.position.y;
+        img.position.z = this.position.z;
+
+        console.log("img",img);
+
+        return img;
+
     }
 
     onClick(){
         
     }
+
 
 }
 

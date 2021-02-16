@@ -23,15 +23,23 @@ export default {
             informations: [
             {
                 id: 1,
-                text: "The Algorithm is used to detect arabic dialects"
+                content: "The Algorithm is used to detect arabic dialects",
+                isImage: false
             },
             {
                 id: 2,
-                text: "It is used for refugees to verify their region of origin."
+                content: "It is used for refugees to verify their region of origin.",
+                isImage: false
             },
             {
                 id: 3,
-                text: "It is one more element on a asylum decision."
+                content: "It is one more element on a asylum decision.",
+                isImage: false
+            },
+            {
+                id: 4,
+                content: "/img/Bamf2017_Schulung_Seite_050.png",
+                isImage: true
             }
         ]
         }

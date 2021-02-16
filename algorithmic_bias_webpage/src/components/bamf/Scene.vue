@@ -1,31 +1,32 @@
 <template>
     <div>
-        <div v-if="!preloading" id="container"> </div> 
+        <div v-if="!preloading" id="container"></div>
         <div id="instructions">
-          <span style="font-size:36px">Click to play</span>
-          <br /><br />
-          Move: WASD<br/>
-          Jump: SPACE<br/>
-          Look: MOUSE
-          <!-- <ul v-for="(info, id) in informations" :key="id">
+            <span style="font-size: 36px">Click to play</span>
+            <br /><br />
+            Look: click and drag your mouse
+            Pause: click on pause
+            Close Element: click on element;
+            <!-- <ul v-for="(info, id) in informations" :key="id">
             <li>{{info.text}}</li>
           </ul> -->
-          <p>{{informations[1].text}}</p>
+            <p>{{ informations[1].content }}</p>
         </div>
-        <button id="pause"> pause </button>
-        <transition 
-            @enter="enterInfo"
-            @leave="leaveInfo"> 
-            <div class="info" v-if="infoElement2" @click="stopInfo">{{informations[1].text}}</div> 
+        <button id="pause">pause</button>
+        <transition @enter="enterInfo" @leave="leaveInfo">
+            <div class="info" v-if="infoElement2" @click="stopInfo">
+                {{ informations[1].content }}
+            </div>
         </transition>
-        
-        <div id="container"></div> 
-    </div>    
+
+        <div id="container"></div>
+    </div>
 </template>
 
 <script>
 "use strict";
 
+//#region imports
 import * as THREE from "three";
 import {gsap} from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -39,7 +40,9 @@ import { InformationElement } from './InformationElement.js';
 import { PathLoader } from './PathLoader.js';
 import {InfoFontLoader} from './InfoFontLoader.js';
 import {PlayerControls} from './PlayerControls.js'
+//#endregion
 
+//#region Variables
 //HELPERS
 //import {VertexTangentsHelper} from 'three/examples/jsm/helpers/VertexTangentsHelper.js';
 //import {VertexNormalsHelper} from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
@@ -66,17 +69,19 @@ let helperTubeGeometry;
 let pathVertices;
 let font;
 
-let box;
-
 let guiParameters;
 
 let informationsPhase = false;
-let infoSegments = [2,5];
+let infoSegments = [2,5,10,20];
 let infoSegmentsDone = [];
 let infoPos = new THREE.Vector3();
+const mouse = new THREE.Vector2();
+const raycaster = new THREE.Raycaster();
 
 //TODO: resizing
 let windowSize; 
+
+//#endregion
 
 export default {
   name: 'Scene',
@@ -92,7 +97,7 @@ export default {
     }
   },
   methods: {
-    //GSAP transitions
+    //#region GSAP transitions
     beforeEnterInfo(el) {
       gsap.set(el, {
         scaleX: 0,
@@ -148,8 +153,9 @@ export default {
             }
         });  
     },
+    //#endregion
 
-    //THREE js
+    //#region THREE js
     preLoadPath: function (){
       let path = new PathLoader();
       return path.init()
@@ -222,7 +228,7 @@ export default {
 
         //MATERIAL
         const material = new THREE.MeshPhongMaterial( 
-          { color: 0xb00000 } );
+          { color: 0xA64E2E } );
         // const wireframeMaterial = new THREE.MeshBasicMaterial( 
         //   { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
         
@@ -258,9 +264,9 @@ export default {
         //SCENE
         scene = new THREE.Scene();
         //scene.background = new THREE.Color('#f43df1');
-        scene.background = new THREE.Color(0x2F252D);
+        scene.background = new THREE.Color(0x0D0D0D);
         //scene.background = new THREE.Color(0xffffff);
-        //scene.fog = new THREE.FogExp2(scene.background, 0.002);
+        scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
         overviewCamera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.01, 100000 );
         overviewCamera.position.set( -50, 50, 200 );
@@ -285,7 +291,7 @@ export default {
         // FLOOR
         //same as other geometry
         let planeGeometry = new THREE.PlaneBufferGeometry(10000, 20000);
-        let planeMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff, depthWrite: false });
+        let planeMaterial = new THREE.MeshPhongMaterial({ color: 0x262626, depthWrite: false });
         let planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
         planeMesh.rotation.x = -Math.PI / 2;
         planeMesh.position.y = 0;
@@ -304,11 +310,8 @@ export default {
 		parent.add( cameraEye );
 
         //INFORMATION ELEMENT 
-        const boxGeo = new THREE.BoxBufferGeometry(10,10,10);
-        const boxMat = new THREE.MeshPhongMaterial({color:0x00ff00});
-        box = new THREE.Mesh(boxGeo,boxMat);
         console.log("font", font);
-        let info = new InformationElement(scene,font,new THREE.Vector3(-40,0,40),box);
+        let info = new InformationElement(scene,font,new THREE.Vector3(-40,0,40));
         info.init();
 
         //SVG path
@@ -374,15 +377,35 @@ export default {
 		renderer.setSize( window.innerWidth, window.innerHeight );
 
 	},
+    onPointerDownInfo: function(event,obj,onIntersection){
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+        // update the picking ray with the camera and mouse position
+        raycaster.setFromCamera( mouse, camera );
+
+        // calculate objects intersecting the picking ray
+        const intersects = raycaster.intersectObjects(obj);
+        //const intersects = raycaster.intersectObjects(scene.children);
+        console.log(intersects);
+
+        for ( let i = 0; i < intersects.length; i ++ ) {
+            intersects[ i ].object.material.color.set( 0xff0000 );
+            if(typeof onIntersection !== undefined){
+                onIntersection();
+            }
+        }
+    },
     stopInformationPhase: function(){
         controls.start();
         controls.update(true);
         informationsPhase = false;
         console.log("informationPhase stopped.")
+        window.removeEventListener( 'pointerdown',  this.onPointerDownInfo);
     },
     // },
     manageInformation: function(info){
-        informationsPhase = true
+        informationsPhase = true;
 
         //FIRST INFO ELEMENT
 		if (info === infoSegmentsDone[0]){
@@ -394,27 +417,94 @@ export default {
            
             infoPos = (new THREE.Vector3( 0, 0, -30 )).applyQuaternion( camera.quaternion ).add( camera.position );
             infoPos.y = 50;
-            let text = this.informations[0].text;
-            let info2 = new InformationElement(scene,font,infoPos,box,text);
+            let text = this.informations[0].content;
+            let info2 = new InformationElement(scene,font,infoPos,text);
             info2.init();
 
-            this.camToObject(info2.getText());
+            this.camToObject(info2.getMeshObject());
+            let objects = []
+            objects.push(info2.bbox);
 
-            console.log(lastCam.position);
-            gsap.to( camera.position,{
-                delay: 2,
-                duration: 2,
-                ease: "power4",
-                x: lastCam.position.x,
-                y: lastCam.position.y,
-                z: lastCam.position.z,
-                onComplete: this.stopInformationPhase
-            })
+            window.addEventListener('pointerdown', (event) => this.onPointerDownInfo(event, objects, function(){
+                gsap.to( camera.position,{
+                    duration: 2,
+                    ease: "power4",
+                    x: lastCam.position.x,
+                    y: lastCam.position.y,
+                    z: lastCam.position.z,
+                    onComplete: this.stopInformationPhase
+                })
+            //using bind this because it is higher order function
+            //https://stackoverflow.com/a/59060545
+            }.bind(this))); 
         }
 
         else if (info === infoSegmentsDone[1]){
             console.log("window",windowSize);
             this.infoElement2 = true;
+        }
+
+        else if (info === infoSegmentsDone[2]){
+
+            infoPos = (new THREE.Vector3( 0, 0, -30 )).applyQuaternion( camera.quaternion ).add( camera.position );
+            infoPos.y = 15;
+            let text = this.informations[2].content;
+            let info = new InformationElement(scene,font,infoPos,text,this.informations[2].isImage);
+            info.init();
+
+            gsap.from(info.obj.position,{
+                duration: 2,
+                x: infoPos.x - 100,
+                y: 20,
+                z: infoPos.z - 100,
+            })
+            let objects = []
+            objects.push(info.bbox);
+            window.addEventListener('pointerdown', (event) => this.onPointerDownInfo(event, objects, function(){
+                gsap.to( info.obj.position,{
+                    duration: 1,
+                    x: infoPos.x - 100,
+                    y: 20,
+                    z: infoPos.z - 100,
+                    onComplete: this.stopInformationPhase
+                })
+            //using bind this because it is higher order function
+            //https://stackoverflow.com/a/59060545
+            }.bind(this)));
+
+
+        }
+
+        else if (info === infoSegmentsDone[3]){
+
+            infoPos = (new THREE.Vector3( 0, 0, -30)).applyQuaternion( camera.quaternion ).add( camera.position );
+            infoPos.y = 10;
+            let path = this.informations[3].content;
+            let info = new InformationElement(scene,font,infoPos,path,this.informations[3].isImage);
+            info.init();
+
+            gsap.from(info.obj.position,{
+                duration: 3,
+                x: infoPos.x*5,
+                y: infoPos.y*5
+            })    
+
+            let objects = []
+            objects.push(info.bbox);
+            window.addEventListener('pointerdown', (event) => this.onPointerDownInfo(event, objects, function(){
+                gsap.to( info.obj.position,{
+                    duration: 1,
+                    x: infoPos.x*5,
+                    y: infoPos.y*5,
+                    onComplete: this.stopInformationPhase
+                })
+            }.bind(this)));
+
+
+
+            
+
+
         }
     },    
     animateCamera: function() {
@@ -449,6 +539,7 @@ export default {
 			console.log("animation error", err);
 		}
     },
+    //#endregion
   },  
   mounted() {
       //TO DO: when there is an error, it is still looping through the other thens
@@ -466,13 +557,12 @@ export default {
 </script>
 
 <style scoped>
-
 #container {
-  height: 100vh;
-  position: relative;
+    height: 100vh;
+    position: relative;
 }
 
-#home{
+#home {
     margin: 0;
 }
 
@@ -491,23 +581,23 @@ export default {
     cursor: pointer;
 }
 
-#pause{
-  background: none;
-  margin: 0;
+#pause {
+    background: none;
+    margin: 0;
 }
 
-.info{
+.info {
     position: absolute;
     color: #ffffff;
-	width: 100%;
-	padding: 1rem;
-	box-sizing: border-box;
-	text-align: center;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	z-index: 1;
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    text-align: center;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    z-index: 1;
 }
 </style>
 
