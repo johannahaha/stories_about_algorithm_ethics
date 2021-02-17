@@ -40,6 +40,7 @@ import { InformationElement } from './InformationElement.js';
 import { PathLoader } from './PathLoader.js';
 import {InfoFontLoader} from './InfoFontLoader.js';
 import {PlayerControls} from './PlayerControls.js'
+import {Ground} from './Ground.js'
 //#endregion
 
 //#region Variables
@@ -66,8 +67,9 @@ let camera, cameraHelper, cameraEye, overviewCamera;
 let cameraHelperOn = true;
 
 let helperTubeGeometry;
-let pathVertices;
+let pathVertices,path;
 let font;
+let ground;
 
 let guiParameters;
 
@@ -157,14 +159,14 @@ export default {
 
     //#region THREE js
     preLoadPath: function (){
-      let path = new PathLoader();
-      return path.init()
-        .then(() => {
-          console.log("I am in the scene then");
-          pathVertices = path.getVertices();
-          console.log(pathVertices);
-          })
-        .catch(() => console.log("Error during loading path"));
+        path = new PathLoader();
+        return path.init()
+            .then((data) => {
+                path.createBorder(data);
+                console.log("I am in the scene then");
+                pathVertices = path.getVertices();
+                console.log(pathVertices);
+            })
     },      
     preLoadFont: function (){
       let fontLoad = new InfoFontLoader();
@@ -172,7 +174,6 @@ export default {
         .then((loadedFont) => {
           font = loadedFont;
         })
-        .catch(() => console.log("Error during loading font"));
     },
     initPath: function(pathVertices,parent) {
         //SPLINE
@@ -227,12 +228,12 @@ export default {
         console.log("path geo", pathGeometry);
 
         //MATERIAL
-        const material = new THREE.MeshPhongMaterial( 
-          { color: 0xA64E2E } );
+        // const material = new THREE.MeshPhongMaterial( 
+        //   { color: 0xA64E2E } );
         // const wireframeMaterial = new THREE.MeshBasicMaterial( 
         //   { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
-        
-        let mesh = new THREE.Mesh( pathGeometry, material );
+        path.setupShader();
+        let mesh = new THREE.Mesh( pathGeometry, path.material );
         
 
         mesh.scale.set(4, 4, 4);
@@ -264,8 +265,8 @@ export default {
         //SCENE
         scene = new THREE.Scene();
         //scene.background = new THREE.Color('#f43df1');
-        scene.background = new THREE.Color(0x0D0D0D);
-        //scene.background = new THREE.Color(0xffffff);
+        //scene.background = new THREE.Color(0x0D0D0D);
+        scene.background = new THREE.Color(0xffffff);
         scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
         overviewCamera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.01, 100000 );
@@ -290,13 +291,15 @@ export default {
 
         // FLOOR
         //same as other geometry
-        let planeGeometry = new THREE.PlaneBufferGeometry(10000, 20000);
-        let planeMaterial = new THREE.MeshPhongMaterial({ color: 0x262626, depthWrite: false });
-        let planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
-        planeMesh.rotation.x = -Math.PI / 2;
-        planeMesh.position.y = 0;
-        planeMesh.receiveShadow = true;
-        scene.add(planeMesh);
+        // let planeGeometry = new THREE.PlaneBufferGeometry(10000, 20000);
+        // let planeMaterial = new THREE.MeshPhongMaterial({ color: 0x262626, depthWrite: false });
+        // let planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
+        // planeMesh.rotation.x = -Math.PI / 2;
+        // planeMesh.position.y = 0;
+        // planeMesh.receiveShadow = true;
+        ground = new Ground();
+        ground.init();
+        scene.add(ground);
 
         //PARENT  FOR CAMERA
         let parent = new THREE.Object3D();
@@ -323,6 +326,7 @@ export default {
         //RENDERER
         renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.context.getExtension('OES_standard_derivatives');
         container.appendChild(renderer.domElement);
 
         windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
@@ -532,6 +536,7 @@ export default {
 				}
 				overviewControls.update();
 			}
+            ground.update();
 			renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
 		}
 		catch(err){
@@ -542,16 +547,17 @@ export default {
     //#endregion
   },  
   mounted() {
-      //TO DO: when there is an error, it is still looping through the other thens
-      this.preLoadPath()
-      .then(() => this.preLoadFont())
-      .then(()=> {
+      Promise.all([this.preLoadPath(),this.preLoadFont()])
+      .then(res => {
+        console.log(res);
         this.init();
         this.preloading = true;
       })
-      .then(()=> console.log("Let's go, animation"))
-      .then(()=> this.animate())
-      .catch(() => "Error during mounting");
+      .then(res => {
+          console.log("Let's go, animation",res)
+          this.animate()
+      }) 
+      //.catch(alert);
   }
 }
 </script>

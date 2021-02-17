@@ -1,0 +1,85 @@
+{
+  "id": 5025,
+  "name": "New Composed Shader",
+  "fragment": "#extension GL_OES_standard_derivatives : enable\n\nprecision highp float;\nprecision highp int;\nuniform vec3 Transperent_Freshnel_FrontFacing1613578547585_96_color;\nuniform float start;\nuniform float end;\nuniform float alpha;\nuniform float time;\nuniform vec3 Fork_of_Electric_Wave1613578619289_156_color;\nuniform float waverSpeed;\nuniform float phaseSpeed;\nuniform float thickness;\nuniform float contrast;\nuniform float electricitySpeed;\nuniform float flashSpeed;\nuniform float turbulence;\nvarying vec3 fPosition;\nvarying vec3 fNormal;\nvarying vec2 vUv;\nconst float F3 = 0.3333333;\nconst float G3 = 0.1666667;\nvec3 random3(vec3 c) \n                                {\n                                    float j = 4096.0 * sin(dot(c, vec3(17.0, 59.4, 15.0)));\n                                    vec3 r;\n                                    r.z = fract(512.0 * j);\n                                    j *= .125;\n                                    r.x = fract(512.0 * j);\n                                    j *= .125;\n                                    r.y = fract(512.0 * j);\n                                    return r - 0.5;\n                                }\nfloat simplex3d(vec3 p) \n                                {\n                                    vec3 s = floor(p + dot(p, vec3(F3)));\n                                    vec3 x = p - s + dot(s, vec3(G3));\n                                    vec3 e = step(vec3(0.0), x - x.yzx);\n                                    vec3 i1 = e * (1.0 - e.zxy);\n                                    vec3 i2 = 1.0 - e.zxy * (1.0 - e);\n                                    vec3 x1 = x - i1 + G3;\n                                    vec3 x2 = x - i2 + 2.0 * G3;\n                                    vec3 x3 = x - 1.0 + 3.0 * G3;\n                                    vec4 w, d;\n                                    w.x = dot(x, x);\n                                    w.y = dot(x1, x1);\n                                    w.z = dot(x2, x2);\n                                    w.w = dot(x3, x3);\n                                    w = max(0.6 - w, 0.0);\n                                    d.x = dot(random3(s), x);\n                                    d.y = dot(random3(s + i1), x1);\n                                    d.z = dot(random3(s + i2), x2);\n                                    d.w = dot(random3(s + 1.0), x3);\n                                    w *= w;\n                                    w *= w;\n                                    d *= w;\n                                    return dot(d, vec4(52.0));\n                                }\nfloat noise(vec3 m) \n                                {\n                                    return 0.5333333 * simplex3d(m) + 0.2666667 * simplex3d(2.0 * m) + 0.1333333 * simplex3d(4.0 * m) + 0.0666667 * simplex3d(8.0 * m);\n                                }\nvec4 Transperent_Freshnel_FrontFacing1613578547585_96_main() \n                                {\n                                    vec4 Transperent_Freshnel_FrontFacing1613578547585_96_gl_FragColor = vec4(0.0);\n                                    if (!gl_FrontFacing) \n                                    {\n                                        discard;\n                                    }\n                                     vec3 normal = normalize(fNormal);\n                                    vec3 eye = normalize(-fPosition.xyz);\n                                    float rim = smoothstep(start, end, 1.0 - dot(normal, eye));\n                                    float value = clamp(rim, 0.0, 1.0) * alpha;\n                                    Transperent_Freshnel_FrontFacing1613578547585_96_gl_FragColor = vec4(value * Transperent_Freshnel_FrontFacing1613578547585_96_color, length(value));\n                                    return Transperent_Freshnel_FrontFacing1613578547585_96_gl_FragColor *= 1.0;\n                                }\nvec4 Fork_of_Electric_Wave1613578619289_156_main(void) \n                                {\n                                    vec4 Fork_of_Electric_Wave1613578619289_156_gl_FragColor = vec4(0.0);\n                                    vec2 uvScaled = vUv.xy * 2.0 - 1.0;\n                                    uvScaled.y += waverSpeed * 4.0 * (-0.5 + mod(time * waverSpeed, 1.0));\n                                    vec3 p3 = vec3(vUv.xy * turbulence, time * electricitySpeed);\n                                    float simplexNoise = noise(vec3(p3 * 12.0 + 12.0));\n                                    float t = clamp((uvScaled.x * -uvScaled.x * 0.16) + 0.15, 0.0, 1.0);\n                                    float y = abs(simplexNoise * -t + uvScaled.y) * (0.6 + sin(time * flashSpeed));\n                                    float g = pow(y, thickness);\n                                    float pixel = pow(1.0 - g, contrast);\n                                    Fork_of_Electric_Wave1613578619289_156_gl_FragColor = vec4(pixel * Fork_of_Electric_Wave1613578619289_156_color, pixel);\n                                    return Fork_of_Electric_Wave1613578619289_156_gl_FragColor *= 1.0;\n                                }\nvoid main() \n                                {\n                                    gl_FragColor = (Transperent_Freshnel_FrontFacing1613578547585_96_main() + Fork_of_Electric_Wave1613578619289_156_main());                                }\n",
+  "vertex": "precision highp float;\nprecision highp int;\nuniform mat3 normalMatrix;\nuniform mat4 modelViewMatrix;\nuniform mat4 projectionMatrix;\nuniform mat4 modelMatrix;\nuniform mat4 viewMatrix;\nattribute vec3 position;\nattribute vec3 normal;\nattribute vec2 uv;\nvarying vec3 fNormal;\nvarying vec3 fPosition;\nvarying vec2 vUv;\nvec4 Transperent_Freshnel_FrontFacing1613578547585_96_main() \n                                {\n                                    vec4 Transperent_Freshnel_FrontFacing1613578547585_96_gl_Position = vec4(0.0);\n                                    fNormal = normalize(normalMatrix * normal);\n                                    vec4 pos = modelViewMatrix * vec4(position, 1.0);\n                                    fPosition = pos.xyz;\n                                    Transperent_Freshnel_FrontFacing1613578547585_96_gl_Position = projectionMatrix * pos;\n                                    return Transperent_Freshnel_FrontFacing1613578547585_96_gl_Position *= 1.0;\n                                }\nvec4 Fork_of_Electric_Wave1613578619289_156_main() \n                                {\n                                    vec4 Fork_of_Electric_Wave1613578619289_156_gl_Position = vec4(0.0);\n                                    vUv = uv;\n                                    Fork_of_Electric_Wave1613578619289_156_gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n                                    return Fork_of_Electric_Wave1613578619289_156_gl_Position *= 1.0;\n                                }\nvoid main() \n                                {\n                                    gl_Position = Transperent_Freshnel_FrontFacing1613578547585_96_main() + Fork_of_Electric_Wave1613578619289_156_main();                                }\n",
+  "uniforms": {
+    "start": {
+      "value": 0,
+      "type": "f",
+      "glslType": "float"
+    },
+    "end": {
+      "value": "1",
+      "type": "f",
+      "glslType": "float"
+    },
+    "alpha": {
+      "value": "1",
+      "type": "f",
+      "glslType": "float"
+    },
+    "Transperent_Freshnel_FrontFacing1613578547585_96_color": {
+      "value": {
+        "r": 0,
+        "g": 0.8823529411764706,
+        "b": 1
+      },
+      "type": "c",
+      "glslType": "vec3"
+    },
+    "time": {
+      "type": "f",
+      "glslType": "float"
+    },
+    "phaseSpeed": {
+      "value": "10",
+      "type": "f",
+      "glslType": "float"
+    },
+    "thickness": {
+      "value": "1.20528104",
+      "type": "f",
+      "glslType": "float"
+    },
+    "contrast": {
+      "value": "19.07526043",
+      "type": "f",
+      "glslType": "float"
+    },
+    "electricitySpeed": {
+      "value": "0.27169517",
+      "type": "f",
+      "glslType": "float"
+    },
+    "flashSpeed": {
+      "value": "0",
+      "type": "f",
+      "glslType": "float"
+    },
+    "turbulence": {
+      "value": "2.6210239",
+      "type": "f",
+      "glslType": "float"
+    },
+    "waverSpeed": {
+      "value": "0.47451395",
+      "type": "f",
+      "glslType": "float"
+    },
+    "Fork_of_Electric_Wave1613578619289_156_color": {
+      "value": {
+        "r": "1",
+        "g": "1",
+        "b": "1"
+      },
+      "type": "c",
+      "glslType": "vec3"
+    }
+  },
+  "url": "http://shaderfrog.com/app/view/5025",
+  "user": {
+    "username": "jo1232456321",
+    "url": "http://shaderfrog.com/app/profile/andrewray"
+  }
+}

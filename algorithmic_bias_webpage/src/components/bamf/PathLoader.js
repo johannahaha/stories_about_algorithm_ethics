@@ -2,48 +2,40 @@
 
 import * as THREE from "three";
 import {SVGLoader} from 'three/examples/jsm/loaders/SVGLoader.js';
+import {GlowingShader} from "./GlowingShader.js";
 
 class PathLoader {
     constructor(){
         this.vertices = [];
     }
 
-    init(){
-        return this.loadSvg()
-        .then(data => {
-            console.log(" I am in the path then", data);
-            this.createBorder(data)})
-        .catch(err => console.log("Error during Initialization of SVG; ", err));
+    async init(){
+        return await this.loadSvg();
+
     }
 
     async loadSvg(){
-        try{
-            const manager = new THREE.LoadingManager();
-            manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
-                console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-            };
+        const manager = new THREE.LoadingManager();
+        manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+            console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+        };
 
-            manager.onLoad = function ( ) {
-                console.log( 'Loading complete!');
-            };
+        manager.onLoad = function ( ) {
+            console.log( 'Loading complete!');
+        };
 
 
-            manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
-                console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-            };
+        manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+            console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+        };
 
-            manager.onError = function ( url ) {
-                console.log( 'There was an error loading ' + url );
-            };
-            const loader = new SVGLoader(manager);
-            let loadedSvgData = await loader.loadAsync('/threeAssets/border.svg');
-            //console.log("I loaded this", svgData);
-            return loadedSvgData;
-        }
-
-        catch (err){  
-            console.error('ERROR: ', err.message);
-        }
+        manager.onError = function ( url ) {
+            console.log( 'There was an error loading ' + url );
+        };
+        const loader = new SVGLoader(manager);
+        let loadedSvgData = await loader.loadAsync('/threeAssets/border.svg');
+        //console.log("I loaded this", svgData);
+        return loadedSvgData;
 
     }
 
@@ -135,6 +127,92 @@ class PathLoader {
 		//scene.add( group );
     }
 
+    setupShader(){
+        let shader = GlowingShader;
+        let uniforms =  {
+            "start": {
+              "value": 0,
+              "type": "f",
+              "glslType": "float"
+            },
+            "end": {
+              "value": 1,
+              "type": "f",
+              "glslType": "float"
+            },
+            "alpha": {
+              "value": 1,
+              "type": "f",
+              "glslType": "float"
+            },
+            "Transperent_Freshnel_FrontFacing1613578547585_96_color": {
+              "value": {
+                "r": 0,
+                "g": 0.8823529411764706,
+                "b": 1
+              },
+              "type": "c",
+              "glslType": "vec3"
+            },
+            "time": {
+              "type": "f",
+              "glslType": "float"
+            },
+            "phaseSpeed": {
+              "value": 10,
+              "type": "f",
+              "glslType": "float"
+            },
+            "thickness": {
+              "value": 1.20528104,
+              "type": "f",
+              "glslType": "float"
+            },
+            "contrast": {
+              "value": 19.0752604,
+              "type": "f",
+              "glslType": "float"
+            },
+            "electricitySpeed": {
+              "value": 0.27169517,
+              "type": "f",
+              "glslType": "float"
+            },
+            "flashSpeed": {
+              "value": "0",
+              "type": "f",
+              "glslType": "float"
+            },
+            "turbulence": {
+              "value": 2.6210239,
+              "type": "f",
+              "glslType": "float"
+            },
+            "waverSpeed": {
+              "value": 0.47451395,
+              "type": "f",
+              "glslType": "float"
+            },
+            "Fork_of_Electric_Wave1613578619289_156_color": {
+              "value": {
+                "r": "1",
+                "g": "1",
+                "b": "1"
+              },
+              "type": "c",
+              "glslType": "vec3"
+            }
+        } 
+
+        this.material = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader: shader.vertexShader,
+            fragmentShader: shader.fragmentShader   
+        })
+        this.material.extensions = {
+            derivatives: true
+         };
+    }
     getVertices(){
         console.log("path vertices", this.vertices);
         return this.vertices;
