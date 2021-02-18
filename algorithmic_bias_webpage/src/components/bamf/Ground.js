@@ -1,7 +1,7 @@
 "use strict";
 
 import * as THREE from "three";
-import {SmokeShader} from "./SmokeShader.js";
+//import {SmokeShader} from "./shaders/SmokeShader.js";
 //import {BasicShader} from "./BasicShader.js";
 
 let Ground = function(){
@@ -19,18 +19,19 @@ let Ground = function(){
     function initShader(){
 
         let planeGeometry = new THREE.PlaneBufferGeometry(10000, 20000);
-        //let planeMaterial = new THREE.MeshPhongMaterial({ color: 0x262626, depthWrite: false });
-        let shader = SmokeShader;
+        let planeMaterial = new THREE.MeshPhongMaterial({ color: 0x262626, depthWrite: false });
+        //let shader = SmokeShader;
         //let shader = BasicShader;
         //const uniforms = THREE.UniformsUtils.clone( shader.uniforms );
         // console.log("uniforms",uniforms);
          
-        let planeMaterial = new THREE.ShaderMaterial({
-            //credits for shader: http://shaderfrog.com/view/2459
-            uniforms: uniforms,
-            vertexShader: shader.vertexShader,
-            fragmentShader: shader.fragmentShader
-        })
+        // //TODO: fog
+        // let planeMaterial = new THREE.ShaderMaterial({
+        //     //credits for shader: http://shaderfrog.com/view/2459
+        //     uniforms: uniforms,
+        //     vertexShader: shader.vertexShader,
+        //     fragmentShader: shader.fragmentShader
+        // })
 
         console.log("uniforms",planeMaterial);
         //planeMaterial.uniforms.resolution.value.x = window.innerWidth;

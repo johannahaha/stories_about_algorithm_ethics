@@ -2,7 +2,8 @@
 
 import * as THREE from "three";
 import {SVGLoader} from 'three/examples/jsm/loaders/SVGLoader.js';
-import {GlowingShader} from "./GlowingShader.js";
+import {GlowingShader} from "./shaders/GlowingShader.js";
+//import {OuterGlowShader} from "./shaders/OuterGlowShader.js";
 
 class PathLoader {
     constructor(){
@@ -129,89 +130,103 @@ class PathLoader {
 
     setupShader(){
         let shader = GlowingShader;
+        //let shader = OuterGlowShader;
         let uniforms =  {
+            "transparent_color":{
+                value: {
+                    r: 0,
+                    g: 0.8,
+                    b: 1 },
+                type: "c",
+                glsltype: "vec3"
+            },
             "start": {
-              "value": 0,
-              "type": "f",
-              "glslType": "float"
+              value: 0.0,
+              type: "f",
+              glslType: "float"
             },
             "end": {
-              "value": 1,
-              "type": "f",
-              "glslType": "float"
+              value: 1.0,
+              type: "f",
+              glsltype: "float"
             },
             "alpha": {
-              "value": 1,
-              "type": "f",
-              "glslType": "float"
-            },
-            "Transperent_Freshnel_FrontFacing1613578547585_96_color": {
-              "value": {
-                "r": 0,
-                "g": 0.8823529411764706,
-                "b": 1
-              },
-              "type": "c",
-              "glslType": "vec3"
+              value: 1.0,
+              type: "f",
+              glsltype: "float"
             },
             "time": {
-              "type": "f",
-              "glslType": "float"
+              type: "f",
+              glsltype: "float"
             },
             "phaseSpeed": {
-              "value": 10,
-              "type": "f",
-              "glslType": "float"
+              value: 10,
+              type: "f",
+              glsltype: "float"
             },
             "thickness": {
-              "value": 1.20528104,
-              "type": "f",
-              "glslType": "float"
+              value: 1.20528104,
+              type: "f",
+              glsltype: "float"
             },
             "contrast": {
-              "value": 19.0752604,
-              "type": "f",
-              "glslType": "float"
+              value: 19.0752604,
+              type: "f",
+              glsltype: "float"
             },
             "electricitySpeed": {
-              "value": 0.27169517,
-              "type": "f",
-              "glslType": "float"
+              value: 0.27169517,
+              type: "f",
+              glsltype: "float"
             },
             "flashSpeed": {
-              "value": "0",
-              "type": "f",
-              "glslType": "float"
+              value: 0.0,
+              type: "f",
+              glsltype: "float"
             },
             "turbulence": {
-              "value": 2.6210239,
-              "type": "f",
-              "glslType": "float"
+              value: 2.6210239,
+              type: "f",
+              glsltype: "float"
             },
             "waverSpeed": {
-              "value": 0.47451395,
-              "type": "f",
-              "glslType": "float"
+              value: 0.47451395,
+              type: "f",
+              glsltype: "float"
             },
-            "Fork_of_Electric_Wave1613578619289_156_color": {
-              "value": {
-                "r": "1",
-                "g": "1",
-                "b": "1"
+            "electric_color": {
+              value: {
+                r: 1.0,
+                g: 1.0,
+                b: 1.0
               },
-              "type": "c",
-              "glslType": "vec3"
+              type: "c",
+              glsltype: "vec3"
             }
         } 
 
-        this.material = new THREE.ShaderMaterial({
+        // this.material = new THREE.MeshNormalMaterial();
+	
+        // this.material.onBeforeCompile = function ( shader ) {
+        //     console.log( shader )
+        //     shader.uniforms = uniforms,
+        //     shader.vertexShader = glowShader.vertexShader;
+        //     shader.fragmentShader = glowShader.fragmentShade;
+            
+        //     this.materialShader = shader;
+        // };
+        
+        // this.material.extensions = {
+        //     derivatives: true
+        // };
+
+        this.material = new THREE.RawShaderMaterial({
+            extensions: {derivatives: true},
             uniforms: uniforms,
             vertexShader: shader.vertexShader,
-            fragmentShader: shader.fragmentShader   
+            fragmentShader: shader.fragmentShader,
         })
-        this.material.extensions = {
-            derivatives: true
-         };
+
     }
     getVertices(){
         console.log("path vertices", this.vertices);

@@ -234,6 +234,11 @@ export default {
         //   { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
         path.setupShader();
         let mesh = new THREE.Mesh( pathGeometry, path.material );
+
+        //BOX FOR SHADER TESTING
+        let geo = new THREE.BoxGeometry();
+        let box = new THREE.Mesh(geo, path.material);
+        scene.add(box);
         
 
         mesh.scale.set(4, 4, 4);
@@ -317,18 +322,19 @@ export default {
         let info = new InformationElement(scene,font,new THREE.Vector3(-40,0,40));
         info.init();
 
-        //SVG path
-        this.initPath(pathVertices,parent);
-
 		cameraHelper.visible = cameraHelperOn;
 		cameraEye.visible = cameraHelperOn;
     
         //RENDERER
         renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.context.getExtension('OES_standard_derivatives');
-        container.appendChild(renderer.domElement);
+        renderer.getContext().getExtension('OES_standard_derivatives');
+        console.log("extensions",console.log(renderer.getContext().getSupportedExtensions()));
 
+        //SVG path
+        this.initPath(pathVertices,parent);
+
+        container.appendChild(renderer.domElement);
         windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
 
         //CONTROLS

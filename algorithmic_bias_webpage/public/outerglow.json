@@ -1,0 +1,37 @@
+{
+  "id": 5027,
+  "name": "New Composed Shader",
+  "fragment": "#extension GL_OES_standard_derivatives : enable\n\nprecision highp float;\nuniform vec3 color;\nuniform float start;\nuniform float end;\nuniform float alpha;\nvarying vec3 fPosition;\nvarying vec3 fNormal;\nvec4 Transperent_Freshnel_FrontFacing1613649666997_145_main() \n                                {\n                                    vec4 Transperent_Freshnel_FrontFacing1613649666997_145_gl_FragColor = vec4(0.0);\n                                    if (!gl_FrontFacing) \n                                    {\n                                        discard;\n                                    }\n                                     vec3 normal = normalize(fNormal);\n                                    vec3 eye = normalize(-fPosition.xyz);\n                                    float rim = smoothstep(start, end, 1.0 - dot(normal, eye));\n                                    float value = clamp(rim, 0.0, 1.0) * alpha;\n                                    Transperent_Freshnel_FrontFacing1613649666997_145_gl_FragColor = vec4(value * color, length(value));\n                                    return Transperent_Freshnel_FrontFacing1613649666997_145_gl_FragColor *= 1.0;\n                                }\nvoid main() \n                                {\n                                    gl_FragColor = Transperent_Freshnel_FrontFacing1613649666997_145_main();                                }\n",
+  "vertex": "precision highp float;\nuniform mat3 normalMatrix;\nuniform mat4 modelViewMatrix;\nuniform mat4 projectionMatrix;\nattribute vec3 position;\nattribute vec3 normal;\nvarying vec3 fNormal;\nvarying vec3 fPosition;\nvec4 Transperent_Freshnel_FrontFacing1613649666997_145_main() \n                                {\n                                    vec4 Transperent_Freshnel_FrontFacing1613649666997_145_gl_Position = vec4(0.0);\n                                    fNormal = normalize(normalMatrix * normal);\n                                    vec4 pos = modelViewMatrix * vec4(position, 1.0);\n                                    fPosition = pos.xyz;\n                                    Transperent_Freshnel_FrontFacing1613649666997_145_gl_Position = projectionMatrix * pos;\n                                    return Transperent_Freshnel_FrontFacing1613649666997_145_gl_Position *= 1.0;\n                                }\nvoid main() \n                                {\n                                    gl_Position = Transperent_Freshnel_FrontFacing1613649666997_145_main();                                }\n",
+  "uniforms": {
+    "color": {
+      "value": {
+        "r": 0,
+        "g": 0.8823529411764706,
+        "b": 1
+      },
+      "type": "c",
+      "glslType": "vec3"
+    },
+    "start": {
+      "value": 0,
+      "type": "f",
+      "glslType": "float"
+    },
+    "end": {
+      "value": "1",
+      "type": "f",
+      "glslType": "float"
+    },
+    "alpha": {
+      "value": "1",
+      "type": "f",
+      "glslType": "float"
+    }
+  },
+  "url": "http://shaderfrog.com/app/view/5027",
+  "user": {
+    "username": "jo1232456321",
+    "url": "http://shaderfrog.com/app/profile/andrewray"
+  }
+}
