@@ -28,7 +28,7 @@
 
 //#region imports
 import * as THREE from "three";
-import {gsap} from 'gsap';
+//import {gsap} from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 //import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
 //import { PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls.js';
@@ -39,8 +39,9 @@ import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
 import { InformationElement } from './InformationElement.js';
 import { PathLoader } from './PathLoader.js';
 import {InfoFontLoader} from './InfoFontLoader.js';
-import {PlayerControls} from './PlayerControls.js'
-import {Ground} from './Ground.js'
+import {PlayerControls} from './PlayerControls.js';
+import {InformationManager} from './InformationManager.js';
+//import {Ground} from './Ground.js'
 //#endregion
 
 //#region Variables
@@ -69,19 +70,21 @@ let cameraHelperOn = true;
 let helperTubeGeometry;
 let pathVertices,path;
 let font;
-let ground;
+//let ground;
 
 let guiParameters;
 
-let informationsPhase = false;
-let infoSegments = [2,5,10,20];
-let infoSegmentsDone = [];
-let infoPos = new THREE.Vector3();
-const mouse = new THREE.Vector2();
-const raycaster = new THREE.Raycaster();
+let infoManager;
+let informationRunning = false;
+let informationPhase = false;
+//let infoSegments = [12,20,30,40];
+//let infoSegmentsDone = [];
+//let infoPos = new THREE.Vector3();
+// const mouse = new THREE.Vector2();
+// const raycaster = new THREE.Raycaster();
 
-//TODO: resizing
-let windowSize; 
+// //TODO: resizing
+// let windowSize; 
 
 //#endregion
 
@@ -99,63 +102,64 @@ export default {
     }
   },
   methods: {
-    //#region GSAP transitions
-    beforeEnterInfo(el) {
-      gsap.set(el, {
-        scaleX: 0,
-        scaleY: 0,
-        opacity: 0
-      })
-    },
-    enterInfo(el,done){
-         gsap.to(".info",{
-            duration: 1,
-            scaleX: 1,
-            scaleY: 1,
-            opacity:1,
-            y: windowSize.y/2,
-            x: windowSize.x/4,
-            onComplete: done
-        })
-    },
-    stopInfo(){
-        if(informationsPhase){
-            if (this.infoElement2){
-                 this.infoElement2 = false;
-            }
-        console.log("clicked on elem");
-        }
-    },
-    leaveInfo(){
-        gsap.to(".info",{
-            duration: 1,
-            scaleX: 0,
-            scaleY: 0,
-            opacity: 0,
-            onComplete: this.stopInformationPhase,
-        })
-    },
-    camToObject: function(object){
+    //TODO: fix html element gsap
+    // //#region GSAP transitions
+    // beforeEnterInfo(el) {
+    //   gsap.set(el, {
+    //     scaleX: 0,
+    //     scaleY: 0,
+    //     opacity: 0
+    //   })
+    // },
+    // enterInfo(el,done){
+    //      gsap.to(".info",{
+    //         duration: 1,
+    //         scaleX: 1,
+    //         scaleY: 1,
+    //         opacity:1,
+    //         y: windowSize.y/2,
+    //         x: windowSize.x/4,
+    //         onComplete: done
+    //     })
+    // },
+    // stopInfo(){
+    //     if(informationPhase){
+    //         if (this.infoElement2){
+    //              this.infoElement2 = false;
+    //         }
+    //     console.log("clicked on elem");
+    //     }
+    // },
+    // leaveInfo(){
+    //     gsap.to(".info",{
+    //         duration: 1,
+    //         scaleX: 0,
+    //         scaleY: 0,
+    //         opacity: 0,
+    //         onComplete: this.stopInformationPhase,
+    //     })
+    // },
+    // camToObject: function(object){
 
-        let aabb = new THREE.Box3().setFromObject( object );
-        let center = aabb.getCenter( new THREE.Vector3() );
-        //var size = aabb.getSize( new THREE.Vector3() );
+    //     let aabb = new THREE.Box3().setFromObject( object );
+    //     let center = aabb.getCenter( new THREE.Vector3() );
+    //     //var size = aabb.getSize( new THREE.Vector3() );
 
-        gsap.to( camera.position, {
-            duration: 1,
-            ease: "power4",
-            x: center.x,
-            y: center.y,
-            z: center.z + 50, // maybe adding even more offset depending on your model
-            onUpdate: function() {
-                camera.lookAt( center );
-                cameraHelper.update();
-                cameraEye.position.copy( camera.position );
-                //console.log("camera moved up");
-            }
-        });  
-    },
-    //#endregion
+    //     gsap.to( camera.position, {
+    //         duration: 1,
+    //         ease: "power4",
+    //         x: center.x,
+    //         y: center.y,
+    //         z: center.z + 50, // maybe adding even more offset depending on your model
+    //         onUpdate: function() {
+    //             camera.lookAt( center );
+    //             cameraHelper.update();
+    //             cameraEye.position.copy( camera.position );
+    //             //console.log("camera moved up");
+    //         }
+    //     });  
+    // },
+    // //#endregion
 
     //#region THREE js
     preLoadPath: function (){
@@ -271,8 +275,8 @@ export default {
         scene = new THREE.Scene();
         //scene.background = new THREE.Color('#f43df1');
         //scene.background = new THREE.Color(0x0D0D0D);
-        scene.background = new THREE.Color(0xffffff);
-        scene.fog = new THREE.FogExp2(scene.background, 0.002);
+        scene.background = new THREE.Color(0x000000);
+        //scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
         overviewCamera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.01, 100000 );
         overviewCamera.position.set( -50, 50, 200 );
@@ -302,9 +306,9 @@ export default {
         // planeMesh.rotation.x = -Math.PI / 2;
         // planeMesh.position.y = 0;
         // planeMesh.receiveShadow = true;
-        ground = new Ground();
-        ground.init();
-        scene.add(ground);
+        //ground = new Ground();
+        //ground.init();
+        //scene.add(ground);
 
         //PARENT  FOR CAMERA
         let parent = new THREE.Object3D();
@@ -335,11 +339,12 @@ export default {
         this.initPath(pathVertices,parent);
 
         container.appendChild(renderer.domElement);
-        windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
+        //windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
 
         //CONTROLS
         overviewControls = new OrbitControls(overviewCamera, renderer.domElement);
         
+        infoManager = new InformationManager(scene,renderer.domElement,camera,this.informations,font,cameraHelper,cameraEye);
 
         camera.rotation.order = 'YXZ';
         controls = new PlayerControls(camera,renderer.domElement,helperTubeGeometry,cameraEye,cameraHelper);
@@ -387,136 +392,14 @@ export default {
 		renderer.setSize( window.innerWidth, window.innerHeight );
 
 	},
-    onPointerDownInfo: function(event,obj,onIntersection){
-        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-        // update the picking ray with the camera and mouse position
-        raycaster.setFromCamera( mouse, camera );
-
-        // calculate objects intersecting the picking ray
-        const intersects = raycaster.intersectObjects(obj);
-        //const intersects = raycaster.intersectObjects(scene.children);
-        console.log(intersects);
-
-        for ( let i = 0; i < intersects.length; i ++ ) {
-            intersects[ i ].object.material.color.set( 0xff0000 );
-            if(typeof onIntersection !== undefined){
-                onIntersection();
-            }
-        }
-    },
     stopInformationPhase: function(){
         controls.start();
         controls.update(true);
-        informationsPhase = false;
+        //informationPhase = false;
+        informationRunning = false;
         console.log("informationPhase stopped.")
         window.removeEventListener( 'pointerdown',  this.onPointerDownInfo);
-    },
-    // },
-    manageInformation: function(info){
-        informationsPhase = true;
-
-        //FIRST INFO ELEMENT
-		if (info === infoSegmentsDone[0]){
-			console.log("infoPhase 1");
-
-			//setting info Position
-            let lastCam = new THREE.Camera();
-            lastCam.copy(camera);
-           
-            infoPos = (new THREE.Vector3( 0, 0, -30 )).applyQuaternion( camera.quaternion ).add( camera.position );
-            infoPos.y = 50;
-            let text = this.informations[0].content;
-            let info2 = new InformationElement(scene,font,infoPos,text);
-            info2.init();
-
-            this.camToObject(info2.getMeshObject());
-            let objects = []
-            objects.push(info2.bbox);
-
-            window.addEventListener('pointerdown', (event) => this.onPointerDownInfo(event, objects, function(){
-                gsap.to( camera.position,{
-                    duration: 2,
-                    ease: "power4",
-                    x: lastCam.position.x,
-                    y: lastCam.position.y,
-                    z: lastCam.position.z,
-                    onComplete: this.stopInformationPhase
-                })
-            //using bind this because it is higher order function
-            //https://stackoverflow.com/a/59060545
-            }.bind(this))); 
-        }
-
-        else if (info === infoSegmentsDone[1]){
-            console.log("window",windowSize);
-            this.infoElement2 = true;
-        }
-
-        else if (info === infoSegmentsDone[2]){
-
-            infoPos = (new THREE.Vector3( 0, 0, -30 )).applyQuaternion( camera.quaternion ).add( camera.position );
-            infoPos.y = 15;
-            let text = this.informations[2].content;
-            let info = new InformationElement(scene,font,infoPos,text,this.informations[2].isImage);
-            info.init();
-
-            gsap.from(info.obj.position,{
-                duration: 2,
-                x: infoPos.x - 100,
-                y: 20,
-                z: infoPos.z - 100,
-            })
-            let objects = []
-            objects.push(info.bbox);
-            window.addEventListener('pointerdown', (event) => this.onPointerDownInfo(event, objects, function(){
-                gsap.to( info.obj.position,{
-                    duration: 1,
-                    x: infoPos.x - 100,
-                    y: 20,
-                    z: infoPos.z - 100,
-                    onComplete: this.stopInformationPhase
-                })
-            //using bind this because it is higher order function
-            //https://stackoverflow.com/a/59060545
-            }.bind(this)));
-
-
-        }
-
-        else if (info === infoSegmentsDone[3]){
-
-            infoPos = (new THREE.Vector3( 0, 0, -30)).applyQuaternion( camera.quaternion ).add( camera.position );
-            infoPos.y = 10;
-            let path = this.informations[3].content;
-            let info = new InformationElement(scene,font,infoPos,path,this.informations[3].isImage);
-            info.init();
-
-            gsap.from(info.obj.position,{
-                duration: 3,
-                x: infoPos.x*5,
-                y: infoPos.y*5
-            })    
-
-            let objects = []
-            objects.push(info.bbox);
-            window.addEventListener('pointerdown', (event) => this.onPointerDownInfo(event, objects, function(){
-                gsap.to( info.obj.position,{
-                    duration: 1,
-                    x: infoPos.x*5,
-                    y: infoPos.y*5,
-                    onComplete: this.stopInformationPhase
-                })
-            }.bind(this)));
-
-
-
-            
-
-
-        }
-    },    
+    },  
     animateCamera: function() {
         console.log("animate camera called");
         cameraHelper.visible = cameraHelperOn;
@@ -525,24 +408,30 @@ export default {
     animate: function() {
 		try{
 			frame = requestAnimationFrame(this.animate);
-			if (informationsPhase){
+            informationPhase = infoManager.informationPhase;
+            console.log(informationPhase);
+			if (informationPhase){
 				controls.update(false);
 				overviewControls.update();
+
+                if(!informationRunning){
+                    controls.stop();
+                    informationRunning = true;
+                    console.log("starting InformationPhase, Controls stop")
+                }
 			}
 
 			else{
 				controls.update(true);
-				console.log(controls.segment);
-                if (infoSegments[0] === controls.segment){
-                    let info = infoSegments.shift();
-                    infoSegmentsDone.push(info)
-                    console.log(infoSegments);
-                    controls.stop();
-					this.manageInformation(info);
-				}
+                infoManager.update(controls.segment);
+
+                if(informationRunning){
+                    this.stopInformationPhase();
+                }
 				overviewControls.update();
 			}
-            ground.update();
+            path.update();
+            //ground.update();
 			renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
 		}
 		catch(err){

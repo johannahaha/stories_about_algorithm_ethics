@@ -2,12 +2,13 @@
 
 import * as THREE from "three";
 import {SVGLoader} from 'three/examples/jsm/loaders/SVGLoader.js';
-import {GlowingShader} from "./shaders/GlowingShader.js";
+//import {GlowingShader} from "./shaders/GlowingShader.js";
 //import {OuterGlowShader} from "./shaders/OuterGlowShader.js";
 
 class PathLoader {
     constructor(){
         this.vertices = [];
+        this.clock = new THREE.Clock();
     }
 
     async init(){
@@ -129,13 +130,13 @@ class PathLoader {
     }
 
     setupShader(){
-        let shader = GlowingShader;
+        //let shader = GlowingShader;
         //let shader = OuterGlowShader;
-        let uniforms =  {
+        this.uniforms =  {
             "transparent_color":{
                 value: {
                     r: 0,
-                    g: 0.8,
+                    g: 0.5,
                     b: 1 },
                 type: "c",
                 glsltype: "vec3"
@@ -156,56 +157,81 @@ class PathLoader {
               glsltype: "float"
             },
             "time": {
+              value: 1,
               type: "f",
               glsltype: "float"
             },
-            "phaseSpeed": {
-              value: 10,
-              type: "f",
-              glsltype: "float"
-            },
-            "thickness": {
-              value: 1.20528104,
-              type: "f",
-              glsltype: "float"
-            },
-            "contrast": {
-              value: 19.0752604,
-              type: "f",
-              glsltype: "float"
-            },
-            "electricitySpeed": {
-              value: 0.27169517,
-              type: "f",
-              glsltype: "float"
-            },
-            "flashSpeed": {
-              value: 0.0,
-              type: "f",
-              glsltype: "float"
-            },
-            "turbulence": {
-              value: 2.6210239,
-              type: "f",
-              glsltype: "float"
-            },
-            "waverSpeed": {
-              value: 0.47451395,
-              type: "f",
-              glsltype: "float"
-            },
-            "electric_color": {
+            "lightPosition": {
               value: {
-                r: 1.0,
-                g: 1.0,
-                b: 1.0
+                "x": 0,
+                "y": 1.25,
+                "z": 1.25
               },
-              type: "c",
+              type: "v3",
               glsltype: "vec3"
+            },
+            "angle": {
+              value: 1.7,
+              type: "f",
+              glsltype: "float"
+            },
+            "cStrength": {
+              value: 0.4,
+              type: "f",
+              glsltype: "float"
             }
+            // "time": {
+            //   type: "f",
+            //   glsltype: "float"
+            // },
+            // "phaseSpeed": {
+            //   value: 10,
+            //   type: "f",
+            //   glsltype: "float"
+            // },
+            // "thickness": {
+            //   value: 1.20528104,
+            //   type: "f",
+            //   glsltype: "float"
+            // },
+            // "contrast": {
+            //   value: 19.0752604,
+            //   type: "f",
+            //   glsltype: "float"
+            // },
+            // "electricitySpeed": {
+            //   value: 0.27169517,
+            //   type: "f",
+            //   glsltype: "float"
+            // },
+            // "flashSpeed": {
+            //   value: 0.0,
+            //   type: "f",
+            //   glsltype: "float"
+            // },
+            // "turbulence": {
+            //   value: 2.6210239,
+            //   type: "f",
+            //   glsltype: "float"
+            // },
+            // "waverSpeed": {
+            //   value: 0.47451395,
+            //   type: "f",
+            //   glsltype: "float"
+            // },
+            // "electric_color": {
+            //   value: {
+            //     r: 1.0,
+            //     g: 1.0,
+            //     b: 1.0
+            //   },
+            //   type: "c",
+            //   glsltype: "vec3"
+            // }
         } 
 
-        // this.material = new THREE.MeshNormalMaterial();
+        this.material = new THREE.MeshPhongMaterial( 
+           { color: 0xffffff } );
 	
         // this.material.onBeforeCompile = function ( shader ) {
         //     console.log( shader )
@@ -220,17 +246,21 @@ class PathLoader {
         //     derivatives: true
         // };
 
-        this.material = new THREE.RawShaderMaterial({
-            extensions: {derivatives: true},
-            uniforms: uniforms,
-            vertexShader: shader.vertexShader,
-            fragmentShader: shader.fragmentShader,
-        })
+        // this.material = new THREE.RawShaderMaterial({
+        //     extensions: {derivatives: true},
+        //     uniforms: this.uniforms,
+        //     vertexShader: shader.vertexShader,
+        //     fragmentShader: shader.fragmentShader,
+        // })
 
     }
     getVertices(){
         console.log("path vertices", this.vertices);
         return this.vertices;
+    }
+
+    update(){
+      this.uniforms.time.value = this.clock.getElapsedTime();
     }
 
 
