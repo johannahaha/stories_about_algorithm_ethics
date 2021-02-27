@@ -13,7 +13,7 @@
             <p>{{ informations[1].content }}</p>
         </div>
         <button id="pause">pause</button>
-        <transition @enter="enterInfo" @leave="leaveInfo">
+        <transition @before-enter="beforeEnterInfo" @enter="enterInfo" @leave="leaveInfo">
             <div class="info" v-if="infoElement2" @click="stopInfo">
                 {{ informations[1].content }}
             </div>
@@ -28,7 +28,7 @@
 
 //#region imports
 import * as THREE from "three";
-//import {gsap} from 'gsap';
+import {gsap} from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 //import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
 //import { PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls.js';
@@ -37,8 +37,10 @@ import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
 
 //MY CLASSES
 import { InformationElement } from './InformationElement.js';
-import { PathLoader } from './PathLoader.js';
-import {InfoFontLoader} from './InfoFontLoader.js';
+import { PathLoader } from './loaders/PathLoader.js';
+import {InfoFontLoader} from './loaders/InfoFontLoader.js';
+import {ModelLoader} from './loaders/ModelLoader.js';
+import {AudioLoader} from './loaders/AudioLoader.js';
 import {PlayerControls} from './PlayerControls.js';
 import {InformationManager} from './InformationManager.js';
 //import {Ground} from './Ground.js'
@@ -56,11 +58,7 @@ let overviewControls, controls;
 //follow path
 let firstLoop = true;
 let direction = new THREE.Vector3(0,0,0);
-// let binormal = new THREE.Vector3();
-// let normal = new THREE.Vector3();
-// let position = new THREE.Vector3();
-// let lookAt = new THREE.Vector3();
-// let lookAhead = false;
+
 let frame;
 
 //camera
@@ -70,6 +68,8 @@ let cameraHelperOn = true;
 let helperTubeGeometry;
 let pathVertices,path;
 let font;
+let models;
+let audios;
 //let ground;
 
 let guiParameters;
@@ -84,7 +84,8 @@ let informationPhase = false;
 // const raycaster = new THREE.Raycaster();
 
 // //TODO: resizing
-// let windowSize; 
+const windowSize = new THREE.Vector2( window.offsetWidth, window.offsetHeight);
+
 
 //#endregion
 
@@ -103,63 +104,45 @@ export default {
   },
   methods: {
     //TODO: fix html element gsap
-    // //#region GSAP transitions
-    // beforeEnterInfo(el) {
-    //   gsap.set(el, {
-    //     scaleX: 0,
-    //     scaleY: 0,
-    //     opacity: 0
-    //   })
-    // },
-    // enterInfo(el,done){
-    //      gsap.to(".info",{
-    //         duration: 1,
-    //         scaleX: 1,
-    //         scaleY: 1,
-    //         opacity:1,
-    //         y: windowSize.y/2,
-    //         x: windowSize.x/4,
-    //         onComplete: done
-    //     })
-    // },
-    // stopInfo(){
-    //     if(informationPhase){
-    //         if (this.infoElement2){
-    //              this.infoElement2 = false;
-    //         }
-    //     console.log("clicked on elem");
-    //     }
-    // },
-    // leaveInfo(){
-    //     gsap.to(".info",{
-    //         duration: 1,
-    //         scaleX: 0,
-    //         scaleY: 0,
-    //         opacity: 0,
-    //         onComplete: this.stopInformationPhase,
-    //     })
-    // },
-    // camToObject: function(object){
-
-    //     let aabb = new THREE.Box3().setFromObject( object );
-    //     let center = aabb.getCenter( new THREE.Vector3() );
-    //     //var size = aabb.getSize( new THREE.Vector3() );
-
-    //     gsap.to( camera.position, {
-    //         duration: 1,
-    //         ease: "power4",
-    //         x: center.x,
-    //         y: center.y,
-    //         z: center.z + 50, // maybe adding even more offset depending on your model
-    //         onUpdate: function() {
-    //             camera.lookAt( center );
-    //             cameraHelper.update();
-    //             cameraEye.position.copy( camera.position );
-    //             //console.log("camera moved up");
-    //         }
-    //     });  
-    // },
-    // //#endregion
+    //#region GSAP transitions
+    beforeEnterInfo(el) {
+      gsap.set(el, {
+        scaleX: 0,
+        scaleY: 0,
+        opacity: 0
+      })
+    },
+    enterInfo(el,done){
+         gsap.to(".info",{
+            duration: 1,
+            scaleX: 1,
+            scaleY: 1,
+            opacity:1,
+            y: windowSize.y/2,
+            x: windowSize.x/4,
+            onComplete: done
+        })
+    },
+    stopInfo(){
+        if(informationPhase){
+            if (this.infoElement2){
+                 this.infoElement2 = false;
+            }
+        console.log("clicked on elem");
+        }
+    },
+    leaveInfo(){
+        gsap.to(".info",{
+            duration: 1,
+            scaleX: 0,
+            scaleY: 0,
+            opacity: 0,
+            onComplete: this.stopInformationPhase,
+        })
+        infoManager.informationPhase = false;
+        infoManager.htmlInformation = false;
+    },
+     //#endregion
 
     //#region THREE js
     preLoadPath: function (){
@@ -179,14 +162,26 @@ export default {
           font = loadedFont;
         })
     },
+    preLoadModels: function(){
+        let modelLoader = new ModelLoader();
+        return modelLoader.init()
+        .then((m)  => {
+            console.log("model promise",m);
+            models = modelLoader.getModels();
+            console.log("models saved",models);
+        })
+    },
+    preLoadAudio: function(){
+        let audioLoader = new AudioLoader();
+        return audioLoader.init()
+        .then((res) => {
+            console.log("audio promise",res);
+            audios = audioLoader.getAudios();
+            console.log("audios saved",audios);
+        })
+    },
     initPath: function(pathVertices,parent) {
         //SPLINE
-        // spline = new THREE.CatmullRomCurve3( [
-        //   new THREE.Vector3( -40, 0, -40 ),
-        //   new THREE.Vector3( -40, 0, 40 ),
-        //   new THREE.Vector3( -40, 0, 140 ),
-        //   new THREE.Vector3( 40, 0, 40 ),
-        //   new THREE.Vector3( 40, 0, -40 )]);
         let spline = new THREE.CatmullRomCurve3(pathVertices);
         console.log("spline",spline);
         console.log(spline);
@@ -194,12 +189,6 @@ export default {
         spline.curveType = 'catmullrom';
         spline.closed = true;
         console.log("spline here", spline);
-
-				// if ( mesh !== undefined ) {
-				// 	parent.remove( mesh );
-				// 	mesh.geometry.dispose();
-        //   console.log("mesh was disposed");
-        // }
 
         //segments need to be at least spline.length/2 for a smooth followPath
         console.log("calculating segments...");
@@ -275,7 +264,7 @@ export default {
         scene = new THREE.Scene();
         //scene.background = new THREE.Color('#f43df1');
         //scene.background = new THREE.Color(0x0D0D0D);
-        scene.background = new THREE.Color(0x000000);
+        scene.background = new THREE.Color(0xffffff);
         //scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
         overviewCamera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.01, 100000 );
@@ -284,19 +273,18 @@ export default {
         //path following camera
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.y = 5;
-
-        //camera when an information is seen
-        //informationCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const listener = new THREE.AudioListener();
+        camera.add( listener );
 
         const light = new THREE.DirectionalLight( 0xffffff, 0.7 );
-        light.position.set( 1, 1, 0 ).normalize();
+        light.position.set( 500, 500, 0 ).normalize();
         scene.add( light );
 
         const light2 = new THREE.DirectionalLight( 0xff5566, 0.4 );
-        light2.position.set( -3, -1, 0 ).normalize();
+        light2.position.set( -500, -100, 0 ).normalize();
         scene.add( light2 );
 
-        scene.add(new THREE.AmbientLight(0xffffff,0.3))     
+        scene.add(new THREE.AmbientLight(0xffffff,0.3))  
 
         // FLOOR
         //same as other geometry
@@ -333,10 +321,14 @@ export default {
         renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setSize(container.clientWidth, container.clientHeight);
         renderer.getContext().getExtension('OES_standard_derivatives');
+        renderer.outputEncoding = THREE.sRGBEncoding
         console.log("extensions",console.log(renderer.getContext().getSupportedExtensions()));
 
         //SVG path
         this.initPath(pathVertices,parent);
+
+        console.log(models);
+        scene.add(models[0].scene);
 
         container.appendChild(renderer.domElement);
         //windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
@@ -344,7 +336,7 @@ export default {
         //CONTROLS
         overviewControls = new OrbitControls(overviewCamera, renderer.domElement);
         
-        infoManager = new InformationManager(scene,renderer.domElement,camera,this.informations,font,cameraHelper,cameraEye);
+        infoManager = new InformationManager(scene,renderer.domElement,camera,this.informations,font,models,audios,cameraHelper,cameraEye);
 
         camera.rotation.order = 'YXZ';
         controls = new PlayerControls(camera,renderer.domElement,helperTubeGeometry,cameraEye,cameraHelper);
@@ -409,7 +401,6 @@ export default {
 		try{
 			frame = requestAnimationFrame(this.animate);
             informationPhase = infoManager.informationPhase;
-            console.log(informationPhase);
 			if (informationPhase){
 				controls.update(false);
 				overviewControls.update();
@@ -417,6 +408,12 @@ export default {
                 if(!informationRunning){
                     controls.stop();
                     informationRunning = true;
+                    console.log("htmlInfo?",infoManager.htmlInformation);
+
+                    if(infoManager.htmlInformation){
+                        console.log("html info registered");
+                        this.infoElement2 = true;
+                    }
                     console.log("starting InformationPhase, Controls stop")
                 }
 			}
@@ -442,7 +439,10 @@ export default {
     //#endregion
   },  
   mounted() {
-      Promise.all([this.preLoadPath(),this.preLoadFont()])
+      Promise.all([this.preLoadPath(),
+      this.preLoadFont(),
+      this.preLoadModels(),
+      this.preLoadAudio()])
       .then(res => {
         console.log(res);
         this.init();

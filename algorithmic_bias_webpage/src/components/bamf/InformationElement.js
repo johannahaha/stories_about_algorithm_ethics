@@ -3,7 +3,7 @@
 import * as THREE from "three";
 
 class InformationElement    {
-    constructor(scene,font,position,content = "Das ist eine neue Information über das Bamf",isImage){
+    constructor(scene,font,position,content = "Das ist eine neue Information über das Bamf",isImage,scale=0.5){
         this.scene = scene;
         this.font = font;
         this.position = position;
@@ -12,6 +12,7 @@ class InformationElement    {
             this.imgPath = content;
         }
         this.isImage = isImage;
+        this.scale = scale;
         console.log(this);
 
     }
@@ -31,7 +32,7 @@ class InformationElement    {
 
         //BOUNDING BOX for clicking
         this.bbox = new THREE.BoxHelper(this.obj, 0xffff00);
-        this.bbox.material.visible = false;
+        this.bbox.material.visible = true;
         this.scene.add(this.bbox);
 
     }
@@ -39,11 +40,11 @@ class InformationElement    {
     setupText(pLoadedFont){
         let text;
         //this.loadFont().then( pLoadedFont => {
-        const color = 0xDAD7DC;
+        const color = 0x000000;
         const matLite = new THREE.MeshBasicMaterial( {
             color: color,
-            transparent: true,
-            opacity: 0.4,
+            transparent: false,
+            opacity: 1,
             side: THREE.DoubleSide
         } );
 
@@ -52,7 +53,7 @@ class InformationElement    {
         const geometry = new THREE.ShapeBufferGeometry( shapes );
 
         geometry.computeBoundingBox();
-        geometry.scale(0.5,0.5,0.5);
+        geometry.scale(this.scale,this.scale,this.scale);
 
         const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
 

@@ -3,16 +3,20 @@
 import * as THREE from "three";
 import {gsap} from 'gsap';
 import { InformationElement } from './InformationElement.js';
+import {AudioElement} from './AudioElement.js'
 
-let InformationManager = function(scene,domElement,camera,informations,font,cameraHelper,cameraEye){
+let InformationManager = function(scene,domElement,camera,informations,font,models,audios,cameraHelper,cameraEye){
     
     this.informationPhase = false;
+    this.htmlInformation = false;
 
     this.scene = scene;
     this.domElement = domElement;
     this.camera = camera;
     this.informations = informations;
     this.font = font;
+    this.models = models;
+    this.audios = audios;
     this.cameraEye = cameraEye;
     this.cameraHelper = cameraHelper;
 
@@ -66,7 +70,7 @@ let InformationManager = function(scene,domElement,camera,informations,font,came
     //       })
     //   }
     
-      function camToObject(object){
+    function camToObject(object){
   
           let aabb = new THREE.Box3().setFromObject( object );
           let center = aabb.getCenter( new THREE.Vector3() );
@@ -90,7 +94,7 @@ let InformationManager = function(scene,domElement,camera,informations,font,came
 
     function manageInfo(infoNumber){
         //FIRST INFO ELEMENT
-		if (infoNumber === infoSegmentsDone[0]){
+		if (infoNumber === infoSegmentsDone[4]){
 			console.log("infoPhase 1");
 
 			//setting info Position
@@ -125,18 +129,34 @@ let InformationManager = function(scene,domElement,camera,informations,font,came
         }
 
         //TODO: fix the html transition
-        // else if (infoNumber === infoSegmentsDone[1]){
-        //     console.log("window",windowSize);
-        //     scope.infoElement2 = true;
-        // }
-
         else if (infoNumber === infoSegmentsDone[1]){
+            //console.log("window",windowSize);
+            //scope.infoElement2 = true;
+            scope.htmlInformation = true;
+            console.log("html information",scope.htmlInformation);
+
+        }
+
+        else if (infoNumber === infoSegmentsDone[2]){
 
             infoPos = (new THREE.Vector3( 0, 0, -30 )).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
             infoPos.y = 15;
             let text = scope.informations[2].content;
-            let info = new InformationElement(scope.scene,scope.font,infoPos,text,scope.informations[2].isImage);
+            let info = new InformationElement(scope.scene,scope.font,infoPos,text,scope.informations[2].isImage,0.2);
             info.init();
+
+            //infoPos = new THREE.Vector3( 20, 20, -20 ).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
+            let bamf = models[0].scene;
+            console.log("bamf",bamf);
+            //bamf.material.metalness = 0;
+            infoPos = (new THREE.Vector3( -30, 0,0)).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
+            infoPos.y = 15;
+            bamf.position.set(infoPos.x - 100 ,infoPos.y,infoPos.z - 100);
+            bamf.scale.set(5,5,5);
+            //bamf.rotation.y = Math.PI/2
+            console.log(models[0])
+
+            scope.scene.add(models[0].scene);
 
             gsap.from(info.obj.position,{
                 duration: 2,
@@ -164,7 +184,7 @@ let InformationManager = function(scene,domElement,camera,informations,font,came
 
         }
 
-        else if(infoNumber === infoSegmentsDone[2]){
+        else if(infoNumber === infoSegmentsDone[3]){
             let lastCam = new THREE.Camera();
             lastCam.copy(scope.camera);
 
@@ -173,7 +193,7 @@ let InformationManager = function(scene,domElement,camera,informations,font,came
             let info = new InformationElement(scope.scene,scope.font,infoPos,text);
             info.init();
 
-            scope.camToObject(info.getMeshObject());
+            camToObject(info.getMeshObject());
             let objects = [];
             objects.push(info.bbox);
 
@@ -189,6 +209,18 @@ let InformationManager = function(scene,domElement,camera,informations,font,came
             //using bind this because it is higher order function
             //https://stackoverflow.com/a/59060545
             }.bind(this))); 
+        }
+
+        else if(infoNumber === infoSegmentsDone[0]){
+            infoPos = (new THREE.Vector3( 0, 0, -30 )).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
+            infoPos.y = 50;
+            let text = scope.informations[4].content;
+            let info = new InformationElement(scope.scene,scope.font,infoPos,text);
+            info.init();
+
+            console.log(camera);
+            let irish = new AudioElement(audios[0],camera.listener,info)
+            irish.place();
         }
 
         else if (infoNumber === infoSegmentsDone[30]){
