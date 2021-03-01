@@ -23,6 +23,9 @@ export default {
         },
         infoId:{
             type: Number
+        },
+        scale:{
+            type: Number
         }
     },
     methods: {
@@ -37,8 +40,8 @@ export default {
         enterInfo(el,done){
             gsap.to(el,{
                 duration: 1,
-                scaleX: 1,
-                scaleY: 1,
+                scaleX: this.scale,
+                scaleY: this.scale,
                 opacity:1,
                 y: windowSize.y/2,
                 x: windowSize.x/4,
@@ -69,6 +72,7 @@ export default {
 
 <style scoped>
 .info {
+    white-space: pre-line;
     position: absolute;
     color: black;
     width: 100%;

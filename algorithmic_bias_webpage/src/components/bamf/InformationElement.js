@@ -13,29 +13,41 @@ class InformationElement    {
         }
         this.isImage = isImage;
         this.scale = scale;
-        console.log(this);
 
     }
 
     init(){
         //ADD TEXT
         if(this.isImage){
-            console.log("it is an image");
             this.obj = this.setupImage();
         }
         else {            
-            console.log("it is not an image");
             this.obj = this.setupText(this.font);
         }
 
-        console.log("info object",this.obj);
         this.scene.add(this.obj);
 
         //BOUNDING BOX for clicking
-        this.bbox = new THREE.BoxHelper(this.obj, 0xffff00);
-        this.bbox.material.visible = true;
-        this.scene.add(this.bbox);
+        this.createBBox();
 
+    }
+
+    createBBox(){
+        //BOUNDING BOX for clicking
+        const box3 = new THREE.Box3().setFromObject(this.obj);
+
+        const dimensions = new THREE.Vector3().subVectors( box3.max, box3.min );
+        console.log("dimensions",dimensions)
+        if(dimensions.x === 0) dimensions.x=1;
+        if(dimensions.y === 0) dimensions.y=1;
+        if(dimensions.z === 0) dimensions.z=1;
+        const boxGeo = new THREE.BoxBufferGeometry(dimensions.x, dimensions.y, dimensions.z).scale(1.2,1.2,1.2);
+
+        const matrix = new THREE.Matrix4().setPosition(dimensions.addVectors(box3.min, box3.max).multiplyScalar( 0.5 ));
+        boxGeo.applyMatrix4(matrix);
+
+        this.bbox = new THREE.Mesh(boxGeo, new THREE.MeshBasicMaterial( { color: 0xDDDfff,visible:false} ));
+        this.scene.add(this.bbox);
     }
 
     setupText(pLoadedFont){
@@ -111,14 +123,10 @@ class InformationElement    {
 
     }
 
-    onClick(){
-        
-    }
-
     rotate(axis,angle){
         if (axis === "X"){
-            console.log("rotating X",angle);
             this.obj.rotateX(angle);
+            //this.bbox.rotateX(angle);
         }
         else if (axis === "Y"){
             this.obj.rotateY(angle);
@@ -126,6 +134,7 @@ class InformationElement    {
         else if (axis === "Z"){
             this.obj.rotateZ(angle);
         }
+        this.createBBox();
     }
 
 

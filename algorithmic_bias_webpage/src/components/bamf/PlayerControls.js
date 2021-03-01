@@ -31,7 +31,7 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	camera.rotation.reorder( 'YXZ' );
 	const mouse = new Vector2();
 	//const target = new Vector2();
-	const destination = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
+	let destination = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
 	destination.reorder( 'YXZ' );
 	let drag = 0.66;
 	let scale = 1;
@@ -99,6 +99,8 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
 	function onPointerDown ( e ) {
 
+		if ( scope.enabled === false ) return;
+
 		//e.preventDefault();
 
 		//console.log("mouse is down");
@@ -111,6 +113,8 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	}
 
 	function onPointerUp ( e ) {
+		if ( scope.enabled === false ) return;
+
 		e.preventDefault();
 		scope.domElement.ownerDocument.removeEventListener('pointermove', onPointerMove, false);
 		scope.domElement.ownerDocument.removeEventListener('pointerup', onPointerUp, false);
@@ -249,12 +253,15 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	}
 
 	this.update = function (isMoving){
+		if ( scope.enabled === false ) return;
 		if (isMoving){
 			// if (!clock.running) {
 			// 	clock.start();
 			// }
 			
 			followPath();
+			// If the page is hidden, pause the video;
+			// if the page is shown, play the video
 		}
 		else{
 			if (clock.running) {
@@ -271,6 +278,11 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
 	this.start = function (){
 		clock.start();
+	}
+
+	this.resetMouse = function(){
+		mouse.set(0, 0);
+		destination = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
 	}
 
 	// this.moveForward = function () {

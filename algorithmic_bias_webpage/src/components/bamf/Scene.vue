@@ -14,10 +14,9 @@
         </div>
         <button id="pause">pause</button>
         <Information 
-        :infoElement="infoElement2" 
+        v-bind="htmlProps"
         :informations="informations"
-        :infoId="infoId"
-        @click="infoElement2 = false"
+        @click="htmlProps.infoElement = false"
         @information-closed="stopInformationPhase"> </Information>
 
 
@@ -101,8 +100,11 @@ export default {
   data: function(){
     return{
       preloading: true,
-      infoElement2: false,
-      infoId: 0,
+      htmlProps: {
+        infoElement: false,
+        infoId: 0,
+        scale: 1,
+      }
     }
   },
   methods: {
@@ -287,10 +289,12 @@ export default {
         //CONTROLS
         overviewControls = new OrbitControls(overviewCamera, renderer.domElement);
         
-        infoManager = new InformationManager(scene,renderer.domElement,camera,this.informations,font,models,audios,cameraHelper,cameraEye);
 
         camera.rotation.order = 'YXZ';
         controls = new PlayerControls(camera,renderer.domElement,helperTubeGeometry,cameraEye,cameraHelper);
+
+        infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,models,audios,cameraHelper,cameraEye);
+
         let menu = document.querySelector("#instructions");
 
         menu.addEventListener( 'click', function () {
@@ -341,12 +345,14 @@ export default {
         //informationPhase = false;
         informationRunning = false;
         if(infoManager.htmlInformation){
-            this.infoElement2 = false;
+            this.htmlProps.infoElement = false;
             infoManager.informationPhase = false;
             infoManager.htmlInformation = false;
         }
         //console.log("informationPhase stopped.")
-        window.removeEventListener( 'pointerdown',  this.onPointerDownInfo);
+        //reset scale
+        this.scale = 1;
+        window.removeEventListener( 'pointerdown',  infoManager.onPointerDownInfo);
     },  
     animateCamera: function() {
         //console.log("animate camera called");
@@ -367,9 +373,11 @@ export default {
                     //console.log("htmlInfo?",infoManager.htmlInformation);
 
                     if(infoManager.htmlInformation){
-                        this.infoId = infoManager.htmlInfoId;
+                        this.htmlProps.infoId = infoManager.htmlInfoId;
+                        this.htmlProps.scale = infoManager.htmlScale;
                         //console.log("html info registered");
-                        this.infoElement2 = true;
+                        this.htmlProps.infoElement = true;
+                        console.log("html props",this.htmlProps);
                     }
                     //console.log("starting InformationPhase, Controls stop")
                 }
