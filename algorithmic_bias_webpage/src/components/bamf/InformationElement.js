@@ -28,6 +28,7 @@ class InformationElement    {
             this.obj = this.setupText(this.font);
         }
 
+        console.log("info object",this.obj);
         this.scene.add(this.obj);
 
         //BOUNDING BOX for clicking
@@ -112,6 +113,19 @@ class InformationElement    {
 
     onClick(){
         
+    }
+
+    rotate(axis,angle){
+        if (axis === "X"){
+            console.log("rotating X",angle);
+            this.obj.rotateX(angle);
+        }
+        else if (axis === "Y"){
+            this.obj.rotateY(angle);
+        }
+        else if (axis === "Z"){
+            this.obj.rotateZ(angle);
+        }
     }
 
 

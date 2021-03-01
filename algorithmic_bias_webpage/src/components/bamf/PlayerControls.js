@@ -67,7 +67,7 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
 		if ( scope.enabled === false ) return;
 
-		console.log("dragging mouse..");
+		//console.log("dragging mouse..");
 		e.preventDefault();
 
 		let x = e.clientX;
@@ -101,7 +101,7 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
 		//e.preventDefault();
 
-		console.log("mouse is down");
+		//console.log("mouse is down");
 	
 		mouse.set(e.clientX, e.clientY);
 	
@@ -223,7 +223,7 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 		
 
         if (firstLoop) {
-          console.log("end position: ",scope.position);
+          //console.log("end position: ",scope.position);
           firstLoop = false;
         }
 
@@ -266,7 +266,7 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
 	this.stop = function (){
 		clock.stop();
-		console.log(clock);
+		//console.log(clock);
 	}
 
 	this.start = function (){

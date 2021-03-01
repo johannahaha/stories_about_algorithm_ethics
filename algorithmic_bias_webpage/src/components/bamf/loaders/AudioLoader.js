@@ -8,7 +8,7 @@ class AudioLoader{
     }
 
     async init(){
-        let paths = ['/sound/irish.wav'];
+        let paths = ['/sound/irish.wav','/sound/scottish.wav'];
 
         const manager = new THREE.LoadingManager();
         manager.onStart = function ( url, itemsLoaded, itemsTotal ) {

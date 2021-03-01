@@ -13,11 +13,14 @@
             <p>{{ informations[1].content }}</p>
         </div>
         <button id="pause">pause</button>
-        <transition @before-enter="beforeEnterInfo" @enter="enterInfo" @leave="leaveInfo">
-            <div class="info" v-if="infoElement2" @click="stopInfo">
-                {{ informations[1].content }}
-            </div>
-        </transition>
+        <Information 
+        :infoElement="infoElement2" 
+        :informations="informations"
+        :infoId="infoId"
+        @click="infoElement2 = false"
+        @information-closed="stopInformationPhase"> </Information>
+
+
 
         <div id="container"></div>
     </div>
@@ -27,8 +30,9 @@
 "use strict";
 
 //#region imports
+import Information from './Information.vue';
+
 import * as THREE from "three";
-import {gsap} from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 //import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
 //import { PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls.js';
@@ -55,9 +59,6 @@ import {InformationManager} from './InformationManager.js';
 let scene, renderer
 let overviewControls, controls;
 
-//follow path
-let firstLoop = true;
-let direction = new THREE.Vector3(0,0,0);
 
 let frame;
 
@@ -84,12 +85,13 @@ let informationPhase = false;
 // const raycaster = new THREE.Raycaster();
 
 // //TODO: resizing
-const windowSize = new THREE.Vector2( window.offsetWidth, window.offsetHeight);
+//const windowSize = new THREE.Vector2( window.offsetWidth, window.offsetHeight);
 
 
 //#endregion
 
 export default {
+    components: { Information },
   name: 'Scene',
   props: {
     informations:{
@@ -99,51 +101,11 @@ export default {
   data: function(){
     return{
       preloading: true,
-      infoElement2: false
+      infoElement2: false,
+      infoId: 0,
     }
   },
   methods: {
-    //TODO: fix html element gsap
-    //#region GSAP transitions
-    beforeEnterInfo(el) {
-      gsap.set(el, {
-        scaleX: 0,
-        scaleY: 0,
-        opacity: 0
-      })
-    },
-    enterInfo(el,done){
-         gsap.to(".info",{
-            duration: 1,
-            scaleX: 1,
-            scaleY: 1,
-            opacity:1,
-            y: windowSize.y/2,
-            x: windowSize.x/4,
-            onComplete: done
-        })
-    },
-    stopInfo(){
-        if(informationPhase){
-            if (this.infoElement2){
-                 this.infoElement2 = false;
-            }
-        console.log("clicked on elem");
-        }
-    },
-    leaveInfo(){
-        gsap.to(".info",{
-            duration: 1,
-            scaleX: 0,
-            scaleY: 0,
-            opacity: 0,
-            onComplete: this.stopInformationPhase,
-        })
-        infoManager.informationPhase = false;
-        infoManager.htmlInformation = false;
-    },
-     //#endregion
-
     //#region THREE js
     preLoadPath: function (){
         path = new PathLoader();
@@ -183,22 +145,15 @@ export default {
     initPath: function(pathVertices,parent) {
         //SPLINE
         let spline = new THREE.CatmullRomCurve3(pathVertices);
-        console.log("spline",spline);
-        console.log(spline);
-        
         spline.curveType = 'catmullrom';
         spline.closed = true;
-        console.log("spline here", spline);
 
         //segments need to be at least spline.length/2 for a smooth followPath
-        console.log("calculating segments...");
         let segments = Math.floor(spline.points.length/2);
-        console.log("segments",segments);
         
         //TUBE HELPER GEOMETRY
         helperTubeGeometry = new THREE.TubeBufferGeometry( spline, segments, 2, 10, false );
         helperTubeGeometry.computeTangents(); //for helper function
-        console.log("tube geo", helperTubeGeometry);
 
         //EXTRUDE GEOMETRY
         const extrudeSettings = {
@@ -218,8 +173,6 @@ export default {
 		const shape = new THREE.Shape( points );
         let pathGeometry = new THREE.ExtrudeBufferGeometry( shape, extrudeSettings );
 
-        console.log("path geo", pathGeometry);
-
         //MATERIAL
         // const material = new THREE.MeshPhongMaterial( 
         //   { color: 0xA64E2E } );
@@ -235,7 +188,6 @@ export default {
         
 
         mesh.scale.set(4, 4, 4);
-        console.log("mesh",mesh);
 
         //HELPERS
         //let mesh2 = new THREE.Mesh(helperTubeGeometry,new THREE.MeshBasicMaterial({color:0xfff000}));
@@ -258,7 +210,7 @@ export default {
     init: function() {
 		console.log("I am in the init");
         let container = document.getElementById('container');
-        if (firstLoop) {console.log("beginning direction ",direction);}
+        //if (firstLoop) {console.log("beginning direction ",direction);}
 
         //SCENE
         scene = new THREE.Scene();
@@ -271,10 +223,10 @@ export default {
         overviewCamera.position.set( -50, 50, 200 );
         
         //path following camera
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000000);
         camera.position.y = 5;
         const listener = new THREE.AudioListener();
-        camera.add( listener );
+        camera.add( listener ); //stored as camera.children
 
         const light = new THREE.DirectionalLight( 0xffffff, 0.7 );
         light.position.set( 500, 500, 0 ).normalize();
@@ -310,7 +262,6 @@ export default {
 		parent.add( cameraEye );
 
         //INFORMATION ELEMENT 
-        console.log("font", font);
         let info = new InformationElement(scene,font,new THREE.Vector3(-40,0,40));
         info.init();
 
@@ -322,12 +273,12 @@ export default {
         renderer.setSize(container.clientWidth, container.clientHeight);
         renderer.getContext().getExtension('OES_standard_derivatives');
         renderer.outputEncoding = THREE.sRGBEncoding
-        console.log("extensions",console.log(renderer.getContext().getSupportedExtensions()));
+        //console.log("extensions",console.log(renderer.getContext().getSupportedExtensions()));
 
         //SVG path
         this.initPath(pathVertices,parent);
 
-        console.log(models);
+        //console.log(models);
         scene.add(models[0].scene);
 
         container.appendChild(renderer.domElement);
@@ -389,11 +340,16 @@ export default {
         controls.update(true);
         //informationPhase = false;
         informationRunning = false;
-        console.log("informationPhase stopped.")
+        if(infoManager.htmlInformation){
+            this.infoElement2 = false;
+            infoManager.informationPhase = false;
+            infoManager.htmlInformation = false;
+        }
+        //console.log("informationPhase stopped.")
         window.removeEventListener( 'pointerdown',  this.onPointerDownInfo);
     },  
     animateCamera: function() {
-        console.log("animate camera called");
+        //console.log("animate camera called");
         cameraHelper.visible = cameraHelperOn;
         cameraEye.visible = cameraHelperOn;
     },
@@ -408,13 +364,14 @@ export default {
                 if(!informationRunning){
                     controls.stop();
                     informationRunning = true;
-                    console.log("htmlInfo?",infoManager.htmlInformation);
+                    //console.log("htmlInfo?",infoManager.htmlInformation);
 
                     if(infoManager.htmlInformation){
-                        console.log("html info registered");
+                        this.infoId = infoManager.htmlInfoId;
+                        //console.log("html info registered");
                         this.infoElement2 = true;
                     }
-                    console.log("starting InformationPhase, Controls stop")
+                    //console.log("starting InformationPhase, Controls stop")
                 }
 			}
 
@@ -487,18 +444,5 @@ export default {
     margin: 0;
 }
 
-.info {
-    position: absolute;
-    color: #ffffff;
-    width: 100%;
-    padding: 1rem;
-    box-sizing: border-box;
-    text-align: center;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    z-index: 1;
-}
 </style>
 

@@ -44,7 +44,7 @@ class PathLoader {
     createBorder(data){
         const paths = data.paths;
         //const group = new THREE.Group();
-        console.log("path lenght", paths.length);
+        //console.log("path lenght", paths.length);
 
 		if (paths.length === 1){
 
@@ -70,7 +70,7 @@ class PathLoader {
                 let mesh = new THREE.Mesh(geometry,new THREE.Material());
                 
                 let positionAttribute = mesh.geometry.getAttribute( 'position' );
-                console.log("pos attribute",positionAttribute);
+                //console.log("pos attribute",positionAttribute);
 
                 let localVertex = new THREE.Vector3();
 
@@ -89,13 +89,13 @@ class PathLoader {
                 mesh.geometry.setAttribute("position",new THREE.Float32BufferAttribute( switchedVertices, 3 ))
                 mesh.geometry.setAttribute("normal", THREE.Float32BufferAttribute( normals, 3 ))
 
-                console.log(mesh.geometry);
+                //console.log(mesh.geometry);
 
 
                 //set center of vertices to zero with bounding box
                 mesh.geometry.computeBoundingBox();
                 let bb = mesh.geometry.boundingBox;
-                console.log("bb",bb);
+                //console.log("bb",bb);
                 mesh.geometry.translate(-bb.max.x/2,0,-bb.max.z/2);
 
                 //transform this bufferGeoMesh to array of vectors
@@ -255,7 +255,7 @@ class PathLoader {
 
     }
     getVertices(){
-        console.log("path vertices", this.vertices);
+        //console.log("path vertices", this.vertices);
         return this.vertices;
     }
 
