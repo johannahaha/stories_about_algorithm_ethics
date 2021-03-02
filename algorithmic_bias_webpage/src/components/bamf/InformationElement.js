@@ -13,7 +13,6 @@ class InformationElement    {
         }
         this.isImage = isImage;
         this.scale = scale;
-
     }
 
     init(){
@@ -34,10 +33,17 @@ class InformationElement    {
 
     createBBox(){
         //BOUNDING BOX for clicking
+        if (this.bbox !== undefined){
+            this.scene.remove(this.bbox);
+            this.bbox.geometry.dispose();
+            this.bbox.material.dispose();
+            this.bbox = undefined;
+            console.log("bbox hopefully undefined here: ",this.bbox)
+        }
+
         const box3 = new THREE.Box3().setFromObject(this.obj);
 
         const dimensions = new THREE.Vector3().subVectors( box3.max, box3.min );
-        console.log("dimensions",dimensions)
         if(dimensions.x === 0) dimensions.x=1;
         if(dimensions.y === 0) dimensions.y=1;
         if(dimensions.z === 0) dimensions.z=1;
@@ -46,7 +52,10 @@ class InformationElement    {
         const matrix = new THREE.Matrix4().setPosition(dimensions.addVectors(box3.min, box3.max).multiplyScalar( 0.5 ));
         boxGeo.applyMatrix4(matrix);
 
-        this.bbox = new THREE.Mesh(boxGeo, new THREE.MeshBasicMaterial( { color: 0xDDDfff,visible:false} ));
+        this.bbox = new THREE.Mesh(boxGeo, new THREE.MeshBasicMaterial( { color: 0xDDDfff,visible:true,transparent: true,opacity:0.5} ));
+
+        const axesHelper = new THREE.AxesHelper( 5 );
+        this.bbox.add( axesHelper );
         this.scene.add(this.bbox);
     }
 
@@ -65,18 +74,27 @@ class InformationElement    {
 
         const geometry = new THREE.ShapeBufferGeometry( shapes );
 
-        geometry.computeBoundingBox();
         geometry.scale(this.scale,this.scale,this.scale);
+        geometry.computeBoundingBox();
 
+        //translate 0.5 in x direction. but I want all.
         const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
+        const yMid = 0.5 * ( geometry.boundingBox.max.y - geometry.boundingBox.min.y );
 
-        geometry.translate( xMid, 0, 0 );
+        geometry.translate(xMid,yMid,0);
 
         text = new THREE.Mesh( geometry, matLite ); 
 
-        text.position.x = this.position.x;
-        text.position.y = this.position.y;
-        text.position.z = this.position.z;
+        text.position.x += this.position.x;
+        text.position.y += this.position.y;
+        text.position.z += this.position.z;
+
+        //HELPER
+        let sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(),new THREE.MeshBasicMaterial({color:0xff0000}))
+        sphere.position.x = this.position.x;
+        sphere.position.y = this.position.y;
+        sphere.position.z = this.position.z;
+        this.scene.add(sphere)
         //console.log("returned text:", text);
         return text;
     }
@@ -126,15 +144,21 @@ class InformationElement    {
     rotate(axis,angle){
         if (axis === "X"){
             this.obj.rotateX(angle);
+            this.createBBox();
             //this.bbox.rotateX(angle);
         }
         else if (axis === "Y"){
+            console.log("rotating Y");
             this.obj.rotateY(angle);
+            this.createBBox();
+            //this.bbox.rotateY(angle);
         }
         else if (axis === "Z"){
             this.obj.rotateZ(angle);
+            this.createBBox();
+            //this.bbox.rotateZ(angle);
         }
-        this.createBBox();
+        console.log(this.bbox);
     }
 
 

@@ -1,6 +1,6 @@
 <template>
     <transition @before-enter="beforeEnterInfo" @enter="enterInfo" @leave="leaveInfo">
-        <div class="info" v-if="infoElement">
+        <div class="info" :style="style" v-if="infoElement">
                 {{ informations[infoId].content }}
         </div>
     </transition>
@@ -11,7 +11,7 @@ import {gsap} from 'gsap';
 import {Vector2} from 'three';
 
 //TODO: resizing
-let windowSize;
+//let windowSize;
 
 export default {
     props: {
@@ -26,32 +26,47 @@ export default {
         },
         scale:{
             type: Number
+        },
+        position: {
+            type: Vector2
+        }
+    },
+    computed: {
+        style(){
+            return 'font-size: '+ this.scale + 'rem';
+        },
+        posPercentLeft(){
+            return '"'+this.position.x+'%"'
+        },
+        posPercentTop(){
+            return '"'+this.position.y+'%"'
         }
     },
     methods: {
         //#region GSAP transitions
         beforeEnterInfo(el) {
         gsap.set(el, {
-            scaleX: 0,
-            scaleY: 0,
+            scaleX: 1,
+            scaleY: 1,
             opacity: 0
         })
         },
         enterInfo(el,done){
             gsap.to(el,{
                 duration: 1,
-                scaleX: this.scale,
-                scaleY: this.scale,
+                scaleX: 1,
+                scaleY: 1,
                 opacity:1,
-                y: windowSize.y/2,
-                x: windowSize.x/4,
+                xPercent:this.position.x, 
+                left:this.posPercentLeft, 
+                yPercent:this.position.y, 
+                top:this.posPercentTop, 
                 onComplete: done
             })
         },
         leaveInfo(el,done){
-            console.log("leaving info");
             gsap.to(el,{
-                duration: 3,
+                duration: 0.5,
                 scaleX: 0,
                 scaleY: 0,
                 y:0,
@@ -59,12 +74,11 @@ export default {
             })
         },
         onClose(){
-            console.log("close this");
             this.$emit("information-closed")
         }
     },
     mounted(){
-        windowSize = new Vector2( window.offsetWidth, window.offsetHeight);
+        //windowSize = new Vector2( window.offsetWidth, window.offsetHeight);
     }
     
 }
@@ -75,8 +89,8 @@ export default {
     white-space: pre-line;
     position: absolute;
     color: black;
-    width: 100%;
-    padding: 1rem;
+    /* //width: 100vw;
+    //height: 100vh; */
     box-sizing: border-box;
     text-align: center;
     -moz-user-select: none;

@@ -19,6 +19,8 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	this.enabled = false;
 	this.segment;
 
+	this.offset = 15;
+
 	//
 	// internals
 	//
@@ -47,9 +49,7 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
 	const clock = new Clock();
 	let delta;
-	let speed = 0.001;
-
-
+	let speed = 0.01;//0.002;//0.001;
 	
 	//follow path
 	let firstLoop = true;
@@ -58,8 +58,10 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	this.normal = new Vector3();
 	this.position = new Vector3();
 	let lookAt = new Vector3();
-	let lookAhead = false;
+	let lookAhead = true;
 	let t=0;
+	const segments = this.helperTubeGeometry.tangents.length;
+	let pick,pickt,pickNext
 
 
 	//TODO: onTouchMove for mobile devices
@@ -137,14 +139,14 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	function followPath(){
 		if ( scope.enabled === false ) return;
 
-		const segments = scope.helperTubeGeometry.tangents.length;
+		//const segments = scope.helperTubeGeometry.tangents.length;
         //if (firstLoop) {console.log("tangenten: ",scope.helperTubeGeometry.tangents);}
-		let	pickt = t * segments;
-		let	pick = Math.floor( pickt );
+		pickt = t * segments;
+		pick = Math.floor( pickt );
 
 		scope.segment = pick;
         //if (firstLoop) {console.log("pick: ",pick);}
-        const pickNext = ( pick + 1 ) % segments;
+        pickNext = ( pick + 1 ) % segments;
 
 		//using delta to make animation more smooth
 		delta = clock.getDelta();
@@ -166,7 +168,6 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
         //tangente copied into direction
         //if (firstLoop) {console.log("t ",t);}
         scope.helperTubeGeometry.parameters.path.getTangentAt( t, direction );
-        const offset = 15;
 
         //the bug is somewhere at the tangente, that sets the wrong direction. It works differently if the tube is in 3D
         // so if one Z value is changed.
@@ -183,7 +184,7 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
         //normal.copy(binormal);
 
         // we move on a offset on its binormal
-        scope.position.add( scope.normal.clone().multiplyScalar( offset ) );
+        scope.position.add( scope.normal.clone().multiplyScalar( scope.offset ) );
 
 		//camera.rotation.y = -camRotationY;
 
@@ -199,32 +200,13 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
         if ( !lookAhead ){ 
           lookAt.copy( scope.position ).add( direction );
         }
+		// Constructs a rotation matrix, looking from eye towards center oriented by the up vector. 
         camera.matrix.lookAt( camera.position, lookAt, scope.normal );
         camera.quaternion.setFromRotationMatrix( camera.matrix,camera.rotation.order );
 		
-		
-		// target.x = (1 - mouse.x) * 0.002;
-		// target.y = (1 - mouse.y) * 0.002;
-
-		// //camRotationX += 0.05 * (target.y - camera.rotation.x);
-		// camRotationY += 0.05 * (target.x - camera.rotation.y);
-		// console.log(camRotationY);
-		// if(camRotationY >= 0.45){
-		// 	camRotationY = 0.45;
-		// } 
-		// if(camRotationY <= -0.45){
-		// 	camRotationY = -0.45;
-		// } 
-		
-		// //camera.rotation.x = camRotationX;
-		// camera.rotation.y = camRotationY;
 
 		rotateCam();
-		
-		//camera.quaternion.setFromEuler( euler );
 
-		//calcEuler();
-		
 
         if (firstLoop) {
           //console.log("end position: ",scope.position);

@@ -10,6 +10,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     this.informationPhase = false;
     this.htmlInformation = false;
     this.htmlInfoId = 0;
+    this.htmlPosition = new THREE.Vector2(0,0);
 
     this.scene = scene;
     this.domElement = domElement;
@@ -24,7 +25,8 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
     let scope = this;
 
-    let infoSegments = [12,20,30,40,50,60,70,80,90,100,110,120,130,140];
+    //let infoSegments = [12,20,30,40,50,60,70,80,90,100,110,120,130,140];
+    let infoSegments = [20,40,70,100,120,140,170,190,220,240,280,300];
     //let infoSegments = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
     let infoSegmentsDone = [];
     let infoPos = new THREE.Vector3();
@@ -32,11 +34,15 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     const mouse = new THREE.Vector2();
     const raycaster = new THREE.Raycaster();
 
+    //const windowSize = new THREE.Vector2( scope.domElement.offsetWidth, scope.domElement.offsetHeight);
+
     const cam = new THREE.Vector3();
     const defaultStartVector = new THREE.Vector3(0,0,-30);
     const defaultViewingDist = new THREE.Vector3(0,0,50);
+    const defaultHtmlPos = new THREE.Vector2(50,0);
     const customStartVector = new THREE.Vector3();
     const customViewingDist = new THREE.Vector3();
+    const customHtmlPos = new THREE.Vector2();
     const aabb = new THREE.Box3();
     const lastCam = new THREE.Camera();
     
@@ -55,7 +61,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 z: rotation.z,
                 onStart: function(){
                     scope.controls.enable = false;
-                    console.log("START",camera.rotation.x);
                 },
                 onUpdate: function() {
                     //scope.camera.lookAt( center );
@@ -66,8 +71,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 onComplete: function(){
                     scope.controls.resetMouse();
                     scope.controls.enable = true;
-    
-                    console.log("DONE",camera.rotation.x);
                 }
               })
           }
@@ -79,6 +82,9 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             x: center.x,
             y: center.y,
             z: center.z, // maybe adding even more offset depending on your model
+            onStart: function(){
+                scope.controls.enable = false;
+            },
             onUpdate: function() {
                 //scope.camera.lookAt( center );
                 scope.cameraHelper.update();
@@ -89,25 +95,35 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 if (typeof onComplete === 'function'){
                     onComplete();
                 }
+                scope.controls.resetMouse();
+                scope.controls.enable = true;
             }
         }, ); 
       }
 
       //TODO SCALE
-    function infoOverPath(id,{startVector = defaultStartVector,viewingDist = defaultViewingDist,onComplete} = {}){
+    function infoOverPath(id,{startVector = defaultStartVector,
+                        viewingDist = defaultViewingDist,
+                        height = 35,
+                        onComplete,
+                        infoRotAxis,
+                        infoRotAngle} = {}){
         lastCam.copy(scope.camera);
         
         infoPos = startVector.applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
-        infoPos.y = 50;
+        infoPos.y = height + scope.controls.offset;
         let text = scope.informations[id].content;
         let scale = scope.informations[id].scale;
-        let info2 = new InformationElement(scope.scene,scope.font,infoPos,text,false,scale);
-        info2.init();
+        let info = new InformationElement(scope.scene,scope.font,infoPos,text,false,scale);
+        info.init();
 
-        camToObject(info2.getMeshObject(),viewingDist,onComplete);
+        if(typeof infoRotAxis === "string" && typeof infoRotAngle === "number"){
+            info.rotate(infoRotAxis,infoRotAngle);
+        }
+
+        camToObject(info.getMeshObject(),viewingDist,onComplete);
         let objects = [];
-        objects.push(info2.bbox);
-        console.log("objects",objects);
+        objects.push(info.bbox);
 
         window.addEventListener('pointerdown', (event) => scope.onPointerDownInfo(event, objects, function(){
             gsap.to( scope.camera.position,{
@@ -116,10 +132,15 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 x: lastCam.position.x,
                 y: lastCam.position.y,
                 z: lastCam.position.z,
+                onStart: function(){
+                    scope.controls.enable = false;
+                },
                 onComplete: function(){
                     scope.informationPhase = false;
                     console.log("informationPhase is false");
-                    console.log(scope);}
+                    console.log(scope);
+                    scope.controls.resetMouse();
+                    scope.controls.enable = true;}
             })
         //using bind this because it is higher order function
         //https://stackoverflow.com/a/59060545
@@ -148,18 +169,25 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 x: infoPos.x - 100,
                 y: 20,
                 z: infoPos.z - 100,
-                onComplete: function(){scope.informationPhase = false}
+                onStart: function(){
+                    scope.controls.enable = false;
+                },
+                onComplete: function(){
+                    scope.informationPhase = false;
+                    scope.controls.resetMouse();
+                    scope.controls.enable = true}
             })
         //using bind this because it is higher order function
         //https://stackoverflow.com/a/59060545
         }.bind(this)));
     }
 
-    function infoAsHtml(id,{scale = 1}={}){
+    //TODO: fix the html transition leave
+    function infoAsHtml(id,{scale = 1, position = defaultHtmlPos}={}){
         scope.htmlInformation = true;
         scope.htmlInfoId = id;
         scope.htmlScale = scale;
-        console.log("html information",scope.htmlInformation);
+        scope.htmlPosition = position;
     }
 
     function manageInfo(infoNumber){
@@ -171,7 +199,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoOverPath(0);
         }
 
-        //TODO: fix the html transition leave
+        //DONE
         else if (infoNumber === infoSegmentsDone[1]){
             //console.log("window",windowSize);
             //scope.infoElement2 = true;
@@ -183,13 +211,13 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         //TODO: bamf not gsap animated
         //bamf model in here
         else if (infoNumber === infoSegmentsDone[2]){
-            customStartVector.set(-30,0,0)
+            customStartVector.set(0,0,-20)
             infoFlyingToCam(2,{startVector:customStartVector});
             //infoPos = new THREE.Vector3( 20, 20, -20 ).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
             let bamf = models[0].scene;
             console.log("bamf",bamf);
             //bamf.material.metalness = 0;
-            infoPos = customStartVector.set(-30,0,0).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
+            infoPos.set(-30,0,0).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
             infoPos.y = 15;
             bamf.position.set(infoPos.x - 100 ,infoPos.y,infoPos.z - 100);
             bamf.scale.set(5,5,5);
@@ -197,9 +225,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             console.log(models[0])
 
             scope.scene.add(models[0].scene);
-
-
-
         }
 
         //DONE
@@ -233,18 +258,22 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
         //DONE, maybe place in center or somewhere else
         else if(infoNumber === infoSegmentsDone[4]){
-            infoAsHtml(4);
+            customHtmlPos.set(50,50)
+            infoAsHtml(4,{position:customHtmlPos});
         }
 
-        //TODO: more centered over path
+        //DONE
+        //BBOX OF THING NOT WORKING
         else if(infoNumber === infoSegmentsDone[5]){
             cam.set(0,0,-1);
-            camera.getWorldDirection(cam);
+            camera.getWorldDirection(cam).addScalar(30);
             cam.y = 0;
-            console.log("cam",cam);
-            console.log("cam 30",cam.addScalar(30));
-            customViewingDist.set(20,0,20)
-            infoOverPath(5,{startVector:cam.addScalar(30),viewingDist: customViewingDist})
+            //console.log("cam 30",cam.addScalar(30));
+            customViewingDist.set(cam.x+30,cam.y,cam.z+30);
+            //const angle = THREE.MathUtils.degToRad(50);
+            const angle = camera.rotation.y;
+            console.log("angle",angle)
+            infoOverPath(5,{startVector:cam,viewingDist: customViewingDist,infoRotAxis:"Y",infoRotAngle:angle})
             //infoOverPath(5,new THREE.Vector3(30,0,30));
         }
 
@@ -253,19 +282,31 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoAsHtml(6);
         }
 
-        //TODO: bad, this is really bad. Position in front of me please. Z is doing something here.
+        //DONE
         else if(infoNumber === infoSegmentsDone[7]){
-            cam.set(0,0,0)
-            camera.getWorldDirection(cam);
-            infoFlyingToCam(7,{viewingDist:cam.addScalar(20)});
+            gsap.to(scope.controls,{
+                duration: 4,
+                ease:"power4",
+                offset: 60,
+                lookAtInfluence:0.5,
+                onComplete: function() {
+                    cam.set(0,0,-10)
+                    camera.getWorldDirection(cam).addScalar(10);
+                    customViewingDist.set(cam.x,cam.y,cam.z);
+                    infoFlyingToCam(7,{startVector:cam,viewingDist:customViewingDist});
+                }
+            })
         }
 
-        //audio in here
+        //TODO: place audio at correc tspace
         else if(infoNumber === infoSegmentsDone[8]){
-            customStartVector.set(-30,0,0);
-            customViewingDist.set(50,0,0);
+            cam.set(0,0,-1);
+            camera.getWorldDirection(cam).addScalar(30);
+            cam.y = 0;
+            //console.log("cam 30",cam.addScalar(30));
+            customViewingDist.set(cam.x,cam.y,cam.z);
 
-            infoOverPath(8,{startVector:customStartVector,viewingDist:customViewingDist})//onComplete:function(){
+            infoOverPath(8,{startVector:cam,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:camera.rotation.y})//onComplete:function(){
             //         let cross = new THREE.Vector3();
             //         camera.getWorldDirection(cross);
             //         cross.cross(camera.up);
@@ -283,13 +324,15 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             // });
         }
         
+        //TODO: maybe keep following path a bit while reading this
         else if(infoNumber === infoSegmentsDone[9]){
             infoAsHtml(9);
         }
 
         //audio in here
         else if(infoNumber === infoSegmentsDone[10]){
-            infoFlyingToCam(10,{startVector:new THREE.Vector3( 0, 0, -30 )})
+            customStartVector.set(0,0,-30);
+            infoFlyingToCam(10,{startVector:customStartVector})
             // infoPos = (new THREE.Vector3( 0, 0, -30 )).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
             // infoPos.y = 20;
             // let text = scope.informations[10].content;
@@ -299,11 +342,11 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             let cross = new THREE.Vector3();
             camera.getWorldDirection(cross);
             cross.cross(camera.up);
-            console.log("cross",cross);
+            //console.log("cross",cross);
             // console.log("infoPos",infoPos);
             let irishPos = camera.clone().position.addScaledVector(cross,5);
             let irish = new AudioElement(audios[0],"#222a8f");
-            console.log("irish",irishPos);
+            //console.log("irish",irishPos);
             irish.place(scene,camera.children[0],irishPos);
 
             window.addEventListener('pointerdown', (event) => scope.onPointerDownInfo(event, [irish.getMesh()], function(){
@@ -312,7 +355,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
             let scottish = new AudioElement(audios[1],"#3a8f22");
             let scottishPos = camera.clone().position.addScaledVector(cross,-5);
-            console.log("scottish",scottishPos);
+            //console.log("scottish",scottishPos);
             scottish.place(scene,camera.children[0],scottishPos);
 
             window.addEventListener('pointerdown', (event) => scope.onPointerDownInfo(event, [scottish.getMesh()], function(){
@@ -323,7 +366,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             //     scope.informationPhase = false;
             // }.bind(this)));
 
-            console.log("scene",scene)
         }
 
         else if(infoNumber === infoSegmentsDone[11]){
@@ -335,12 +377,13 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         else if(infoNumber === infoSegmentsDone[12]){
             cam.set(0,0,0);
             camera.getWorldDirection(cam);
-            infoOverPath(12,{startVector:new THREE.Vector(-30,0,0),viewingDist:cam.addScalar(20)});
+            customStartVector.set(-30,0,0);
+            infoOverPath(12,{startVector:customStartVector,viewingDist:cam.addScalar(20)});
         }
         
 
         else if (infoNumber === infoSegmentsDone[30]){
-            infoPos = (new THREE.Vector3( 0, 0, -30)).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
+            infoPos = defaultStartVector.applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
             infoPos.y = 10;
             let path = scope.informations[3].content;
             let info = new InformationElement(scope.scene,scope.font,infoPos,path,scope.informations[3].isImage);
@@ -392,7 +435,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         if (infoSegments[0] === controlsSegment){
             let info = infoSegments.shift();
             infoSegmentsDone.push(info)
-            console.log(infoSegments);
+            //console.log(infoSegments);
             //controls.stop();
             this.informationPhase = true;
             manageInfo(info);

@@ -77,6 +77,7 @@ let guiParameters;
 let infoManager;
 let informationRunning = false;
 let informationPhase = false;
+
 //let infoSegments = [12,20,30,40];
 //let infoSegmentsDone = [];
 //let infoPos = new THREE.Vector3();
@@ -104,6 +105,7 @@ export default {
         infoElement: false,
         infoId: 0,
         scale: 1,
+        position: new THREE.Vector2(0,0)
       }
     }
   },
@@ -375,6 +377,7 @@ export default {
                     if(infoManager.htmlInformation){
                         this.htmlProps.infoId = infoManager.htmlInfoId;
                         this.htmlProps.scale = infoManager.htmlScale;
+                        this.htmlProps.position = infoManager.htmlPosition;
                         //console.log("html info registered");
                         this.htmlProps.infoElement = true;
                         console.log("html props",this.htmlProps);
