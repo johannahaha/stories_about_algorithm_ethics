@@ -17,6 +17,7 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	this.isLocked = false;
 	this.helperTubeGeometry = helperGeo;
 	this.enabled = false;
+	this.enableMouseControl = true;
 	this.segment;
 
 	this.offset = 15;
@@ -62,6 +63,10 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	let t=0;
 	const segments = this.helperTubeGeometry.tangents.length;
 	let pick,pickt,pickNext
+
+	let euler = new Euler();
+	let lastEuler = new Euler();
+	let rotationDi= new Vector3();
 
 
 	//TODO: onTouchMove for mobile devices
@@ -126,6 +131,7 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
 	function rotateCam(){
 		if ( scope.enabled === false ) return;
+		if ( scope.enableMouseControl === false ) return;
 
 		let dx = clamp(destination.x, - HALF_PI, HALF_PI);
 		let dy = destination.y;
@@ -202,10 +208,20 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
         }
 		// Constructs a rotation matrix, looking from eye towards center oriented by the up vector. 
         camera.matrix.lookAt( camera.position, lookAt, scope.normal );
+		lastEuler.set(euler.x,euler.y,euler.z);
+		euler.setFromRotationMatrix(camera.matrix);
+		rotationDi.subVectors(lastEuler.toVector3(),euler.toVector3());
         camera.quaternion.setFromRotationMatrix( camera.matrix,camera.rotation.order );
 		
-
-		rotateCam();
+		if (Math.abs(rotationDi.x) < 2.8 && Math.abs(rotationDi.z) < 2.8){
+			rotateCam();
+		}
+		else{
+			console.log("last euler",lastEuler);
+			console.log("euler",euler);
+			scope.resetMouse();
+		}
+		
 
 
         if (firstLoop) {
@@ -265,6 +281,10 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	this.resetMouse = function(){
 		mouse.set(0, 0);
 		destination = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
+	}
+
+	this.getClock = function(){
+		return clock;
 	}
 
 	// this.moveForward = function () {

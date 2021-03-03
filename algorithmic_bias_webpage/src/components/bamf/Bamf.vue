@@ -83,7 +83,7 @@ export default {
             },
             {
                 id: 10,
-                content: "After hearing thousands of those samples, it can maybe detect that the blue sphere is Irish and the green sphere is Scottish",
+                content: "After hearing thousands of those samples, \n it can maybe detect that the blue sphere is Irish and the green sphere is Scottish",
                 isImage: false,
                 scale: 0.2
             },

@@ -10,26 +10,31 @@ class AudioElement{
         this.color = color;
     }
 
-    place(scene,listener,pos){
+    place(listener,parent,{x = 0, y = 0, z=0,distance = 1} = {}){
         console.log("place");
         this.sound = new THREE.PositionalAudio( listener );
 
         this.sound.setBuffer(this.audio);
         this.sound.setRefDistance(20);
-        //sound.play();
         let spheregeo = new THREE.SphereBufferGeometry(1, 12, 12);
         this.mesh = new THREE.Mesh(spheregeo,new THREE.MeshPhongMaterial({color:this.color}))
-        this.mesh.position.x = pos.x;
-        this.mesh.position.y = 50;
-        this.mesh.position.z = pos.z;
+        
         this.mesh.add(this.sound);
-        scene.add(this.mesh);
+        parent.add(this.mesh);
+        
+        let aabb = parent.geometry.boundingBox.getSize( new THREE.Vector3() )
 
-        gsap.to(this.mesh.position,{
+        this.mesh.position.x = (aabb.x + distance) * x
+        this.mesh.position.y = (aabb.y + distance) * y
+        this.mesh.position.z = (aabb.z + distance) * z
+
+    
+
+        gsap.from(this.mesh.position,{
             delay:2,
             duration: 2,
             ease: "elastic",
-            y: pos.y,
+            y: 100,
         })
 
 

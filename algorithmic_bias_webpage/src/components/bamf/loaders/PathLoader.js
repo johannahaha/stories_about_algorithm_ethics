@@ -43,6 +43,7 @@ class PathLoader {
 
     createBorder(data){
         const paths = data.paths;
+        console.log(paths);
         //const group = new THREE.Group();
         //console.log("path lenght", paths.length);
 
