@@ -381,6 +381,16 @@ export default {
                         //console.log("html info registered");
                         this.htmlProps.infoElement = true;
                         console.log("html props",this.htmlProps);
+
+                        if(infoManager.infoFollowPath){
+                            //Faking , that there is no information on the screen
+                            //so that it keeps following the path
+                            //handling of the info happens in Manager
+                            informationPhase = false;
+                            infoManager.informationPhase = false;
+                            infoManager.htmlInformation = false;
+                            informationRunning = false;
+                        }
                     }
                     //console.log("starting InformationPhase, Controls stop")
                 }

@@ -52,7 +52,7 @@ class InformationElement    {
         const matrix = new THREE.Matrix4().setPosition(dimensions.addVectors(box3.min, box3.max).multiplyScalar( 0.5 ));
         boxGeo.applyMatrix4(matrix);
 
-        this.bbox = new THREE.Mesh(boxGeo, new THREE.MeshBasicMaterial( { color: 0xDDDfff,visible:true,transparent: true,opacity:0.5} ));
+        this.bbox = new THREE.Mesh(boxGeo, new THREE.MeshPhongMaterial( {color: 0xffDDDD,visible:true,wireframe:true,wireframeLinewidth: 5} ));
 
         const axesHelper = new THREE.AxesHelper( 5 );
         this.bbox.add( axesHelper );
@@ -159,6 +159,11 @@ class InformationElement    {
             //this.bbox.rotateZ(angle);
         }
         console.log(this.bbox);
+    }
+
+    translate(vec){
+        this.obj.geometry.translate(vec.x,vec.y,vec.z);
+        this.createBBox();
     }
 
 

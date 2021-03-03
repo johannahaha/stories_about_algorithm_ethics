@@ -8,6 +8,8 @@ import {AudioElement} from './AudioElement.js'
 let InformationManager = function(scene,domElement,camera,controls,informations,font,models,audios,cameraHelper,cameraEye){
     
     this.informationPhase = false;
+    this.infoFollowPath = false;
+
     this.htmlInformation = false;
     this.htmlInfoId = 0;
     this.htmlPosition = new THREE.Vector2(0,0);
@@ -26,7 +28,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     let scope = this;
 
     //let infoSegments = [12,20,30,40,50,60,70,80,90,100,110,120,130,140];
-    let infoSegments = [20,40,70,100,120,140,170,190,220,240,280,300];
+    let infoSegments = [20,40,70,100,120,140,170,220,240,280,300];
     //let infoSegments = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
     let infoSegmentsDone = [];
     let infoPos = new THREE.Vector3();
@@ -103,14 +105,21 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
       //TODO SCALE
     function infoOverPath(id,{startVector = defaultStartVector,
+                        useQuaternion = true,   
                         viewingDist = defaultViewingDist,
                         height = 35,
-                        onComplete,
+                        onLeavingInfo,
                         infoRotAxis,
-                        infoRotAngle} = {}){
+                        infoRotAngle,
+                        infoTranslate} = {}){
         lastCam.copy(scope.camera);
         
-        infoPos = startVector.applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
+        if (useQuaternion){
+            infoPos = startVector.applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
+        }
+        else{
+            infoPos.copy(camera.position);
+        }
         infoPos.y = height + scope.controls.offset;
         let text = scope.informations[id].content;
         let scale = scope.informations[id].scale;
@@ -121,65 +130,115 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             info.rotate(infoRotAxis,infoRotAngle);
         }
 
-        camToObject(info.getMeshObject(),viewingDist,onComplete);
+        if(infoTranslate !== undefined){
+            info.translate(infoTranslate);
+        }
+
+        camToObject(info.getMeshObject(),viewingDist);
         let objects = [];
         objects.push(info.bbox);
 
-        window.addEventListener('pointerdown', (event) => scope.onPointerDownInfo(event, objects, function(){
-            gsap.to( scope.camera.position,{
-                duration: 2,
-                ease: "power4",
-                x: lastCam.position.x,
-                y: lastCam.position.y,
-                z: lastCam.position.z,
-                onStart: function(){
-                    scope.controls.enable = false;
-                },
-                onComplete: function(){
-                    scope.informationPhase = false;
-                    console.log("informationPhase is false");
-                    console.log(scope);
-                    scope.controls.resetMouse();
-                    scope.controls.enable = true;}
-            })
+        //good for testing, but this should only be added when info is done animating
+        window.addEventListener('pointerdown', function handler(event){ 
+            scope.onPointerDownInfo(event, objects, function(){
+                gsap.to( scope.camera.position,{
+                    duration: 2,
+                    ease: "power4",
+                    x: lastCam.position.x,
+                    y: lastCam.position.y,
+                    z: lastCam.position.z,
+                    onStart: function(){
+                        scope.controls.enable = false;
+                    },
+                    onComplete: function(){
+                        if (typeof onComplete === 'function'){
+                            console.log("custom leaving function");
+                            onLeavingInfo();
+                        }
+                        scope.informationPhase = false;
+                        console.log("informationPhase is false");
+                        console.log(scope);
+                        scope.controls.resetMouse();
+                        scope.controls.enable = true;
+                        }
+                })
         //using bind this because it is higher order function
         //https://stackoverflow.com/a/59060545
-        }.bind(this))); 
+            })
+            window.removeEventListener('pointerdown', handler);
+        }.bind(this)); 
     }
 
-    function infoFlyingToCam(id,{startVector = defaultStartVector} = {}){
-        infoPos = startVector.applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
-        infoPos.y = 15;
+    function infoFlyingToCam(id,{startVector = defaultStartVector,
+                                useQuaternion = true,   
+                                delay = 0} = {}){
+        //infoPos = startVector.applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
+        if (useQuaternion){
+            infoPos = startVector.applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
+        }
+        else{
+            infoPos.copy(camera.position);
+        }
+        infoPos.y = scope.controls.offset;
         let text = scope.informations[id].content;
         let scale = scope.informations[id].scale;
         let info = new InformationElement(scope.scene,scope.font,infoPos,text,scope.informations[2].isImage,scale);
         info.init();
 
         gsap.from(info.obj.position,{
+            delay: delay,
             duration: 2,
             x: infoPos.x - 100,
             y: 20,
             z: infoPos.z - 100,
-        })
-        let objects = []
-        objects.push(info.bbox);
-        window.addEventListener('pointerdown', (event) => scope.onPointerDownInfo(event, objects, function(){
-            gsap.to( info.obj.position,{
-                duration: 1,
-                x: infoPos.x - 100,
-                y: 20,
-                z: infoPos.z - 100,
-                onStart: function(){
-                    scope.controls.enable = false;
-                },
-                onComplete: function(){
-                    scope.informationPhase = false;
-                    scope.controls.resetMouse();
-                    scope.controls.enable = true}
-            })
+            onComplete: function(){
+                console.log("completed animation");
+                let objects = []
+                objects.push(info.bbox);
+                window.addEventListener('pointerdown', function handler(event){
+                        scope.onPointerDownInfo(event, objects, function(){
+                            gsap.to( info.obj.position,{
+                                duration: 1,
+                                x: infoPos.x - 100,
+                                y: 20,
+                                z: infoPos.z - 100,
+                                onStart: function(){
+                                    scope.controls.enable = false;
+                                },
+                                onComplete: function(){
+                                    scope.informationPhase = false;
+                                    scope.controls.resetMouse();
+                                    scope.controls.enable = true;
+                                    window.removeEventListener('pointerdown', handler);
+                                }
+                            })
         //using bind this because it is higher order function
         //https://stackoverflow.com/a/59060545
-        }.bind(this)));
+                        })
+                window.removeEventListener('pointerdown', handler);        
+                }.bind(this))
+            }
+        })
+        // let objects = []
+        // objects.push(info.bbox);
+        // window.addEventListener('pointerdown', (event) => scope.onPointerDownInfo(event, objects, function(){
+        //     gsap.to( info.obj.position,{
+        //         delay: delay,
+        //         duration: 1,
+        //         x: infoPos.x - 100,
+        //         y: 20,
+        //         z: infoPos.z - 100,
+        //         onStart: function(){
+        //             scope.controls.enable = false;
+        //         },
+        //         onComplete: function(){
+        //             scope.informationPhase = false;
+        //             scope.controls.resetMouse();
+        //             scope.controls.enable = true}
+        //     })
+        // //using bind this because it is higher order function
+        // //https://stackoverflow.com/a/59060545
+        // }.bind(this)));
     }
 
     //TODO: fix the html transition leave
@@ -188,8 +247,13 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         scope.htmlInfoId = id;
         scope.htmlScale = scale;
         scope.htmlPosition = position;
+
+        // if(keepFollowingPath > 0){
+        //     scope.infoFollowPath = true;
+        // }
     }
 
+    //TODO: sometimes it is somehow losing the counter and the informations are not triggered anymore.
     function manageInfo(infoNumber){
         //DONE
 		if (infoNumber === infoSegmentsDone[0]){
@@ -203,7 +267,9 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         else if (infoNumber === infoSegmentsDone[1]){
             //console.log("window",windowSize);
             //scope.infoElement2 = true;
-           infoAsHtml(1,{scale:1.2});
+            infoAsHtml(1,{scale:1.2});
+            // scope.infoFollowPath = true;
+            // console.log("keep following path");
 
         }
 
@@ -213,7 +279,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         else if (infoNumber === infoSegmentsDone[2]){
             customStartVector.set(0,0,-20)
             infoFlyingToCam(2,{startVector:customStartVector});
-            //infoPos = new THREE.Vector3( 20, 20, -20 ).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
+            infoPos = new THREE.Vector3( 20, 20, -20 ).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
             let bamf = models[0].scene;
             console.log("bamf",bamf);
             //bamf.material.metalness = 0;
@@ -265,37 +331,34 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         //DONE
         //BBOX OF THING NOT WORKING
         else if(infoNumber === infoSegmentsDone[5]){
-            cam.set(0,0,-1);
-            camera.getWorldDirection(cam).addScalar(30);
+            camera.getWorldDirection(cam);
             cam.y = 0;
-            //console.log("cam 30",cam.addScalar(30));
-            customViewingDist.set(cam.x+30,cam.y,cam.z+30);
-            //const angle = THREE.MathUtils.degToRad(50);
-            const angle = camera.rotation.y;
-            console.log("angle",angle)
-            infoOverPath(5,{startVector:cam,viewingDist: customViewingDist,infoRotAxis:"Y",infoRotAngle:angle})
-            //infoOverPath(5,new THREE.Vector3(30,0,30));
+            cam.multiplyScalar(-30);
+            const angle = Math.PI/2;
+            infoOverPath(5,{useQuaternion:false,viewingDist: cam,infoRotAxis:"Y",infoRotAngle:angle})
         }
 
         //DONE, same as 4
         else if(infoNumber === infoSegmentsDone[6]){
-            infoAsHtml(6);
+            infoAsHtml(6,{scale:3});
+            scope.infoFollowPath = true;
+            //when the speed is lower, I want to make the delay 10.
+            gsap.to(scope.controls,{
+                duration: 1,
+                ease: "power3",
+                offset: 60,
+            })
         }
 
         //DONE
         else if(infoNumber === infoSegmentsDone[7]){
-            gsap.to(scope.controls,{
-                duration: 4,
-                ease:"power4",
-                offset: 60,
-                lookAtInfluence:0.5,
-                onComplete: function() {
-                    cam.set(0,0,-10)
-                    camera.getWorldDirection(cam).addScalar(10);
-                    customViewingDist.set(cam.x,cam.y,cam.z);
-                    infoFlyingToCam(7,{startVector:cam,viewingDist:customViewingDist});
-                }
-            })
+            //let newOffset=60;
+            camera.getWorldDirection(cam);
+            console.log("cam 7",cam);
+            //cam.multiplyScalar(-30);
+            customViewingDist.set(-1,-0.2,0);
+            infoFlyingToCam(7,{startVector:cam,delay:2})
+            //infoOverPath(7,{useQuaternion:false,viewingDist:cam,height:newOffset-scope.controls.offset});
         }
 
         //TODO: place audio at correc tspace
@@ -431,13 +494,28 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     }
 
 
+    //TODO: if one is skipped because of a mistake, nothing works anymore. If a mistake happens, the info Segments
+    //should shift anyway (so if current segment is bigger than next info segment)
     this.update = function(controlsSegment){
         if (infoSegments[0] === controlsSegment){
             let info = infoSegments.shift();
             infoSegmentsDone.push(info)
-            //console.log(infoSegments);
+            console.log(infoSegments);
             //controls.stop();
             this.informationPhase = true;
+
+            //This can only be used with html informations, which makes sense.
+            if(this.infoFollowPath){
+                console.log("stop following path");
+                this.infoFollowPath = false;
+                let infoHtml = document.getElementById('info');
+                console.log("info",infoHtml);
+                if (infoHtml instanceof HTMLDivElement) {
+                    console.log("clicking");
+                    infoHtml.dispatchEvent(new Event("click"));
+                }
+                window.removeEventListener("pointerdown",this.onPointerDownInfo);
+            }
             manageInfo(info);
         }
     }

@@ -65,9 +65,9 @@ export default {
             },
             {
                 id: 7,
-                content: "Machine Learning is a process where patterns in training data are detected with mathematical methods. \n For an arabic dialect recognition algorithm, the data are arabic samples with dialect labels.",
+                content: "Machine Learning is a process where patterns in training data \n are detected with mathematical methods. \n For an arabic dialect recognition algorithm, \n the data are arabic samples with dialect labels.",
                 isImage: false,
-                scale: 0.2
+                scale: 0.1
             },
             {
                 id: 8,

@@ -1,6 +1,6 @@
 <template>
     <transition @before-enter="beforeEnterInfo" @enter="enterInfo" @leave="leaveInfo">
-        <div class="info" :style="style" v-if="infoElement">
+        <div id="info" :style="style" v-if="infoElement">
                 {{ informations[infoId].content }}
         </div>
     </transition>
@@ -85,7 +85,7 @@ export default {
 </script>
 
 <style scoped>
-.info {
+#info {
     white-space: pre-line;
     position: absolute;
     color: black;

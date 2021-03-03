@@ -237,9 +237,9 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	this.update = function (isMoving){
 		if ( scope.enabled === false ) return;
 		if (isMoving){
-			// if (!clock.running) {
-			// 	clock.start();
-			// }
+			if (!clock.running) {
+				clock.start();
+			}
 			
 			followPath();
 			// If the page is hidden, pause the video;
