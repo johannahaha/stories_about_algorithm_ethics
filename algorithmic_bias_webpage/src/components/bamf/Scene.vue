@@ -293,7 +293,7 @@ export default {
         
 
         camera.rotation.order = 'YXZ';
-        controls = new PlayerControls(camera,renderer.domElement,helperTubeGeometry,cameraEye,cameraHelper);
+        controls = new PlayerControls(parent,camera,renderer.domElement,helperTubeGeometry,cameraEye,cameraHelper);
 
         infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,models,audios,cameraHelper,cameraEye);
 
@@ -321,10 +321,10 @@ export default {
 		gui.add(guiParameters,'animationView' ).onChange( function () {
 			overviewControls.update();
             if(guiParameters.animationView){
-                controls.start();
+                controls.startFollow();
             }
             else{
-                controls.stop();
+                controls.stopFollow();
             }
 			//this.animateCamera();
 		} );
@@ -342,7 +342,7 @@ export default {
 
 	},
     stopInformationPhase: function(){
-        controls.start();
+        controls.startFollow(infoManager.infoFollowPath);
         controls.update(true);
         //informationPhase = false;
         informationRunning = false;
@@ -370,7 +370,7 @@ export default {
 				overviewControls.update();
 
                 if(!informationRunning){
-                    controls.stop();
+                    controls.stopFollow(infoManager.infoFollowPath);
                     informationRunning = true;
                     //console.log("htmlInfo?",infoManager.htmlInformation);
 

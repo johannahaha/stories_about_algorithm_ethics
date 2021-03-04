@@ -1,6 +1,6 @@
 //part of the code are from this class
 //https://github.com/within-unlimited/under-neon-lights/blob/master/release/src/mouse-controls.js
-
+//import * as THREE from "three";
 import {
 	EventDispatcher,
 	Vector3,
@@ -9,7 +9,10 @@ import {
 	Euler
 } from 'three';
 
-const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cameraHelper ) {
+import {gsap} from 'gsap';
+
+
+const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraEye, cameraHelper ) {
 	if ( domElement === document ) console.error( 'PlayerControls: "document" should not be used as the target "domElement". Please use "renderer.domElement" instead.' );
 
 	console.log("instantiating player controls");
@@ -30,18 +33,23 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
 	//this.domElement = domElement || window;
 	//this.domElement.isWindow = !domElement;
-
+	parent.rotation.reorder('YXZ');
 	camera.rotation.reorder( 'YXZ' );
 	const mouse = new Vector2();
 	//const target = new Vector2();
 	let destination = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
 	destination.reorder( 'YXZ' );
+
+	//let destination = new Vector3();
+	//let lastDestination = new Vector3();
+	let lastCamRotation = new Vector3();
+	
 	let drag = 0.66;
 	let scale = 1;
 	// eslint-disable-next-line no-unused-vars
 	let dragging = false;
 	//console.log(dragging);
-	var HALF_PI = Math.PI / 2;
+	const HALF_PI = Math.PI// / 2;
 
 
 
@@ -64,10 +72,13 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 	const segments = this.helperTubeGeometry.tangents.length;
 	let pick,pickt,pickNext
 
-	let euler = new Euler();
-	let lastEuler = new Euler();
-	let rotationDi= new Vector3();
+	// let euler = new Euler();
+	// let lastEuler = new Euler();
+	// let rotationDi= new Vector3();
+	// //let quaternion = new Quaternion();
+	//let destinationQuat = new Quaternion();
 
+	let resetCam = true;
 
 	//TODO: onTouchMove for mobile devices
 	function onPointerMove( e ) {
@@ -83,24 +94,14 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 		let dx = (x - mouse.x) / windowSize.x;
 		let dy = (y - mouse.y) / windowSize.y;
 
+		//lastDestination.copy(destination);
+
 		destination.y += dx * scale;
 		destination.x += dy * scale;
 
 		mouse.set(x, y);
 
-
-        //console.log(mouseIsMoving);
-		// if ( scope.enabled === false ) return;
-
-		// e.preventDefault();
-
-		// mouse.x = ( e.clientX - windowHalf.x );
-		// mouse.y = ( e.clientY - windowHalf.y );
-
-		//ClientX not working in lock mode
-		// movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-		// movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
-		// console.log(movementY);
+		console.log(camera.rotation);
 
 	}
 
@@ -133,17 +134,45 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 		if ( scope.enabled === false ) return;
 		if ( scope.enableMouseControl === false ) return;
 
-		let dx = clamp(destination.x, - HALF_PI, HALF_PI);
-		let dy = destination.y;
-		let dz =  clamp(destination.z, - HALF_PI, HALF_PI);
-	
-		camera.rotation.x += ( dx - camera.rotation.x ) * drag;
-		camera.rotation.y += ( dy - camera.rotation.y ) * drag;
-		camera.rotation.z += ( dz - camera.rotation.z ) * drag;
+		if(scope.segment < 3000){
+
+			//console.log(destination);
+
+			let dx = clamp(destination.x,-HALF_PI,HALF_PI);
+			let dy = clamp(destination.y,-HALF_PI,HALF_PI);
+			//let dz =  clamp(destination.z, - HALF_PI, HALF_PI);
+		
+			camera.rotation.x += ( dx - camera.rotation.x ) * drag;
+			camera.rotation.y += ( dy - camera.rotation.y ) * drag;
+
+			//if(camera.rotation.y > 3 || camera.rotation.y < -3) camera.rotation.y = 0;
+			//camera.rotation.z += ( dz - camera.rotation.z ) * drag;
+
+			//console.log(dx,dy,dz);
+			//console.log(camera.rotation)
+		}
+
+		// else{
+
+		// 	//console.log(destination);
+
+		// 	let dx = clamp(destination.x,-HALF_PI,HALF_PI);
+		// 	let dy = clamp(destination.y,-HALF_PI,HALF_PI);
+		// 	//let dz =  clamp(destination.z,-HALF_PI, HALF_PI);
+
+		// 	//camera.rotation.z += ( dz - camera.rotation.z ) * drag;
+			
+		// 	camera.rotation.x += ( dx - camera.rotation.x ) * drag;
+		// 	camera.rotation.y += ( dy - camera.rotation.y ) * drag;
+		// 	//camera.rotation.z += ( dz - camera.rotation.z ) * drag;
+		// 	//console.log(camera.rotation)
+		// 	//console.log(dx,dy,dz);
+		// }
 	}
 
 	function followPath(){
 		if ( scope.enabled === false ) return;
+		if ( resetCam === false ) return;
 
 		//const segments = scope.helperTubeGeometry.tangents.length;
         //if (firstLoop) {console.log("tangenten: ",scope.helperTubeGeometry.tangents);}
@@ -204,24 +233,14 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 
         // camera orientation 2 - up orientation via normal
         if ( !lookAhead ){ 
-          lookAt.copy( scope.position ).add( direction );
+			lookAt.copy( scope.position ).add( direction );
         }
 		// Constructs a rotation matrix, looking from eye towards center oriented by the up vector. 
         camera.matrix.lookAt( camera.position, lookAt, scope.normal );
-		lastEuler.set(euler.x,euler.y,euler.z);
-		euler.setFromRotationMatrix(camera.matrix);
-		rotationDi.subVectors(lastEuler.toVector3(),euler.toVector3());
         camera.quaternion.setFromRotationMatrix( camera.matrix,camera.rotation.order );
-		
-		if (Math.abs(rotationDi.x) < 2.8 && Math.abs(rotationDi.z) < 2.8){
-			rotateCam();
-		}
-		else{
-			console.log("last euler",lastEuler);
-			console.log("euler",euler);
-			scope.resetMouse();
-		}
-		
+		lastCamRotation.copy(camera.rotation);
+
+		//rotateCam();
 
 
         if (firstLoop) {
@@ -229,20 +248,7 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
           firstLoop = false;
         }
 
-        //console.log(camera);
         cameraHelper.update();
-
-		//when pick is 20
-		
-		//stop following path
-		//tell scene to establish info element
-
-        // if (isMoving){
-        //   //t += 0.00003;
-        //   if (pick == 20){
-        //     this.manageInformation(1);
-        //   }
-        // }
 
 	}	
 
@@ -258,8 +264,6 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 			}
 			
 			followPath();
-			// If the page is hidden, pause the video;
-			// if the page is shown, play the video
 		}
 		else{
 			if (clock.running) {
@@ -269,38 +273,45 @@ const PlayerControls = function ( camera, domElement , helperGeo, cameraEye, cam
 		}
 	};
 
-	this.stop = function (){
+	this.stopFollow = function (infoFollowPath){
+		if (infoFollowPath) return;
 		clock.stop();
+		resetCam = false;
+		console.log("stopping follow");
+		console.log("lastcam",lastCamRotation);
+		//if(lastCamRotation.y > 2.9 && lastCamRotation.y < -2.9) lastCamRotation.y = 0;
+		scope.resetMouse();
 		//console.log(clock);
 	}
 
-	this.start = function (){
-		clock.start();
+	this.startFollow = function (infoFollowPath){
+		if (infoFollowPath) return;
+		console.log("starting follow");
+		console.log(camera.rotation);
+		gsap.to(camera.rotation,{
+			duration: 1,
+			x:lastCamRotation.x,
+			y:lastCamRotation.y,
+			z:0,
+			onComplete: function(){
+				clock.start()
+				resetCam = true;
+			}
+		})
+		//clock.start();
 	}
 
 	this.resetMouse = function(){
 		mouse.set(0, 0);
-		destination = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
+		//if(lastCamRotation.y > 2.8 && lastCamRotation.y < -2.8) lastCamRotation.y = 0;
+		destination = new Euler(lastCamRotation.x,lastCamRotation.y,lastCamRotation.z);
+		destination.reorder( 'YXZ' );
+		console.log("starting destination",destination);
 	}
 
 	this.getClock = function(){
 		return clock;
 	}
-
-	// this.moveForward = function () {
-
-	// 	// move forward parallel to the xz-plane
-	// 	// assumes camera.up is y-up
-
-	// 	//vec.setFromMatrixColumn( camera.matrix, 0 );
-
-	// 	//vec.crossVectors( camera.up, vec );
-
-	// 	followPath();
-
-	// 	//camera.position.addScaledVector( vec, distance );
-
-	// };
 
 	this.handleResize = function () {
 		console.log("resizing controls");
