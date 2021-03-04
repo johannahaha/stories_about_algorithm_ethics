@@ -63,7 +63,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 	const clock = new Clock();
 	let delta;
-	let speed = 0.01;//0.002;//0.001;
+	let speed = 0.04;//0.002;//0.001;
 	
 	//follow path
 	let firstLoop = true;
@@ -106,7 +106,6 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 		mouse.set(x, y);
 
-		console.log(camera.rotation);
 
 	}
 
@@ -138,53 +137,29 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		if ( scope.enabled === false ) return;
 		if ( scope.enableMouseControl === false ) return;
 
-		if(scope.segment < 3000){
+		//console.log(destination);
 
-			//console.log(destination);
+		let dx = clamp(destination.x,-HALF_PI,HALF_PI);
+		let dy = clamp(destination.y,-HALF_PI,HALF_PI);
 
-			let dx = clamp(destination.x,-HALF_PI,HALF_PI);
-			let dy = clamp(destination.y,-HALF_PI,HALF_PI);
+		rotationRadians.x = dx;
+		rotationRadians.y = dy;
+		rotationRadians.z = 0 * drag;
 
-			rotationRadians.x = dx;
-			rotationRadians.y = dy;
-			rotationRadians.z = 0 * drag;
-			//let dz =  clamp(destination.z, - HALF_PI, HALF_PI);
-		
-			//rotationRadians.x += (dx - rotationRadians.x) * drag;
-			//rotationRadians.y += (dy - rotationRadians.y) * drag;
+		quaternion.setFromEuler(rotationRadians);
 
-			console.log(rotationRadians);
+		camera.quaternion.rotateTowards ( quaternion, 0.1 )
+		//camera.rotation.applyQuaternion(quaternion);
+		//camera.rotation.x += ( dx - camera.rotation.x ) * drag;
+		//camera.rotation.y += ( dy - camera.rotation.y ) * drag;
 
-			quaternion.setFromEuler(rotationRadians);
+		//if(camera.rotation.y > 3 || camera.rotation.y < -3) camera.rotation.y = 0;
+		//camera.rotation.z += ( dz - camera.rotation.z ) * drag;
 
-			camera.quaternion.rotateTowards ( quaternion, 0.1 )
-			//camera.rotation.applyQuaternion(quaternion);
-			//camera.rotation.x += ( dx - camera.rotation.x ) * drag;
-			//camera.rotation.y += ( dy - camera.rotation.y ) * drag;
+		//console.log(dx,dy,dz);
+		//console.log(camera.rotation)
+	
 
-			//if(camera.rotation.y > 3 || camera.rotation.y < -3) camera.rotation.y = 0;
-			//camera.rotation.z += ( dz - camera.rotation.z ) * drag;
-
-			//console.log(dx,dy,dz);
-			//console.log(camera.rotation)
-		}
-
-		// else{
-
-		// 	//console.log(destination);
-
-		// 	let dx = clamp(destination.x,-HALF_PI,HALF_PI);
-		// 	let dy = clamp(destination.y,-HALF_PI,HALF_PI);
-		// 	//let dz =  clamp(destination.z,-HALF_PI, HALF_PI);
-
-		// 	//camera.rotation.z += ( dz - camera.rotation.z ) * drag;
-			
-		// 	camera.rotation.x += ( dx - camera.rotation.x ) * drag;
-		// 	camera.rotation.y += ( dy - camera.rotation.y ) * drag;
-		// 	//camera.rotation.z += ( dz - camera.rotation.z ) * drag;
-		// 	//console.log(camera.rotation)
-		// 	//console.log(dx,dy,dz);
-		// }
 	}
 
 	function followPath(){

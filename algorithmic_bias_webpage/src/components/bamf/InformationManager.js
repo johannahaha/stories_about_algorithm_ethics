@@ -3,6 +3,7 @@
 import * as THREE from "three";
 import {gsap} from 'gsap';
 import { InformationElement } from './InformationElement.js';
+import { MathUtils } from "three";
 //import {AudioElement} from './AudioElement.js'
 
 let InformationManager = function(scene,domElement,camera,controls,informations,font,models,audios,cameraHelper,cameraEye){
@@ -27,8 +28,8 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
     let scope = this;
 
-    let infoSegments = [20,170,370,400,450,480,510,550,600]
-    //let infoSegments = [20,40,70,100,120,140,170,220,250,300,330,370,400,450,480,510];
+    let infoSegments = [20,620,660,705,820,850,890,920,970,1000,1050,1090,1120]
+    //let infoSegments = [20,40,70,100,120,140,170,220,250,300,330,370,400,450,480,500,550,600,620,660,705,820,850,890,920,970,1000,1050,1090,1120];
     let infoSegmentsDone = [];
     let infoPos = new THREE.Vector3();
 
@@ -254,6 +255,18 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         console.log(camera.rotation);
     }
 
+    function addAxesHelper(){
+        let helperGeo = new THREE.SphereBufferGeometry(0.03);
+        let helper = new THREE.Mesh(helperGeo, new THREE.MeshBasicMaterial({color:0xff0000}));
+        console.log(helper);
+        helper.position.x = camera.position.x + 0.5;
+        helper.position.y = camera.position.y;
+        helper.position.z = camera.position.z + 0.5;
+        scene.add(helper);
+        var axesHelper = new THREE.AxesHelper(1);
+        helper.add( axesHelper );
+    }
+
     //TODO: sometimes it is somehow losing the counter and the informations are not triggered anymore.
     function manageInfo(infoNumber){
         //DONE
@@ -338,16 +351,16 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         // }
 
         //DONE
-        else if(infoNumber === infoSegmentsDone[1]){
-            infoAsHtml(6,{scale:3});
-            scope.infoFollowPath = true;
-            //when the speed is lower, I want to make the delay 10.
-            gsap.to(scope.controls,{
-                duration: 1,
-                ease: "power3",
-                offset: 60,
-            })
-        }
+        // else if(infoNumber === infoSegmentsDone[1]){
+        //     infoAsHtml(6,{scale:3});
+        //     scope.infoFollowPath = true;
+        //     //when the speed is lower, I want to make the delay 10.
+        //     gsap.to(scope.controls,{
+        //         duration: 1,
+        //         ease: "power3",
+        //         offset: 60,
+        //     })
+        // }
 
         // //DONE
         // else if(infoNumber === infoSegmentsDone[7]){
@@ -412,51 +425,114 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
         // }
 
-        else if(infoNumber === infoSegmentsDone[2]){
-            //scope.controls.resetMouse();
-            //scope.controls.enableMouseControl = true;
+        // else if(infoNumber === infoSegmentsDone[11]){
+        //     //scope.controls.resetMouse();
+        //     //scope.controls.enableMouseControl = true;
+        //     cam.set(0,0,0);
+        //     camera.getWorldDirection(cam);
+        //     console.log("cam 11", cam);
+        //     customViewingDist.set(-30,0,15);
+        //     const angle = MathUtils.degToRad(110)
+        //     infoFlyingToCam(11,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:angle,infoRotAxis:"Y"});
+        // }
+
+        // else if(infoNumber === infoSegmentsDone[12]){
+        //     cam.set(0,0,0);
+        //     camera.getWorldDirection(cam);
+        //     console.log("cam 12", cam.multiplyScalar(30));
+        //     customViewingDist.set(-7,0,-30);
+        //     infoOverPath(12,{height:-20,useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI,infoRotAxis:"Y"});
+        //     //infoAsHtml(12,{scale:1.5})
+        // }
+        
+        // else if(infoNumber === infoSegmentsDone[13]){
+        //     cam.set(0,0,0);
+        //     camera.getWorldDirection(cam);
+        //     console.log("cam 13", cam);
+        //     customViewingDist.set(10,0,30);
+        //     infoFlyingToCam(13,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI,infoRotAxis:"Y"});
+        //     //infoAsHtml(13,{scale:1.5})
+        // }
+        // else if(infoNumber === infoSegmentsDone[14]){
+        //     infoAsHtml(14,{scale:1.5})
+        // }
+        // else if(infoNumber === infoSegmentsDone[15]){
+        //     infoAsHtml(15,{scale:1.5})
+        //     scope.infoFollowPath = true;
+        //     //make duration longer later
+        //     gsap.to(scope.controls,{
+        //         duration: 1,
+        //         ease: "power2",
+        //         offset: 15,
+        //     })
+        // }
+        // else if(infoNumber === infoSegmentsDone[16]){
+        //     cam.set(0,0,0);
+        //     camera.getWorldDirection(cam);
+        //     console.log("cam 16", cam);
+        //     customViewingDist.set(-20,0,20);
+        //     infoFlyingToCam(16,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI,infoRotAxis:"Y"})
+        // }
+
+        // else if(infoNumber === infoSegmentsDone[17]){
+        //     cam.set(0,0,0);
+        //     camera.getWorldDirection(cam);
+        //     console.log("cam 17", cam);
+        //     customViewingDist.set(0,0,-80);
+        //     infoOverPath(17,{useQuaternion:false,viewingDist:customViewingDist,height:30,infoRotAngle:Math.PI,infoRotAxis:"Y"})
+        // }
+
+        else if(infoNumber === infoSegmentsDone[1]){
             cam.set(0,0,0);
-            camera.getWorldDirection(cam);
-            console.log("cam 11", camera.rotation);
-            customViewingDist.set(-30,0,15);
-            infoFlyingToCam(11,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI/2,infoRotAxis:"Y"});
+        //     camera.getWorldDirection(cam);
+        //     console.log("cam 17", cam);
+            
+            customViewingDist.set(0,0,-15);
+            infoOverPath(18,{useQuaternion:false,viewingDist:customViewingDist,height:30,infoRotAngle:Math.PI,infoRotAxis:"Y"})
+            addAxesHelper();
+        }
+
+        else if(infoNumber === infoSegmentsDone[2]){
+
+            customViewingDist.set(-30,0,-15);
+            infoAsHtml(19);
+            addAxesHelper();
         }
 
         else if(infoNumber === infoSegmentsDone[3]){
-            cam.set(0,0,0);
-            camera.getWorldDirection(cam);
-            console.log("cam 12", camera.rotation);
-            customViewingDist.set(-30,0,30);
-            //infoOverPath(12,{height:-20,useQuaternion:false,viewingDist:customViewingDist});
-            infoAsHtml(12,{scale:1.5})
+            
+
+
+            customViewingDist.set(-20,0,-5);
+            infoFlyingToCam(20,{useQuaternion:false,viewingDist:customViewingDist,height:30,infoRotAngle:Math.PI/3,infoRotAxis:"Y"})
+
+            addAxesHelper();
         }
-        
+
         else if(infoNumber === infoSegmentsDone[4]){
-            cam.set(0,0,0);
-            camera.getWorldDirection(cam);
-            console.log("cam 13", camera.rotation);
-            customViewingDist.set(30,0,-15);
-            //infoFlyingToCam(13,{useQuaternion:false,viewingDist:customViewingDist});
-            infoAsHtml(13,{scale:1.5})
+
+            customViewingDist.set(50,0,15);
+            const angle = MathUtils.degToRad(120)
+            infoOverPath(21,{useQuaternion:false,viewingDist:customViewingDist,height:30,infoRotAngle:angle,infoRotAxis:"Y"})
+            addAxesHelper();
         }
+
         else if(infoNumber === infoSegmentsDone[5]){
-            infoAsHtml(14,{scale:1.5})
+           
+            customViewingDist.set(-30,0,-40);
+            infoOverPath(22,{useQuaternion:false,viewingDist:customViewingDist,height:30,infoRotAngle:Math.PI,infoRotAxis:"Y"})
+            addAxesHelper();
         }
+
         else if(infoNumber === infoSegmentsDone[6]){
-            infoAsHtml(15,{scale:1.5})
-            //make duration longer later
-            gsap.to(scope.controls,{
-                duration: 1,
-                ease: "power2",
-                offset: 15,
-            })
+            customViewingDist.set(30,0,40);
+            infoFlyingToCam(23,{useQuaternion:false,viewingDist:customViewingDist,height:30,infoRotAngle:Math.PI,infoRotAxis:"Y"})
+            addAxesHelper();
         }
+
         else if(infoNumber === infoSegmentsDone[7]){
-            cam.set(0,0,0);
-            camera.getWorldDirection(cam);
-            console.log("cam 16", cam);
-            customViewingDist.set(-30,0.-15);
-            infoFlyingToCam(17,{useQuaternion:false,viewingDist:cam})
+            customViewingDist.set(-30,0,-15);
+            infoAsHtml(24)
         }
 
         else if (infoNumber === infoSegmentsDone[30]){

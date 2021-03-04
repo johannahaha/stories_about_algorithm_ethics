@@ -101,9 +101,9 @@ export default {
             },
             {
                 id: 13,
-                content: "The accuracy tells us, how many of those tests were correct. \n Our English language recognition could for example be applied, if 90 % of the test samples were detected correctly",
+                content: "The accuracy tells us, how many of those tests were correct. \n Our English language recognition could for example be applied, \n if 90 % of the test samples were detected correctly",
                 isImage: false,
-                scale: 0.2
+                scale: 0.1
             },
             {
                 id: 14,
@@ -121,7 +121,7 @@ export default {
                 id: 16,
                 content: "Let us go back to our Arabic Algorithm. The Bamf Algorithm has a accuracy of 85 %. \n That means, that 15% of all test samples were labeled incorrectly.",
                 isImage: false,
-                scale: 0.2
+                scale: 0.1
             },
             {
                 id: 17,
@@ -131,42 +131,36 @@ export default {
             },
             {
                 id: 18,
-                content: "This is a huge number. \n If we look at the 10.000 people this algorithm was used on, the algorithm was probably wrong in 1500 cases. That is every 6 persons.",
-                isImage: false,
-                scale: 0.2
-            },
-            {
-                id: 19,
                 content: "Let us look at our image again. \n What does those numbers now mean?",
                 isImage: false,
                 scale: 0.2
             },
             {
-                id: 20,
+                id: 19,
                 content: "They mean, that the algorithm was 70% sure, that the Arabic is levantitic \n This 70 % do not include the accuracy. \n So: The algorithm is 70% sure that the Arabic is levantitic, but that sureness is only correct to 85%. \n In total, the algorithm has a sureness of 59 % that this person soke arabic levantitic ",
                 isImage: false,
                 scale: 0.2
             },
             {
-                id: 21,
-                content: "59 % is not much. Even though, informations like this are used in an Asylum decision.",
+                id: 20,
+                content: "59 % is not much. \n Even though, informations like this \n are used in an Asylum decision.",
                 isImage: false,
-                scale: 0.2
+                scale: 0.1
             },
             {
-                id: 22,
+                id: 21,
                 content: "Moreover, even though the algorithm should be used only for arabic language. \n Journalist Anna Biselli talked to a kurdish refugee,\n  whose kurdish was detected as 'turkish',\n  even though he was from Syria. Because of that, he should be then abgeschoben",
                 isImage: false,
                 scale: 0.2
             },
             {
-                id: 23,
+                id: 22,
                 content: "The algorithm should never be used for him, because he does not speak arabic. This is no single case. \n Many refugees whom this was used for where from Kenya or Venezuela, \n where Arabian is not a common language.",
                 isImage: false,
                 scale: 0.2
             },
             {
-                id: 24,
+                id: 23,
                 content: "But let us assume for a second, that the algorithm would work with an accuracy of 100 % \n and that all the decision makers use it correctly. Would it be ethical then?",
                 isImage: false,
                 scale: 0.2
