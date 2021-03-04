@@ -6,7 +6,8 @@ import {
 	Vector3,
 	Vector2,
 	Clock,
-	Euler
+	Euler,
+	Quaternion
 } from 'three';
 
 import {gsap} from 'gsap';
@@ -39,6 +40,10 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	//const target = new Vector2();
 	let destination = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
 	destination.reorder( 'YXZ' );
+
+	let rotationRadians = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
+	rotationRadians.reorder( 'YXZ' );
+	let quaternion = new Quaternion();
 
 	//let destination = new Vector3();
 	//let lastDestination = new Vector3();
@@ -126,7 +131,6 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		e.preventDefault();
 		scope.domElement.ownerDocument.removeEventListener('pointermove', onPointerMove, false);
 		scope.domElement.ownerDocument.removeEventListener('pointerup', onPointerUp, false);
-		
 		dragging = false;
 	}
 
@@ -140,10 +144,23 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 			let dx = clamp(destination.x,-HALF_PI,HALF_PI);
 			let dy = clamp(destination.y,-HALF_PI,HALF_PI);
+
+			rotationRadians.x = dx;
+			rotationRadians.y = dy;
+			rotationRadians.z = 0 * drag;
 			//let dz =  clamp(destination.z, - HALF_PI, HALF_PI);
 		
-			camera.rotation.x += ( dx - camera.rotation.x ) * drag;
-			camera.rotation.y += ( dy - camera.rotation.y ) * drag;
+			//rotationRadians.x += (dx - rotationRadians.x) * drag;
+			//rotationRadians.y += (dy - rotationRadians.y) * drag;
+
+			console.log(rotationRadians);
+
+			quaternion.setFromEuler(rotationRadians);
+
+			camera.quaternion.rotateTowards ( quaternion, 0.1 )
+			//camera.rotation.applyQuaternion(quaternion);
+			//camera.rotation.x += ( dx - camera.rotation.x ) * drag;
+			//camera.rotation.y += ( dy - camera.rotation.y ) * drag;
 
 			//if(camera.rotation.y > 3 || camera.rotation.y < -3) camera.rotation.y = 0;
 			//camera.rotation.z += ( dz - camera.rotation.z ) * drag;
@@ -304,7 +321,8 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	this.resetMouse = function(){
 		mouse.set(0, 0);
 		//if(lastCamRotation.y > 2.8 && lastCamRotation.y < -2.8) lastCamRotation.y = 0;
-		destination = new Euler(lastCamRotation.x,lastCamRotation.y,lastCamRotation.z);
+		//destination = new Euler(0,0,0);
+		destination.setFromQuaternion(camera.quaternion);
 		destination.reorder( 'YXZ' );
 		console.log("starting destination",destination);
 	}
