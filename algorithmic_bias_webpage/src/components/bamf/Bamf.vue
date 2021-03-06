@@ -1,5 +1,5 @@
 <template>
-    <div> 
+    <div id="bamf"> 
         <h1 v-if="showInformation">Bamf geht los </h1>
         <!-- <Information v-if="showInformation" v-bind:informations="informations" /> -->
         <Scene v-bind:informations="informations"> </Scene>
@@ -178,3 +178,10 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+
+.bamf{
+    overflow: hidden;
+}
+</style>

@@ -18,10 +18,17 @@ export default{
 }
 </script>
 
-<style>
+<style lang="scss">
 html,body{
   margin:0;
-  overflow: hidden;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  height: -webkit-fill-available;
+
+  &.sketch{
+    overflow:hidden;
+  }
+
 }
 
 #app {
@@ -31,7 +38,6 @@ html,body{
   text-align: center;
   color: #2c3e50;
   margin:0;
-  overflow: hidden;
   position: relative;
 }
 

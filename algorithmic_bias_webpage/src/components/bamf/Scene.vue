@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bamf">
         <div v-if="!preloading" id="container"></div>
         <div id="instructions">
             <span style="font-size: 36px">Click to play</span>
@@ -436,6 +436,10 @@ export default {
 </script>
 
 <style scoped>
+
+.bamf{
+    overflow: hidden;
+}
 #container {
     height: 100vh;
     position: relative;
