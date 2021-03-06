@@ -28,7 +28,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
     let scope = this;
 
-    let infoSegments = [20,620,660,705,820,850,890,920,970,1000,1050,1090,1120]
+    let infoSegments = [20,40,660,705,820,850,890,920,970,1000,1050,1090,1120]
     //let infoSegments = [20,40,70,100,120,140,170,220,250,300,330,370,400,450,480,500,550,600,620,660,705,820,850,890,920,970,1000,1050,1090,1120];
     let infoSegmentsDone = [];
     let infoPos = new THREE.Vector3();
@@ -277,15 +277,27 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoOverPath(0);
         }
 
-        // //DONE
-        // else if (infoNumber === infoSegmentsDone[1]){
-        //     //console.log("window",windowSize);
-        //     //scope.infoElement2 = true;
-        //     infoAsHtml(1,{scale:1.2});
-        //     // scope.infoFollowPath = true;
-        //     // console.log("keep following path");
+        //DONE
+        else if (infoNumber === infoSegmentsDone[1]){
+            //console.log("window",windowSize);
+            //scope.infoElement2 = true;
+            infoAsHtml(1,{scale:1.2});
 
-        // }
+            infoPos.copy(camera.position);
+            infoPos.z += -20;
+            infoPos.y = 2 + scope.controls.offset;
+
+            let info = new InformationElement(scope.scene,scope.font,infoPos,"/img/Bamf2017_Schulung_Seite_050.png",true,1);
+            info.init();
+            //info.rotate("Y",-Math.PI/2);
+
+            customViewingDist.set(0,0,30);
+
+            camToObject(info.getMeshObject(),customViewingDist);
+            // scope.infoFollowPath = true;
+            // console.log("keep following path");
+
+        }
 
         // //TODO: bamf positioning next to path
         // //TODO: bamf not gsap animated
@@ -482,18 +494,18 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         //     infoOverPath(17,{useQuaternion:false,viewingDist:customViewingDist,height:30,infoRotAngle:Math.PI,infoRotAxis:"Y"})
         // }
 
-        else if(infoNumber === infoSegmentsDone[1]){
-            cam.set(0,0,0);
-        //     camera.getWorldDirection(cam);
-        //     console.log("cam 17", cam);
+        // else if(infoNumber === infoSegmentsDone[1]){
+        //     cam.set(0,0,0);
+        // //     camera.getWorldDirection(cam);
+        // //     console.log("cam 17", cam);
             
-            customViewingDist.set(0,0,-15);
-            infoOverPath(18,{useQuaternion:false,viewingDist:customViewingDist,height:30,infoRotAngle:Math.PI,infoRotAxis:"Y"})
-            addAxesHelper();
-        }
+        //     customViewingDist.set(0,0,-15);
+        //     infoOverPath(18,{useQuaternion:false,viewingDist:customViewingDist,height:30,infoRotAngle:Math.PI,infoRotAxis:"Y"})
+        //     addAxesHelper();
+        // }
 
         else if(infoNumber === infoSegmentsDone[2]){
-
+            cam.set(0,0,0);
             customViewingDist.set(-30,0,-15);
             infoAsHtml(19);
             addAxesHelper();
