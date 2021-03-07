@@ -149,13 +149,13 @@ export default {
             },
             {
                 id: 21,
-                content: "Moreover, even though the algorithm should be used only for arabic language. \n Journalist Anna Biselli talked to a kurdish refugee,\n  whose kurdish was detected as 'turkish',\n  even though he was from Syria. Because of that, he should be then abgeschoben",
+                content: "Moreover, even though the algorithm should be used only for arabic language. \n Journalist Anna Biselli talked to a kurdish refugee,\n  whose kurdish was detected as 'turkish',\n  even though he was from Syria. \n \n Because of that, he should be then abgeschoben",
                 isImage: false,
-                scale: 0.2
+                scale: 0.1
             },
             {
                 id: 22,
-                content: "With stories like this, it is interesting to take a closer look \n at how the algorithm is used by decision makes of the bamf. \n Anna Biselli published the training documents of the Bamf for the decision makers.",
+                content: "With stories like this, it is interesting to take a closer look \n at how the algorithm is used by decision makers of the bamf. \n Anna Biselli published the training documents of the Bamf for the decision makers.",
                 isImage: false,
                 scale: 0.2
             },
@@ -163,7 +163,7 @@ export default {
                 id: 23,
                 content: "The person that the algorithm is used for must be speaking arabian. \n They should speek into a telephone and describe a given picture for around two minutes.",
                 isImage: false,
-                scale: 0.2
+                scale: 0.1
             },
             {
                 id: 24,
@@ -185,9 +185,9 @@ export default {
             },
             {
                 id: 27,
-                content: "For example, the algorithm should never be used for kurdish speaking persons, because obviously they do not speak arabic. This is no single case. \n Many refugees whom this was used for were from Kenya or Venezuela, \n where Arabian is not a common language.",
+                content: "For example, the algorithm should never be used for kurdish speaking persons, \n because obviously they do not speak arabic. This is no single case. \n Many refugees whom this was used for were from Kenya or Venezuela, \n where Arabian is not a common language.",
                 isImage: false,
-                scale: 0.2
+                scale: 0.1
             },
             {
                 id: 28,
@@ -204,7 +204,7 @@ export default {
 
             {
                 id: 30,
-                content: "But let us assume for a second, that the algorithm would work with an accuracy of 100 % \n and that all the decision makers use it correctly. Would it be ethical then?",
+                content: "But let us assume for a second, that the algorithm would work with a high accuracy \n and that all the decision makers use it correctly. Would it be ethical then?",
                 isImage: false,
                 scale: 0.2
             },
@@ -216,19 +216,19 @@ export default {
             },
             {
                 id: 32,
-                content: "When you look at this map, you can see that the arabic dialects are not bound to borders. Can we assume, that a dialect refers to a country of origin at all?",
+                content: "When you look at this map, you can see that the arabic dialects are not bound to borders. \n Can we assume, that a dialect refers to a country of origin at all?",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 33,
-                content: "Moreover, a person does not automatically have the dialect of the region where they were born. The dialect is strongly connected to sozialization",
+                content: "Moreover, a person does not automatically have the dialect of the region \n where they were born. The dialect is strongly connected to sozialization",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 34,
-                content: "One has to consider where a person grew up, where they went to school, who was their social group or their family and where they were socialized. The biography is an important part here",
+                content: "One has to consider where a person grew up,\n where they went to school,\n who was their social group or their family \nand where they were socialized. \nThe biography is an important part here",
                 isImage: false,
                 scale: 0.2
             },
@@ -240,7 +240,7 @@ export default {
             },
             {
                 id: 36,
-                content: "Often, a dialect can also depend on social groups and might be supressed and unlearned by persons, for example to belong to another group or hide that they belong to a marginilized minority.",
+                content: "Often, a dialect can also depend on social groups and might be supressed and unlearned by persons,\n for example to belong to another group or hide that they belong to a marginilized minority.",
                 isImage: false,
                 scale: 0.2
             },
@@ -252,25 +252,25 @@ export default {
             },
             {
                 id: 38,
-                content: "Therefore, the result of the algorithm could be explained by factors that are not directly related to the country of origin.",
+                content: "Therefore, the result of the algorithm could be explained by factors \n that are not directly related to the country of origin.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 39,
-                content: "An asylum seeker could explain the result in the hearing if asked. That is not always the case, since the algorithm was applied used after the hearing, when a language certificate was planned but then substituted with the algorithm.",
+                content: "An asylum seeker could explain the result in the hearing if asked. \nThat is not always the case, since the algorithm was applied used after the hearing, \n when a language certificate was planned but then substituted with the algorithm.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 40,
-                content: "When asylum is denied because the country of origin was detected as false, the person only has one week to take legal action against this decision. Mostly this timeframe makes it only possible for people who they are already linked to non profit organizations or other people who can help.",
+                content: "When asylum is denied because the country of origin was detected as false, \n the person only has one week to take legal action against this decision.\n Mostly this timeframe makes it only possible for people \n who they are already linked to non profit organizations \n or other people who can help.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 41,
-                content: "That means, that this algorithm could influence decisions that are fare reaching and drastic for the people that the asylum is falsely denied to.",
+                content: "That means, that this algorithm could influence decisions \n that are fare reaching and drastic for the people \n that the asylum is falsely denied to.",
                 isImage: false,
                 scale: 0.2
             },

@@ -25,6 +25,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	this.segment;
 
 	this.offset = 15;
+	this.lookFar = 30;
 
 	//
 	// internals
@@ -83,7 +84,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	// //let quaternion = new Quaternion();
 	//let destinationQuat = new Quaternion();
 
-	let resetCam = true;
+	this.resetCam = true;
 
 	//TODO: onTouchMove for mobile devices
 	function onPointerMove( e ) {
@@ -157,14 +158,14 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		//camera.rotation.z += ( dz - camera.rotation.z ) * drag;
 
 		//console.log(dx,dy,dz);
-		//console.log(camera.rotation)
+		//console.log(camera.rotation.x)
 	
 
 	}
 
 	function followPath(){
 		if ( scope.enabled === false ) return;
-		if ( resetCam === false ) return;
+		if ( scope.resetCam === false ) return;
 
 		//const segments = scope.helperTubeGeometry.tangents.length;
         //if (firstLoop) {console.log("tangenten: ",scope.helperTubeGeometry.tangents);}
@@ -220,7 +221,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
         // using arclength for stablization in look ahead
 
-        scope.helperTubeGeometry.parameters.path.getPointAt( ( t + 30 / scope.helperTubeGeometry.parameters.path.getLength() ) % 1, lookAt );
+        scope.helperTubeGeometry.parameters.path.getPointAt( ( t + scope.lookFar / scope.helperTubeGeometry.parameters.path.getLength() ) % 1, lookAt );
         lookAt.multiplyScalar( 4);
 
         // camera orientation 2 - up orientation via normal
@@ -268,7 +269,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	this.stopFollow = function (infoFollowPath){
 		if (infoFollowPath) return;
 		clock.stop();
-		resetCam = false;
+		scope.resetCam = false;
 		console.log("stopping follow");
 		console.log("lastcam",lastCamRotation);
 		//if(lastCamRotation.y > 2.9 && lastCamRotation.y < -2.9) lastCamRotation.y = 0;
@@ -287,19 +288,23 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 			z:0,
 			onComplete: function(){
 				clock.start()
-				resetCam = true;
+				scope.resetCam = true;
 			}
 		})
 		//clock.start();
 	}
 
-	this.resetMouse = function(){
+	this.resetMouse = function(destinationQuat = camera.quaternion){
 		mouse.set(0, 0);
 		//if(lastCamRotation.y > 2.8 && lastCamRotation.y < -2.8) lastCamRotation.y = 0;
 		//destination = new Euler(0,0,0);
-		destination.setFromQuaternion(camera.quaternion);
+		console.log("destination quat");
+		console.log(JSON.parse(JSON.stringify(destinationQuat)));
+		destination.setFromQuaternion(destinationQuat);
 		destination.reorder( 'YXZ' );
 		console.log("starting destination",destination);
+		console.log("check this quat");
+		console.log(JSON.parse(JSON.stringify(quaternion.setFromEuler(destination))));
 	}
 
 	this.getClock = function(){

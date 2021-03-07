@@ -372,6 +372,7 @@ export default {
                 if(!informationRunning){
                     controls.stopFollow(infoManager.infoFollowPath);
                     informationRunning = true;
+                    console.log(camera.quaternion);
                     //console.log("htmlInfo?",infoManager.htmlInformation);
 
                     if(infoManager.htmlInformation){
@@ -397,12 +398,11 @@ export default {
 			}
 
 			else{
-				controls.update(true);
-                infoManager.update(controls.segment);
-
                 if(informationRunning){
                     this.stopInformationPhase();
                 }
+				controls.update(true);
+                infoManager.update(controls.segment);
 				overviewControls.update();
 			}
             path.update();

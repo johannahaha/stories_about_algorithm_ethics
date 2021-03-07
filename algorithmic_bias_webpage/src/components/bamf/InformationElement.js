@@ -27,11 +27,11 @@ class InformationElement    {
         this.scene.add(this.obj);
 
         //BOUNDING BOX for clicking
-        this.createBBox();
+        this.createBBox(0xffDDDD);
 
     }
 
-    createBBox(){
+    createBBox(color){
         //BOUNDING BOX for clicking
         if (this.bbox !== undefined){
             this.scene.remove(this.bbox);
@@ -41,18 +41,20 @@ class InformationElement    {
             console.log("bbox hopefully undefined here: ",this.bbox)
         }
 
+        //this.obj.geometry.computeBoundingBox()
         const box3 = new THREE.Box3().setFromObject(this.obj);
+
 
         const dimensions = new THREE.Vector3().subVectors( box3.max, box3.min );
         if(dimensions.x === 0) dimensions.x=1;
         if(dimensions.y === 0) dimensions.y=1;
         if(dimensions.z === 0) dimensions.z=1;
-        const boxGeo = new THREE.BoxBufferGeometry(dimensions.x, dimensions.y, dimensions.z).scale(1.2,1.2,1.2);
 
-        const matrix = new THREE.Matrix4().setPosition(dimensions.addVectors(box3.min, box3.max).multiplyScalar( 0.5 ));
-        boxGeo.applyMatrix4(matrix);
+        const boxGeo = new THREE.BoxBufferGeometry(dimensions.x, dimensions.y, dimensions.z)//.scale(1.2,1.2,1.2);
 
-        this.bbox = new THREE.Mesh(boxGeo, new THREE.MeshPhongMaterial( {color: 0xffDDDD,visible:true,wireframe:true,wireframeLinewidth: 5} ));
+        this.bbox = new THREE.Mesh(boxGeo, new THREE.MeshPhongMaterial( {color: color,visible:true,wireframe:true,wireframeLinewidth: 5} ));
+
+        this.bbox.position.copy(dimensions.addVectors(box3.min, box3.max).multiplyScalar( 0.5 ))
 
         const axesHelper = new THREE.AxesHelper( 5 );
         this.bbox.add( axesHelper );
@@ -144,18 +146,17 @@ class InformationElement    {
     rotate(axis,angle){
         if (axis === "X"){
             this.obj.rotateX(angle);
-            this.createBBox();
+            this.bbox.rotateX(angle);
             //this.bbox.rotateX(angle);
         }
         else if (axis === "Y"){
-            console.log("rotating Y");
+            console.log("rotating Y",this.obj);
             this.obj.rotateY(angle);
-            this.createBBox();
-            //this.bbox.rotateY(angle);
+            this.bbox.rotateY(angle);
         }
         else if (axis === "Z"){
             this.obj.rotateZ(angle);
-            this.createBBox();
+            this.bbox.rotateZ(angle);
             //this.bbox.rotateZ(angle);
         }
         console.log(this.bbox);
@@ -163,7 +164,7 @@ class InformationElement    {
 
     translate(vec){
         this.obj.geometry.translate(vec.x,vec.y,vec.z);
-        this.createBBox();
+        this.bbox.geometry.translate(vec.x,vec.y,vec.z);
     }
 
 
