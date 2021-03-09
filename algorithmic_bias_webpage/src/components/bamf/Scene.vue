@@ -2,15 +2,18 @@
     <div class="bamf">
         <div v-if="!preloading" id="container"></div>
         <div id="instructions">
-            <span style="font-size: 36px">Click to play</span>
-            <br /><br />
-            Look: click and drag your mouse
-            Pause: click on pause
-            Close Element: click on element;
-            <!-- <ul v-for="(info, id) in informations" :key="id">
-            <li>{{info.text}}</li>
-          </ul> -->
-            <p>{{ informations[1].content }}</p>
+            <span style="font-size: 36px">Click to Explore</span>
+            <ul>
+                <li>
+                    Pause: Click on the Pause Button
+                </li>
+                <li>
+                    Look Around: Click and Drag your mouse
+                </li>
+                <li>
+                    Keep Following Path: Click on Text
+                </li>
+            </ul>
         </div>
         <button id="pause">pause</button>
         <Information 
@@ -18,9 +21,6 @@
         :informations="informations"
         @click="htmlProps.infoElement = false"
         @information-closed="stopInformationPhase"> </Information>
-
-
-
         <div id="container"></div>
     </div>
 </template>
@@ -44,6 +44,7 @@ import { PathLoader } from './loaders/PathLoader.js';
 import {InfoFontLoader} from './loaders/InfoFontLoader.js';
 import {ModelLoader} from './loaders/ModelLoader.js';
 import {AudioLoader} from './loaders/AudioLoader.js';
+import {TextureLoader} from './loaders/TextureLoader.js';
 import {PlayerControls} from './PlayerControls.js';
 import {InformationManager} from './InformationManager.js';
 //import {Ground} from './Ground.js'
@@ -62,14 +63,15 @@ let overviewControls, controls;
 let frame;
 
 //camera
-let camera, cameraHelper, cameraEye, overviewCamera; 
-let cameraHelperOn = true;
+let camera, cameraHelper, cameraEye, overviewCamera;
+//let cameraHelperOn = true; 
 
 let helperTubeGeometry;
 let pathVertices,path;
 let font;
 let models;
 let audios;
+let textures;
 //let ground;
 
 let guiParameters;
@@ -146,6 +148,13 @@ export default {
             console.log("audios saved",audios);
         })
     },
+    preLoadTextures: function(){
+        let textureLoader = new TextureLoader();
+        return textureLoader.init()
+        .then(()=>{
+            textures = textureLoader.getTextures();
+        })
+    },
     initPath: function(pathVertices,parent) {
         //SPLINE
         let spline = new THREE.CatmullRomCurve3(pathVertices);
@@ -153,7 +162,7 @@ export default {
         spline.closed = true;
 
         //segments need to be at least spline.length/2 for a smooth followPath
-        let segments = Math.floor(spline.points.length/2);
+        let segments = Math.floor(spline.points.length);
         
         //TUBE HELPER GEOMETRY
         helperTubeGeometry = new THREE.TubeBufferGeometry( spline, segments, 2, 10, false );
@@ -219,9 +228,9 @@ export default {
         //SCENE
         scene = new THREE.Scene();
         //scene.background = new THREE.Color('#f43df1');
-        //scene.background = new THREE.Color(0x0D0D0D);
-        scene.background = new THREE.Color(0xffffff);
-        //scene.fog = new THREE.FogExp2(scene.background, 0.002);
+        scene.background = new THREE.Color(0x05181D);
+        //scene.background = new THREE.Color(0xffffff);
+        scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
         overviewCamera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.01, 100000 );
         overviewCamera.position.set( -50, 50, 200 );
@@ -232,15 +241,15 @@ export default {
         const listener = new THREE.AudioListener();
         camera.add( listener ); //stored as camera.children
 
-        const light = new THREE.DirectionalLight( 0xffffff, 0.7 );
+        const light = new THREE.DirectionalLight( 0xDFEDF2, 0.7 );
         light.position.set( 500, 500, 0 ).normalize();
         scene.add( light );
 
-        const light2 = new THREE.DirectionalLight( 0xff5566, 0.4 );
+        const light2 = new THREE.DirectionalLight( 0x082126, 0.4 );
         light2.position.set( -500, -100, 0 ).normalize();
         scene.add( light2 );
 
-        scene.add(new THREE.AmbientLight(0xffffff,0.3))  
+        scene.add(new THREE.AmbientLight(0xDFEDF2,0.3))  
 
         // FLOOR
         //same as other geometry
@@ -269,8 +278,8 @@ export default {
         let info = new InformationElement(scene,font,new THREE.Vector3(-40,0,40));
         info.init();
 
-		cameraHelper.visible = cameraHelperOn;
-		cameraEye.visible = cameraHelperOn;
+		//cameraHelper.visible = cameraHelperOn;
+		//cameraEye.visible = cameraHelperOn;
     
         //RENDERER
         renderer = new THREE.WebGLRenderer({antialias: true});
@@ -295,7 +304,7 @@ export default {
         camera.rotation.order = 'YXZ';
         controls = new PlayerControls(parent,camera,renderer.domElement,helperTubeGeometry,cameraEye,cameraHelper);
 
-        infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,models,audios,cameraHelper,cameraEye);
+        infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,models,audios,textures,cameraHelper,cameraEye);
 
         let menu = document.querySelector("#instructions");
 
@@ -309,7 +318,7 @@ export default {
 
         pause.addEventListener('click', function (){
 			controls.enabled = false;
-			menu.style.display = 'block';
+			menu.style.display = 'flex';
         })
 
         //GUI
@@ -325,6 +334,7 @@ export default {
             }
             else{
                 controls.stopFollow();
+                scene.fog = new THREE.FogExp2(scene.background, 0);
             }
 			//this.animateCamera();
 		} );
@@ -344,22 +354,19 @@ export default {
     stopInformationPhase: function(){
         controls.startFollow(infoManager.infoFollowPath);
         controls.update(true);
-        //informationPhase = false;
         informationRunning = false;
         if(infoManager.htmlInformation){
             this.htmlProps.infoElement = false;
             infoManager.informationPhase = false;
             infoManager.htmlInformation = false;
         }
-        //console.log("informationPhase stopped.")
-        //reset scale
         this.scale = 1;
         window.removeEventListener( 'pointerdown',  infoManager.onPointerDownInfo);
     },  
     animateCamera: function() {
-        //console.log("animate camera called");
-        cameraHelper.visible = cameraHelperOn;
-        cameraEye.visible = cameraHelperOn;
+        scene.fog = new THREE.FogExp2(scene.background, 0);
+        cameraHelper.visible = true;
+        cameraEye.visible = true;
     },
     animate: function() {
 		try{
@@ -368,11 +375,11 @@ export default {
 			if (informationPhase){
 				controls.update(false);
 				overviewControls.update();
+                //console.log(camera.rotation);
 
                 if(!informationRunning){
                     controls.stopFollow(infoManager.infoFollowPath);
                     informationRunning = true;
-                    console.log(camera.quaternion);
                     //console.log("htmlInfo?",infoManager.htmlInformation);
 
                     if(infoManager.htmlInformation){
@@ -407,6 +414,7 @@ export default {
 			}
             path.update();
             //ground.update();
+            //renderer.render(scene,camera);
 			renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
 		}
 		catch(err){
@@ -420,9 +428,11 @@ export default {
       Promise.all([this.preLoadPath(),
       this.preLoadFont(),
       this.preLoadModels(),
-      this.preLoadAudio()])
+      this.preLoadAudio(),
+      this.preLoadTextures()])
       .then(res => {
         console.log(res);
+        console.log("textures",textures);
         this.init();
         this.preloading = true;
       })
@@ -435,39 +445,72 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
+@import "@/assets/_config.scss";
 
 .bamf{
+    min-height: 100%; 
+    height: 100vh;
     overflow: hidden;
+    margin: 0 auto;
+    left: 0;
+    top: 0;
+
+    #instructions {
+        margin: 0 auto;
+        width: 50vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: $dark;
+        color: $lightmiddle;
+        text-align: center;
+        font-family: Arial;
+        font-size: 14px;
+        line-height: 24px;
+
+        cursor: pointer;
+
+        span{
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+
+        ul{
+            list-style: none;
+            text-align: left;
+            margin-left: 0;
+            padding-left: 0;
+
+            li{
+                font-size: 1.2rem;
+                padding: 1rem;
+            }
+        }
+    }
+
+    #pause {
+        @include buttonStyle;
+        margin: 0.25rem;
+        padding: 0.5rem;
+        z-index:2;
+        position: relative;
+    }
 }
+
 #container {
+    min-height: 100%; 
     height: 100vh;
     position: relative;
+    display: block;
 }
 
 #home {
     margin: 0;
 }
 
-#instructions {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-
-    color: red;
-    text-align: center;
-    font-family: Arial;
-    font-size: 14px;
-    line-height: 24px;
-
-    cursor: pointer;
-}
-
-#pause {
-    background: none;
-    margin: 0;
-}
 
 </style>
 

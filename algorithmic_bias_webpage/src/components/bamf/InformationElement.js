@@ -52,23 +52,21 @@ class InformationElement    {
 
         const boxGeo = new THREE.BoxBufferGeometry(dimensions.x, dimensions.y, dimensions.z)//.scale(1.2,1.2,1.2);
 
-        this.bbox = new THREE.Mesh(boxGeo, new THREE.MeshPhongMaterial( {color: color,visible:true,wireframe:true,wireframeLinewidth: 5} ));
+        this.bbox = new THREE.Mesh(boxGeo, new THREE.MeshPhongMaterial( {color: color,visible:false,wireframe:true,wireframeLinewidth: 5} ));
 
         this.bbox.position.copy(dimensions.addVectors(box3.min, box3.max).multiplyScalar( 0.5 ))
 
-        const axesHelper = new THREE.AxesHelper( 5 );
-        this.bbox.add( axesHelper );
+        //const axesHelper = new THREE.AxesHelper( 5 );
+        //this.bbox.add( axesHelper );
         this.scene.add(this.bbox);
     }
 
     setupText(pLoadedFont){
         let text;
         //this.loadFont().then( pLoadedFont => {
-        const color = 0x000000;
-        const matLite = new THREE.MeshBasicMaterial( {
+        const color = 0x9CBBCE;
+        const matLite = new THREE.MeshPhongMaterial( {
             color: color,
-            transparent: false,
-            opacity: 1,
             side: THREE.DoubleSide
         } );
 
@@ -92,11 +90,11 @@ class InformationElement    {
         text.position.z += this.position.z;
 
         //HELPER
-        let sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(),new THREE.MeshBasicMaterial({color:0xff0000}))
-        sphere.position.x = this.position.x;
-        sphere.position.y = this.position.y;
-        sphere.position.z = this.position.z;
-        this.scene.add(sphere)
+        // let sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(),new THREE.MeshBasicMaterial({color:0xff0000}))
+        // sphere.position.x = this.position.x;
+        // sphere.position.y = this.position.y;
+        // sphere.position.z = this.position.z;
+        // this.scene.add(sphere)
         //console.log("returned text:", text);
         return text;
     }

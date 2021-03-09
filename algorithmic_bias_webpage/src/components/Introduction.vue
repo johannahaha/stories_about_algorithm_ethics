@@ -2,16 +2,16 @@
     <div> 
         <div class=bamf_intro v-if="!startedBamf"> 
             <section id=bamf_intro_start>
-                <h2>Arabic dialect recognition algorithm</h2>
-                The German agency for refugees uses an algorithm to detect the country of origin of refugees. 
+                <h2>arabian dialect recognition algorithm</h2>
+                The German agency for refugees uses an algorithm to detect the country of origin of refugees. How ethical is that?
                 <button @click="startBamf">Start exploring</button>
-                <button @click="scrollToElement('bamf_intro_references')"> Referenzen </button>
+                <button @click="scrollToElement('bamf_intro_references')"> References </button>
             </section>
             <section id="bamf_intro_references"> 
 
                 <button @click="scrollToElement('bamf_intro_start')"> Back to Project </button>
                 
-                <h2>References and Ressources </h2>
+                <h2>References and Ressources</h2>
 
                 <ul>
                     <li>AlgorithmWatch. (2020). Automating Society Report 2020. AlgorithmWatch gGmbH. https://automatingsociety.algorithmwatch.org </li>
@@ -23,6 +23,13 @@
                     <li>Bundesamt für Migration und Flüchtlinge. (2020, October 12). Digitalisierung und Identitätsmanagement im Asylverfahren in Europa [Meldung] https://www.bamf.de/SharedDocs/Meldungen/DE/2020/20201012-digitalisierung-asylverfahren-va-eu-rp.html </li>
 
                     <li>Bundestag-Drucksache 19/6647. (2018). Antwort der Bundesregierung auf die Kleine Anfrage der Abgeordneten Ulla Jelpke, Dr. André Hahn, Gökay Akbulut, weiterer Abgeordneter und der Fraktion DIE LINKE. Einsatz von IT-Assistenzsystemen im Bundesamt für Migration und Flüchtlinge.</li>
+                </ul>
+
+                <h2>Assets used</h2>
+
+                <ul>
+                    <li> Dataset </li>
+                    <li> Schulungsunterlagen </li>
                 </ul>
             </section>
         </div>
@@ -64,7 +71,7 @@ export default{
 </script>
 
 <style scoped lang="scss">
-
+@import "@/assets/_config.scss";
 
 #bamf_intro_start{
     height:100vh;
@@ -120,6 +127,11 @@ export default{
 #sketch{
     overflow: hidden;
 }
+
+button{
+    @include buttonStyle;
+}
+
 
 </style>>
 

@@ -232,7 +232,7 @@ class PathLoader {
         } 
 
         this.material = new THREE.MeshPhongMaterial( 
-           { color: 0xffffff } );
+           { color: 0x143E4F } );
 	
         // this.material.onBeforeCompile = function ( shader ) {
         //     console.log( shader )

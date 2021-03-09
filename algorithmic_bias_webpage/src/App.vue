@@ -19,12 +19,13 @@ export default{
 </script>
 
 <style lang="scss">
+@import "./assets/_config.scss";
+
 html,body{
   margin:0;
   min-height: 100vh;
   min-height: -webkit-fill-available;
   height: -webkit-fill-available;
-
   &.sketch{
     overflow:hidden;
   }
@@ -32,27 +33,25 @@ html,body{
 }
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: $light;
   margin:0;
   position: relative;
+  background: $dark;
 }
 
 #home{
   margin:0;
+    text-align: center;
+    color: $light;
 }
 
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.about{
+  width: 70vw;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
 

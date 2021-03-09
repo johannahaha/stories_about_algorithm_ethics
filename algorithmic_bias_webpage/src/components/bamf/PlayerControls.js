@@ -25,7 +25,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	this.segment;
 
 	this.offset = 15;
-	this.lookFar = 30;
+	this.lookFar = 40;
 
 	//
 	// internals
@@ -33,6 +33,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 	let scope = this;
 
+	console.log(cameraEye,cameraHelper);
 	//this.domElement = domElement || window;
 	//this.domElement.isWindow = !domElement;
 	parent.rotation.reorder('YXZ');
@@ -64,7 +65,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 	const clock = new Clock();
 	let delta;
-	let speed = 0.04;//0.002;//0.001;
+	let speed = 0.006;//0.04;//0.001;
 	
 	//follow path
 	let firstLoop = true;
@@ -115,8 +116,6 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		if ( scope.enabled === false ) return;
 
 		//e.preventDefault();
-
-		//console.log("mouse is down");
 	
 		mouse.set(e.clientX, e.clientY);
 	
@@ -135,7 +134,10 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	}
 
 	function rotateCam(){
-		if ( scope.enabled === false ) return;
+		if ( scope.enabled === false ){
+			console.log("controls are not enabled")
+			return;
+		}
 		if ( scope.enableMouseControl === false ) return;
 
 		//console.log(destination);
@@ -217,7 +219,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		//camera.rotation.y = -camRotationY;
 
         camera.position.copy( scope.position );
-        cameraEye.position.copy( scope.position );
+        //cameraEye.position.copy( scope.position );
 
         // using arclength for stablization in look ahead
 
@@ -241,7 +243,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
           firstLoop = false;
         }
 
-        cameraHelper.update();
+        //cameraHelper.update();
 
 	}	
 
@@ -270,8 +272,8 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		if (infoFollowPath) return;
 		clock.stop();
 		scope.resetCam = false;
-		console.log("stopping follow");
-		console.log("lastcam",lastCamRotation);
+		//console.log("stopping follow");
+		//console.log("lastcam",lastCamRotation);
 		//if(lastCamRotation.y > 2.9 && lastCamRotation.y < -2.9) lastCamRotation.y = 0;
 		scope.resetMouse();
 		//console.log(clock);
@@ -279,8 +281,8 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 	this.startFollow = function (infoFollowPath){
 		if (infoFollowPath) return;
-		console.log("starting follow");
-		console.log(camera.rotation);
+		//console.log("starting follow");
+		//console.log(camera.rotation);
 		gsap.to(camera.rotation,{
 			duration: 1,
 			x:lastCamRotation.x,
@@ -298,13 +300,13 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		mouse.set(0, 0);
 		//if(lastCamRotation.y > 2.8 && lastCamRotation.y < -2.8) lastCamRotation.y = 0;
 		//destination = new Euler(0,0,0);
-		console.log("destination quat");
-		console.log(JSON.parse(JSON.stringify(destinationQuat)));
+		//console.log("destination quat");
+		//console.log(JSON.parse(JSON.stringify(destinationQuat)));
 		destination.setFromQuaternion(destinationQuat);
 		destination.reorder( 'YXZ' );
-		console.log("starting destination",destination);
-		console.log("check this quat");
-		console.log(JSON.parse(JSON.stringify(quaternion.setFromEuler(destination))));
+		// console.log("starting destination",destination);
+		// console.log("check this quat");
+		// console.log(JSON.parse(JSON.stringify(quaternion.setFromEuler(destination))));
 	}
 
 	this.getClock = function(){

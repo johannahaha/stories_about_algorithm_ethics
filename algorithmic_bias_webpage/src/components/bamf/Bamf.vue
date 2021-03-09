@@ -77,13 +77,13 @@ export default {
             },
             {
                 id: 9,
-                content: "The algorithm remembers, that the first one is Irish English and the second one is Scottish English",
+                content: "Which using each training sample, the algorithm learns, what patterns make up Scottish, Irish or Southern English dialects.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 10,
-                content: "After hearing thousands of those samples, \n it can maybe detect that the blue sphere is Irish and the green sphere is Scottish",
+                content: "After hearing thousands of those samples, \n it can maybe detect that the dark sphere is Irish and the light sphere is Scottish",
                 isImage: false,
                 scale: 0.2
             },
@@ -191,7 +191,7 @@ export default {
             },
             {
                 id: 28,
-                content: "Another interesting fact about the training documents is, \n that the Rausch? is marked as 'not relevant' in the documents. \n Those are important measurements for the quality of the sound \n which should be considered.",
+                content: "Another interesting fact about the training documents is, \n that the Sound-Noise-Ratio (SNR) is marked as 'not relevant' in the documents. \n Those are important measurements for the quality of the sound \n which should be considered.",
                 isImage: false,
                 scale: 0.2
             },
@@ -275,9 +275,9 @@ export default {
                 scale: 0.2
             },
             {
-                id: 60,
-                content: "/img/Bamf2017_Schulung_Seite_050.png",
-                isImage: true,
+                id: 42,
+                content: "stories about algorithm ethics. \n the bamf case. \n \n johanna hartmann",
+                isImage: false,
                 scale: 0.2
             }
         ]

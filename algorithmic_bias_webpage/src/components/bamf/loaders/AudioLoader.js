@@ -8,7 +8,7 @@ class AudioLoader{
     }
 
     async init(){
-        let paths = ['/sound/irish.wav','/sound/scottish.wav'];
+        let paths = ['/sound/sof_rainbow01.wav','/sound/scm_rainbow01.wav','/sound/wef_rainbow01.wav','/sound/irm_rainbow01.wav','/sound/irm_rainbow02.wav'];
 
         const manager = new THREE.LoadingManager();
         manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
@@ -32,7 +32,7 @@ class AudioLoader{
 
         let loading = await Promise.all(paths.map(async (path) => {
             const audio = await loader.loadAsync(path);
-            this.audios.push(audio);
+            this.audios.push({path:path,audio:audio});
           }));
 
         return loading;

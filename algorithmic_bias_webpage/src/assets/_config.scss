@@ -1,0 +1,39 @@
+$dark: #05181D;
+$darkmiddle: #143E4F;
+$middle: #3F6D85;
+$lightmiddle: #9CBBCE;
+$light: #D9E4EA;
+
+
+@mixin buttonStyle {
+    
+    display: inline-block;
+    border: 0.15rem solid $darkmiddle;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+    margin: 1rem;
+    text-decoration: none;
+    background: none;
+    color: $light;
+    font-family: sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    transition: background 250ms ease-in-out, 
+                transform 150ms ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    &:hover{
+        background: $darkmiddle;
+    }
+
+    &:focus{
+        outline: 1px solid $light;
+        outline-offset: -4px;
+    }
+
+    &:active{
+        transform: scale(0.99);
+    }
+}

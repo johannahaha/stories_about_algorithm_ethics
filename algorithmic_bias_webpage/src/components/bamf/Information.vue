@@ -84,11 +84,13 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "@/assets/_config.scss";
+
 #info {
     white-space: pre-line;
     position: absolute;
-    color: black;
+    color: $light;
     /* //width: 100vw;
     //height: 100vh; */
     box-sizing: border-box;

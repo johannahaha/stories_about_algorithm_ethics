@@ -16,8 +16,5 @@ export default {
 </script>
 
 <style scoped>
-#home{
-    text-align: center;
-    color: #2d305a;
-}
+
 </style>

@@ -2,17 +2,14 @@
 
 import * as THREE from "three";
 
-class InfoFontLoader {
+class TextureLoader{
     constructor(){
-        this.loadedFont;
+        this.textures = [];
     }
-
+    
     async init(){
-        return await this.loadFont();
-    }
+        let paths = ['/img/bamf_training_p50.png','/img/bamf_training_p50_result.png','/img/map_arabian_dialects.png'];
 
-    async loadFont(){
-        
         const manager = new THREE.LoadingManager();
         manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
             console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
@@ -30,10 +27,26 @@ class InfoFontLoader {
         manager.onError = function ( url ) {
             console.log( 'There was an error loading ' + url );
         };
-        const loader = new THREE.FontLoader(manager);
-        this.loadedFont = await loader.loadAsync('/threeAssets/helvetiker_regular.typeface.json');
-        return this.loadedFont;
+
+        const loader = new THREE.TextureLoader(manager);
+
+        let loading = await Promise.all(paths.map(async (path) => {
+            await loader.loadAsync(path).then((texture) => {
+                console.log(path);
+                console.log(texture);
+                const material = new THREE.MeshBasicMaterial({
+                    map: texture,
+                });
+                this.textures.push(material);
+            })
+        }));
+
+        return loading;
+    }
+
+    getTextures(){
+        return this.textures;
     }
 }
 
-export {InfoFontLoader};
+export{TextureLoader}
