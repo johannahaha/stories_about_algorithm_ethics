@@ -5,13 +5,11 @@ import {gsap} from 'gsap';
 
 class AudioElement{
     constructor(audio,color){
-        console.log("audio");
         this.audio = audio;
         this.color = color;
     }
 
     place(listener,parent,{x = 0, y = 0, z=0,distance = 1} = {}){
-        console.log("place");
         this.sound = new THREE.PositionalAudio( listener );
 
         this.sound.setBuffer(this.audio);

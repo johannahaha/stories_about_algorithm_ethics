@@ -2,7 +2,7 @@
     <div class="bamf">
         <div v-if="!preloading" id="container"></div>
         <div id="instructions">
-            <span style="font-size: 36px">Click to Explore</span>
+            <span>Click to Explore</span>
             <ul>
                 <li>
                     Pause: Click on the Pause Button
@@ -39,7 +39,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
 
 //MY CLASSES
-import { InformationElement } from './InformationElement.js';
+//import { InformationElement } from './InformationElement.js';
 import { PathLoader } from './loaders/PathLoader.js';
 import {InfoFontLoader} from './loaders/InfoFontLoader.js';
 import {ModelLoader} from './loaders/ModelLoader.js';
@@ -275,24 +275,23 @@ export default {
 		parent.add( cameraEye );
 
         //INFORMATION ELEMENT 
-        let info = new InformationElement(scene,font,new THREE.Vector3(-40,0,40));
-        info.init();
+        // let info = new InformationElement(scene,font,new THREE.Vector3(-40,0,40));
+        // info.init();
 
-		//cameraHelper.visible = cameraHelperOn;
-		//cameraEye.visible = cameraHelperOn;
+		cameraHelper.visible = false;
+		cameraEye.visible = false;
     
         //RENDERER
         renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setSize(container.clientWidth, container.clientHeight);
         renderer.getContext().getExtension('OES_standard_derivatives');
         renderer.outputEncoding = THREE.sRGBEncoding
-        //console.log("extensions",console.log(renderer.getContext().getSupportedExtensions()));
 
         //SVG path
         this.initPath(pathVertices,parent);
 
         //console.log(models);
-        scene.add(models[0].scene);
+        //scene.add(models[0].scene);
 
         container.appendChild(renderer.domElement);
         //windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
@@ -388,7 +387,6 @@ export default {
                         this.htmlProps.position = infoManager.htmlPosition;
                         //console.log("html info registered");
                         this.htmlProps.infoElement = true;
-                        console.log("html props",this.htmlProps);
 
                         if(infoManager.infoFollowPath){
                             //Faking , that there is no information on the screen
@@ -476,6 +474,8 @@ export default {
         span{
             text-align: left;
             margin-bottom: 1rem;
+            font-size:1.8rem;
+            font-weight: 600;
         }
 
         ul{

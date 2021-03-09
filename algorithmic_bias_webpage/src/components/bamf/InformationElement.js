@@ -148,7 +148,6 @@ class InformationElement    {
             //this.bbox.rotateX(angle);
         }
         else if (axis === "Y"){
-            console.log("rotating Y",this.obj);
             this.obj.rotateY(angle);
             this.bbox.rotateY(angle);
         }
@@ -157,7 +156,6 @@ class InformationElement    {
             this.bbox.rotateZ(angle);
             //this.bbox.rotateZ(angle);
         }
-        console.log(this.bbox);
     }
 
     translate(vec){

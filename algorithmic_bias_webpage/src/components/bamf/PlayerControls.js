@@ -65,7 +65,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 	const clock = new Clock();
 	let delta;
-	let speed = 0.006;//0.04;//0.001;
+	let speed = 0.04;//0.005;//0.04;//0.001;
 	
 	//follow path
 	let firstLoop = true;
@@ -122,6 +122,8 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		scope.domElement.ownerDocument.addEventListener('pointermove', onPointerMove, false);
 		scope.domElement.ownerDocument.addEventListener('pointerup', onPointerUp, false);
 		dragging = true;
+
+		console.log(camera.quaternion);
 	}
 
 	function onPointerUp ( e ) {
@@ -284,7 +286,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		//console.log("starting follow");
 		//console.log(camera.rotation);
 		gsap.to(camera.rotation,{
-			duration: 1,
+			duration: 0.5,
 			x:lastCamRotation.x,
 			y:lastCamRotation.y,
 			z:0,
