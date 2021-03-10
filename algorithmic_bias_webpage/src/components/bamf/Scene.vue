@@ -19,6 +19,7 @@
         <Information 
         v-bind="htmlProps"
         :informations="informations"
+        :windowSize="windowSize"
         @click="htmlProps.infoElement = false"
         @information-closed="stopInformationPhase"> </Information>
         <div id="container"></div>
@@ -50,10 +51,6 @@ import {InformationManager} from './InformationManager.js';
 //import {Ground} from './Ground.js'
 //#endregion
 
-//#region Variables
-//HELPERS
-//import {VertexTangentsHelper} from 'three/examples/jsm/helpers/VertexTangentsHelper.js';
-//import {VertexNormalsHelper} from 'three/examples/jsm/helpers/VertexNormalsHelper.js';
 
 //VARIABLES
 let scene, renderer
@@ -80,14 +77,7 @@ let infoManager;
 let informationRunning = false;
 let informationPhase = false;
 
-//let infoSegments = [12,20,30,40];
-//let infoSegmentsDone = [];
-//let infoPos = new THREE.Vector3();
-// const mouse = new THREE.Vector2();
-// const raycaster = new THREE.Raycaster();
-
-// //TODO: resizing
-//const windowSize = new THREE.Vector2( window.offsetWidth, window.offsetHeight);
+// //TODO: resizin
 
 
 //#endregion
@@ -96,6 +86,9 @@ export default {
     components: { Information },
   name: 'Scene',
   props: {
+    isGerman: {
+        type: Boolean
+    },
     informations:{
       type: Array
     }
@@ -108,7 +101,8 @@ export default {
         infoId: 0,
         scale: 1,
         position: new THREE.Vector2(0,0)
-      }
+      },
+      windowSize: new THREE.Vector2(0,0)
     }
   },
   methods: {
@@ -337,7 +331,7 @@ export default {
             }
 			//this.animateCamera();
 		} );
-
+        this.windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
         window.addEventListener( 'resize', this.onWindowResize, false );
         window.addEventListener('endPath',this.endingPath);
         console.log("done with init");
@@ -349,6 +343,8 @@ export default {
 		camera.updateProjectionMatrix();
 
 		renderer.setSize( window.innerWidth, window.innerHeight );
+
+        this.windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
 
 	},
     endingPath: function(){
@@ -435,9 +431,9 @@ export default {
       this.preLoadTextures()])
       .then(res => {
         console.log(res);
-        console.log("textures",textures);
         this.init();
         this.preloading = true;
+        console.log("window",this.windowSize);
       })
       .then(res => {
           console.log("Let's go, animation",res)

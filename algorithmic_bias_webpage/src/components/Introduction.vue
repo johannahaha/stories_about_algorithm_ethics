@@ -3,8 +3,11 @@
         <div class=bamf_intro v-if="!startedBamf"> 
             <section id=bamf_intro_start>
                 <h2>arabian dialect recognition algorithm</h2>
-                The German agency for refugees uses an algorithm to detect the country of origin of refugees. How ethical is that?
-                <button @click="startBamf">Start exploring</button>
+                The German Federal Office for Migration and Refugees (BAMF) uses an algorithm to identify the country of origin of refugees. How ethical is that?
+                <button @click="startBamf(false)">Start exploring</button>
+
+                Das Bundesamt für Migration und Flüchtlinge (BAMF) nutzt einen Algorithmus, um das Herkunftsland von Geflüchteten zu ermitteln. Wie ethisch ist das?
+                <button @click="startBamf(true)">Beginne die Reise</button>
                 <button id="toreference" @click="scrollToElement('bamf_intro_references')"> References </button>
             </section>
             <section id="bamf_intro_references"> 
@@ -44,7 +47,7 @@
 
             </section>
         </div>
-        <Bamf id="sketch" v-if="startedBamf" @endingPath="endingPath"/>
+        <Bamf id="sketch" v-if="startedBamf" @endingPath="endingPath" :isGerman="german"/>
     </div>
 </template>
 
@@ -61,7 +64,8 @@ export default{
         return{
             startedBamf: false,
             showReferences:false,
-            scrollToReference:false
+            scrollToReference:false,
+            german: false,
         }
     },
     methods: {
@@ -78,10 +82,12 @@ export default{
                 el.scrollIntoView({behavior: 'smooth'});
             }
         },
-        startBamf(){
+        startBamf(isGerman){
+            this.german = isGerman;
             this.startedBamf=true;
             document.body.classList.toggle('sketch');
         },
+
         endingPath(){
             console.log("introduction sending end path");
             this.startedBamf=false;

@@ -11,7 +11,7 @@ import {gsap} from 'gsap';
 import {Vector2} from 'three';
 
 //TODO: resizing
-//let windowSize;
+//et windowSize = new Vector2( window.offsetWidth, window.offsetHeight);
 
 export default {
     props: {
@@ -20,6 +20,9 @@ export default {
         },
         informations:{
             type: Array
+        },
+        windowSize:{
+            type: Vector2
         },
         infoId:{
             type: Number
@@ -35,11 +38,17 @@ export default {
         style(){
             return 'font-size: '+ this.scale + 'rem';
         },
-        posPercentLeft(){
-            return '"'+this.position.x+'vw"'
+        posPercentX(){
+            return -100 * this.position.x
         },
-        posPercentTop(){
-            return '"'+this.position.y+'vh"'
+        posPercentY(){
+            return -100 * this.position.y
+        },
+        posX(){
+            return this.windowSize.x * this.position.x
+        },
+        posY(){
+            return this.windowSize.y * this.position.y
         }
     },
     methods: {
@@ -53,14 +62,15 @@ export default {
         },
         enterInfo(el,done){
             gsap.to(el,{
+                onStart: console.log(this.posX,this.posY,this.posPercentX,this.posPercentY),
                 duration: 1,
                 scaleX: 1,
                 scaleY: 1,
                 opacity:1,
-                x: this.position.x,
-                y: this.position.y,
-                xPercent:-50,
-                yPercent:-50,
+                x: this.posX,
+                y: this.posY,
+                xPercent:this.posPercentX,
+                yPercent:this.posPercentY,
                 //xPercent:this.position.x, 
                 //left:this.posPercentLeft, 
                 //yPercent:this.position.y, 
@@ -82,7 +92,6 @@ export default {
         }
     },
     mounted(){
-        //windowSize = new Vector2( window.offsetWidth, window.offsetHeight);
     }
     
 }
