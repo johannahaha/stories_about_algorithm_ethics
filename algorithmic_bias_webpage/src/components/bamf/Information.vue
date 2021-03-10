@@ -36,10 +36,10 @@ export default {
             return 'font-size: '+ this.scale + 'rem';
         },
         posPercentLeft(){
-            return '"'+this.position.x+'%"'
+            return '"'+this.position.x+'vw"'
         },
         posPercentTop(){
-            return '"'+this.position.y+'%"'
+            return '"'+this.position.y+'vh"'
         }
     },
     methods: {
@@ -57,10 +57,14 @@ export default {
                 scaleX: 1,
                 scaleY: 1,
                 opacity:1,
-                xPercent:this.position.x, 
-                left:this.posPercentLeft, 
-                yPercent:this.position.y, 
-                top:this.posPercentTop, 
+                x: this.position.x,
+                y: this.position.y,
+                xPercent:-50,
+                yPercent:-50,
+                //xPercent:this.position.x, 
+                //left:this.posPercentLeft, 
+                //yPercent:this.position.y, 
+                //top:this.posPercentTop, 
                 onComplete: done
             })
         },

@@ -21,6 +21,13 @@ export default{
 <style lang="scss">
 @import "./assets/_config.scss";
 
+*{
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  box-sizing: border-box; 
+}
+
 html,body{
   margin:0;
   min-height: 100vh;
@@ -45,12 +52,47 @@ html,body{
 
 #home{
   margin:0;
-    text-align: center;
-    color: $light;
+  text-align: center;
+  color: $light;
 }
 
 .about{
   width: 70vw;
+}
+
+@include media-md{
+    
+    #home div{
+
+      section{
+        padding-left: 15%;
+        padding-right: 15%;
+      }
+
+    }
+}
+
+@include media-lg{
+    #home div{
+
+      section{
+        padding-left: 20%;
+        padding-right: 20%;
+      }
+
+    }
+}
+
+@include media-xl{
+    #home div{
+
+      section{
+        padding-left: 25%;
+        padding-right: 25%;
+      }
+
+    }
+
 }
 
 </style>

@@ -2,7 +2,8 @@
     <div id="bamf"> 
         <h1 v-if="showInformation">Bamf geht los </h1>
         <!-- <Information v-if="showInformation" v-bind:informations="informations" /> -->
-        <Scene v-bind:informations="informations"> </Scene>
+        <Scene v-bind:informations="informations"
+        @endingPath="endingPath"> </Scene>
     </div>
     
 </template>
@@ -284,6 +285,10 @@ export default {
         }
     },
     methods: {
+        endingPath(){
+            console.log("bamf sending ending path");
+            this.$emit("ending-path");
+        }
     }
 }
 </script>

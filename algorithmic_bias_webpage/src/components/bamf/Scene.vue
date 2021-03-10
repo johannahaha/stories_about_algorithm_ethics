@@ -339,6 +339,7 @@ export default {
 		} );
 
         window.addEventListener( 'resize', this.onWindowResize, false );
+        window.addEventListener('endPath',this.endingPath);
         console.log("done with init");
 
     },
@@ -350,6 +351,10 @@ export default {
 		renderer.setSize( window.innerWidth, window.innerHeight );
 
 	},
+    endingPath: function(){
+        console.log("scene sending ending path");
+        this.$emit("ending-path");
+    },
     stopInformationPhase: function(){
         controls.startFollow(infoManager.infoFollowPath);
         controls.update(true);
@@ -454,6 +459,7 @@ export default {
     margin: 0 auto;
     left: 0;
     top: 0;
+    position:relative;
 
     #instructions {
         margin: 0 auto;
@@ -496,19 +502,23 @@ export default {
         margin: 0.25rem;
         padding: 0.5rem;
         z-index:2;
-        position: relative;
+        position: absolute;
     }
 }
 
 #container {
     min-height: 100%; 
     height: 100vh;
-    position: relative;
+    //position: absolute;
     display: block;
 }
 
 #home {
     margin: 0;
+}
+
+.header{
+    background: none;
 }
 
 

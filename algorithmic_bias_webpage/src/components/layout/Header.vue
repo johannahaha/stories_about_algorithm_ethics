@@ -13,13 +13,14 @@
 @import "@/assets/_config.scss";
     .header{
         color: $light;
-        position: absolute;
-        margin: 0 auto 0 2rem;
+        margin: 0 auto;
         padding-top: 1rem;
+        padding-left: 2rem;
         display:flex;
         flex-direction: row;
         align-items: center;
-        position: fixed;
+        position: absolute;
+        //position: relative;
         z-index:1;
 
         h1{

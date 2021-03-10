@@ -1,5 +1,6 @@
 "use strict";
 
+//import router from '@/router';
 import * as THREE from "three";
 import {gsap} from 'gsap';
 import { InformationElement } from './InformationElement.js';
@@ -28,7 +29,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     let scope = this;
 
     // let infoSegmentsHalf = [20,40,70,100,120,140,170,220,250,300,330,370,400,450,480,500,550,600,620,660,705,820,850,890,920,940,1000,1050,1080,1120,1200,1230,1300,1370,1410,1450,1490,1530,1580,1630,1670,1710,1750,1800];
-    let infoSegmentsHalf = [20,1670,1710,1750,1800];
+    let infoSegmentsHalf = [20,40,1670,1710,1750,1800];
 
     let infoSegments = [];
     for (let i = 0; i < infoSegmentsHalf.length; i++) {
@@ -41,7 +42,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     const mouse = new THREE.Vector2();
     const raycaster = new THREE.Raycaster();
 
-    //const windowSize = new THREE.Vector2( scope.domElement.offsetWidth, scope.domElement.offsetHeight);
+    const windowSize = new THREE.Vector2( scope.domElement.offsetWidth, scope.domElement.offsetHeight);
 
     const cam = new THREE.Vector3();
     const defaultStartVector = new THREE.Vector3(0,0,-30);
@@ -49,7 +50,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     const defaultHtmlPos = new THREE.Vector2(50,0);
     //const customStartVector = new THREE.Vector3();
     const customViewingDist = new THREE.Vector3();
-    //const customHtmlPos = new THREE.Vector2();
+    const customHtmlPos = new THREE.Vector2();
     const aabb = new THREE.Box3();
     const lastCam = new THREE.Camera();
     
@@ -259,28 +260,28 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         helper.add( axesHelper );
     }
 
-    // function addImage(path,position,size){
-    //     let texture = undefined;
-    //     for (let i = 0; i < textures.length; i++) {
-    //         if(textures[i].map.image.src.includes(path)){
-    //             texture = textures[i];
-    //         }
-    //     }
+    function addImage(path,position,size){
+        let texture = undefined;
+        for (let i = 0; i < textures.length; i++) {
+            if(textures[i].map.image.src.includes(path)){
+                texture = textures[i];
+            }
+        }
 
-    //     if (texture !== undefined){
-    //         const box = new THREE.BoxGeometry(size.x,size.y,size.z);
-    //         box.scale(5,5,5);
-    //         let img = new THREE.Mesh(box, texture);
-    //         img.position.copy(position);
-    //         img.rotateY(THREE.MathUtils.degToRad(50));
-    //         scope.scene.add(img);
-    //         return img;
-    //     } 
-    //     else{
-    //         console.log("texture not found: ",path);
-    //     }
+        if (texture !== undefined){
+            const box = new THREE.BoxGeometry(size.x,size.y,size.z);
+            box.scale(5,5,5);
+            let img = new THREE.Mesh(box, texture);
+            img.position.copy(position);
+            img.rotateY(THREE.MathUtils.degToRad(50));
+            scope.scene.add(img);
+            return img;
+        } 
+        else{
+            console.log("texture not found: ",path);
+        }
 
-    // }
+    }
 
     // function addAudio(path,object,x,y,color = 0x9CBBCE){
     //     let audioFile = undefined;
@@ -302,6 +303,17 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     //     }
     // }
 
+    function showingReferences() {
+        console.log("info manager sending ending path")
+
+        const event = new CustomEvent("endPath",{ 
+            bubbles: true,
+            detail:  {
+                message: "ended path. showing references now."
+        }});
+        scope.domElement.dispatchEvent(event);
+    }
+
     function manageInfo(infoNumber){
 
 		if (infoNumber === infoSegmentsDone[0]){
@@ -309,24 +321,25 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoOverPath(0,{useQuaternion:false,viewingDist:customViewingDist});
         }
 
-        //#region done
+        else if (infoNumber === infoSegmentsDone[1]){
+            customHtmlPos.set(windowSize.x/2,windowSize.y/2);
+            infoAsHtml(1,{scale:1,position:customHtmlPos});
 
-        // else if (infoNumber === infoSegmentsDone[1]){
-        //     infoAsHtml(1,{scale:1.2});
 
+            infoPos.copy(camera.position);
+            infoPos.y += 2;
+            infoPos.z += -20;
 
-        //     infoPos.copy(camera.position);
-        //     infoPos.y += 2;
-        //     infoPos.z += -20;
+            let img = addImage('/img/bamf_training_p50_result.png',infoPos,new THREE.Vector3(3.4,4,0.2));
 
-        //     let img = addImage('/img/bamf_training_p50_result.png',infoPos,new THREE.Vector3(3.4,4,0.2));
-
-        //     gsap.from(img.position,{
-        //         duration:1,
-        //         y:60
-        //     })
+            gsap.from(img.position,{
+                duration:1,
+                y:60
+            })
             
-        // }
+        }
+
+        //#region done
 
     
         // //TODO: bamf positioning next to path
@@ -802,7 +815,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         // }
 
         //#endregion done
-        else if(infoNumber === infoSegmentsDone[1]){
+        else if(infoNumber === infoSegmentsDone[2]){
             console.log("info 39");
             customViewingDist.set(60,0,15);
             infoOverPath(39,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(20)})
@@ -810,7 +823,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             addAxesHelper();
         }
 
-        else if(infoNumber === infoSegmentsDone[2]){
+        else if(infoNumber === infoSegmentsDone[3]){
             console.log("info 40");
             customViewingDist.set(-30,0,-15);
             //infoFlyingToCam(40,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(90)})
@@ -818,7 +831,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             addAxesHelper();
         }
 
-        else if(infoNumber === infoSegmentsDone[3]){
+        else if(infoNumber === infoSegmentsDone[4]){
             console.log("info 41");
             customViewingDist.set(30,0,15);
             //infoFlyingToCam(41,{useQuaternion:false,viewingDist:customViewingDist})
@@ -826,7 +839,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             addAxesHelper();
         }
 
-        else if (infoNumber === infoSegmentsDone[4]){
+        else if (infoNumber === infoSegmentsDone[5]){
 
             infoPos.set(0, 9000, 0);
             let text = scope.informations[42].content;
@@ -848,7 +861,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             //var size = aabb.getSize( new THREE.Vector3() );
             
             tl.to(scope.camera.rotation,{
-                duration: 3,
+                duration: 2,
                 ease: "none",
                 x: -THREE.MathUtils.degToRad(90) + 0.5,
                 z: 0,
@@ -878,10 +891,30 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 z:30,
                 onComplete:() => {
                     scope.controls.resetMouse();
-                    scope.controls.enabled = true
+                    scope.controls.enabled = true;
                 }
 
             }),"-=4";
+
+            let objects = [];
+            objects.push(info.bbox);
+
+            window.addEventListener('pointerdown',function(event){
+                scope.onPointerDownInfo(event, objects, function(){
+                    // console.log(router.getRoutes());
+                    // router.go();
+                    showingReferences();
+
+                    // let id = "bamf_info_references";
+                    // const el = document.getElementById(id);
+                    //     console.log(el);
+
+                    // if (el) {
+                    //     el.scrollIntoView({behavior: 'smooth'});
+                    // }
+
+                })
+            })
         }
 
     }
