@@ -6,7 +6,7 @@ import {gsap} from 'gsap';
 import { InformationElement } from './InformationElement.js';
 import {AudioElement} from './AudioElement.js'
 
-let InformationManager = function(scene,domElement,camera,controls,informations,font,models,audios,textures,cameraHelper,cameraEye){
+let InformationManager = function(scene,domElement,camera,controls,informations,font,models,audios,textures,isGerman,cameraHelper,cameraEye){
     
     this.informationPhase = false;
     this.infoFollowPath = false;
@@ -23,6 +23,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     this.font = font;
     this.models = models;
     this.audios = audios;
+    this.isGerman = isGerman;
     this.cameraEye = cameraEye;
     this.cameraHelper = cameraHelper;
 
@@ -126,7 +127,13 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoPos.copy(camera.position);
         }
         infoPos.y = height + scope.controls.offset;
-        let text = scope.informations[id].content;
+        let text;
+        if(isGerman){
+            text = scope.informations[id].german;
+        }
+        else{
+            text = scope.informations[id].content;
+        }
         let scale = scope.informations[id].scale;
         let info = new InformationElement(scope.scene,scope.font,infoPos,text,false,scale);
         info.init();
@@ -187,7 +194,13 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoPos.add(viewingDist);
         }
         infoPos.y = scope.controls.offset;
-        let text = scope.informations[id].content;
+        let text;
+        if(isGerman){
+            text = scope.informations[id].german;
+        }
+        else{
+            text = scope.informations[id].content;
+        }
         let scale = scope.informations[id].scale;
         let info = new InformationElement(scope.scene,scope.font,infoPos,text,scope.informations[2].isImage,scale);
         info.init();
@@ -323,7 +336,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
         else if (infoNumber === infoSegmentsDone[1]){
             customHtmlPos.set(0,0.3);
-            infoAsHtml(1,{scale:1.6,position:customHtmlPos});
+            infoAsHtml(1,{scale:1,position:customHtmlPos});
 
 
             infoPos.copy(camera.position);
@@ -377,7 +390,13 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             lastCam.copy(scope.camera);
 
             infoPos.set(lastCam.position.x, 5000, lastCam.position.z);
-            let text = scope.informations[3].content;
+            let text;
+            if(isGerman){
+                text = scope.informations[3].german;
+            }
+            else{
+                text = scope.informations[3].content;
+            }
             let info = new InformationElement(scope.scene,scope.font,infoPos,text);
             info.init();
             info.rotate("X",-Math.PI/2);
@@ -608,7 +627,13 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             lastCam.copy(scope.camera);
 
             infoPos.set(lastCam.position.x, 130, lastCam.position.z);
-            let text = scope.informations[27].content;
+            let text;
+            if(isGerman){
+                text = scope.informations[27].german;
+            }
+            else{
+                text = scope.informations[27].content;
+            }
             let info = new InformationElement(scope.scene,scope.font,infoPos,text);
             info.init();
             info.rotate("Y",-Math.PI/2);

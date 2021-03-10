@@ -1,7 +1,7 @@
 <template>
     <transition @before-enter="beforeEnterInfo" @enter="enterInfo" @leave="leaveInfo">
         <div id="info" :style="style" v-if="infoElement">
-                {{ informations[infoId].content }}
+                {{content}}
         </div>
     </transition>
 </template>
@@ -32,9 +32,22 @@ export default {
         },
         position: {
             type: Vector2
+        },
+        isGerman: {
+            type: Boolean
         }
     },
     computed: {
+        content(){
+            let text;
+            if(this.isGerman){
+                text = this.informations[this.infoId].german;
+            }
+            else{
+                text = this.informations[this.infoId].content;
+            }
+            return text;
+        },
         style(){
             return 'font-size: '+ this.scale + 'rem';
         },
@@ -104,10 +117,9 @@ export default {
     white-space: pre-line;
     position: absolute;
     color: $light;
-    /* //width: 100vw;
-    //height: 100vh; */
+    text-align: left;
+    padding:2rem;
     box-sizing: border-box;
-    text-align: center;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;

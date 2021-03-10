@@ -2,12 +2,18 @@
     <div> 
         <div class=bamf_intro v-if="!startedBamf"> 
             <section id=bamf_intro_start>
-                <h2>arabian dialect recognition algorithm</h2>
-                The German Federal Office for Migration and Refugees (BAMF) uses an algorithm to identify the country of origin of refugees. How ethical is that?
-                <button @click="startBamf(false)">Start exploring</button>
+                <h2>arabic dialect recognition algorithm</h2>
 
-                Das Bundesamt für Migration und Flüchtlinge (BAMF) nutzt einen Algorithmus, um das Herkunftsland von Geflüchteten zu ermitteln. Wie ethisch ist das?
-                <button @click="startBamf(true)">Beginne die Reise</button>
+                <div class="bamf_intro_start_language">
+                    <div class="bamf_intro_start_language_item">
+                        The German Federal Office for Migration and Refugees (BAMF) uses an algorithm to identify the country of origin of refugees. How ethical is that? <br>
+                        <button @click="startBamf(false)">Start exploring</button>
+                    </div>
+                    <div class="bamf_intro_start_language_item">
+                        Das Bundesamt für Migration und Flüchtlinge (BAMF) nutzt einen Algorithmus, um das Herkunftsland von Geflüchteten zu ermitteln. Wie ethisch ist das? <br>
+                        <button @click="startBamf(true)">Beginne die Reise</button>
+                    </div>
+                </div>
                 <button id="toreference" @click="scrollToElement('bamf_intro_references')"> References </button>
             </section>
             <section id="bamf_intro_references"> 
@@ -19,12 +25,12 @@
                 <ul>
                     <li>AlgorithmWatch. (2020). Automating Society Report 2020. AlgorithmWatch gGmbH. <a href="https://automatingsociety.algorithmwatch.org">https://automatingsociety.algorithmwatch.org</a></li>
 
-                    <li>Biselli, A. (2017, March 17). Software, die an der Realität scheitern muss. Zeit Online. <a href="https://www.zeit.de/digital/internet/2017-03/bamf-asylbewerber-sprach-analyse-software-computerlinguistik ">https://www.zeit.de/digital/internet/2017-03/bamf-asylbewerber-sprach-analyse-software-computerlinguistik </a> 
+                    <li>Biselli, Anna. (2017, March 17). Software, die an der Realität scheitern muss. Zeit Online. <a href="https://www.zeit.de/digital/internet/2017-03/bamf-asylbewerber-sprach-analyse-software-computerlinguistik ">https://www.zeit.de/digital/internet/2017-03/bamf-asylbewerber-sprach-analyse-software-computerlinguistik </a> 
                     </li>
 
-                    <li>Biselli, A. (2018, August 20). Eine Software des BAMF bringt Menschen in Gefahr. Vice. <a href="https://www.vice.com/de/article/a3q8wj/fluechtlinge-bamf-sprachanalyse-software-entscheidet-asyl">https://www.vice.com/de/article/a3q8wj/fluechtlinge-bamf-sprachanalyse-software-entscheidet-asyl</a></li>
+                    <li>Biselli, Anna. (2018, August 20). Eine Software des BAMF bringt Menschen in Gefahr. Vice. <a href="https://www.vice.com/de/article/a3q8wj/fluechtlinge-bamf-sprachanalyse-software-entscheidet-asyl">https://www.vice.com/de/article/a3q8wj/fluechtlinge-bamf-sprachanalyse-software-entscheidet-asyl</a></li>
 
-                    <li>Biselli, A. (2018, December 28). Die IT-Tools des BAMF: Fehler vorprogrammiert. Netzpolitik.org. <a href="https://netzpolitik.org/2018/die-it-tools-des-bamf-fehler-vorprogrammiert/">https://netzpolitik.org/2018/die-it-tools-des-bamf-fehler-vorprogrammiert/</a></li>
+                    <li>Biselli, Anna. (2018, December 28). Die IT-Tools des BAMF: Fehler vorprogrammiert. Netzpolitik.org. <a href="https://netzpolitik.org/2018/die-it-tools-des-bamf-fehler-vorprogrammiert/">https://netzpolitik.org/2018/die-it-tools-des-bamf-fehler-vorprogrammiert/</a></li>
 
                     <li>Bundesamt für Migration und Flüchtlinge. (2019). Digitalisierungsagenda 2020. <a href="https://www.bamf.de/DE/Themen/Digitalisierung/Digitalisierungsagenda/digitalisierungsagenda-node.html">https://www.bamf.de/DE/Themen/Digitalisierung/Digitalisierungsagenda/digitalisierungsagenda-node.html</a>  </li>
 
@@ -84,6 +90,7 @@ export default{
         },
         startBamf(isGerman){
             this.german = isGerman;
+            console.log("german: ",this.german);
             this.startedBamf=true;
             document.body.classList.toggle('sketch');
         },
@@ -118,6 +125,17 @@ export default{
     position: absolute;
     display: block;
 }
+
+.bamf_intro_start_language{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+      &_item{
+          margin: 1rem;
+          align-self: center;
+      }
+    }
 
 #bamf_intro_start{
     height:100vh;

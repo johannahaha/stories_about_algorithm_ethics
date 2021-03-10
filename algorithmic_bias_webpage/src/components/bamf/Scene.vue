@@ -1,7 +1,7 @@
 <template>
     <div class="bamf">
         <div v-if="!preloading" id="container"></div>
-        <div id="instructions">
+        <div id="instructions" v-if="!isGerman">
             <span>Click to Explore</span>
             <ul>
                 <li>
@@ -15,11 +15,26 @@
                 </li>
             </ul>
         </div>
+        <div id="instructions" v-if="isGerman">
+            <span>Klicke, um fortzusetzen.</span>
+            <ul>
+                <li>
+                    Pause: Klicke auf den Pause-Knopf
+                </li>
+                <li>
+                    Umschauen: Klicke und Ziehe mit deiner Maus
+                </li>
+                <li>
+                    Folge dem Pfad weiter: Klicke auf den Text
+                </li>
+            </ul>
+        </div>
         <button id="pause">pause</button>
         <Information 
         v-bind="htmlProps"
         :informations="informations"
         :windowSize="windowSize"
+        :isGerman="isGerman"
         @click="htmlProps.infoElement = false"
         @information-closed="stopInformationPhase"> </Information>
         <div id="container"></div>
@@ -297,7 +312,7 @@ export default {
         camera.rotation.order = 'YXZ';
         controls = new PlayerControls(parent,camera,renderer.domElement,helperTubeGeometry,cameraEye,cameraHelper);
 
-        infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,models,audios,textures,cameraHelper,cameraEye);
+        infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,models,audios,textures,this.isGerman,cameraHelper,cameraEye);
 
         let menu = document.querySelector("#instructions");
 

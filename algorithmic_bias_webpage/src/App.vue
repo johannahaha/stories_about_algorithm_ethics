@@ -69,6 +69,11 @@ html,body{
         padding-right: 15%;
       }
 
+      .bamf_intro_start_language{
+        display: flex;
+        flex-direction: row;
+        justify-content: center
+      }
     }
 }
 
