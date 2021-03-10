@@ -216,7 +216,7 @@ export default {
             },
             {
                 id: 32,
-                content: "When you look at this map, you can see that \nthe arabic dialects are not bound to borders. \nCan we assume, that a dialect refers to a country of origin at all?",
+                content: "When you look at this map, you can see that \nthe arabic dialects are not bound to borders. \nCan we assume, that a dialect refers to\n a country of origin at all?",
                 isImage: false,
                 scale: 0.1
             },
