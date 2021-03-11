@@ -57,7 +57,7 @@ export default {
             },
             {
                 id: 4,
-                content: "By 2019, the total costs for the dialect recognition software amounted to \nover two million euros. \nBut what exactly is happening here?",
+                content: "By 2019, the total costs for the dialect recognition software amounted to over two million euros. \nBut what exactly is happening here?",
                 german:"Bis 2019 betrugen die Gesamtkosten fuer die Dialekterkennungssoftware \nueber zwei Millionen Euro.\nDoch was genau passiert hier?",
                 isImage: false,
                 scale: 0.2
@@ -329,11 +329,17 @@ export default {
                 isImage: false,
                 scale: 0.2
             },
-
             {
                 id: 43,
-                content: "stories about algorithm ethics. \nthe BAMF case. \n\njohanna hartmann",
+                content: "BAMF plans a pilot project to use this algorithm across the EU.",
                 german: "stories about algorithm ethics. \nthe BAMF case. \n\njohanna hartmann",
+                isImage: false,
+                scale: 0.2
+            },
+            {
+                id: 44,
+                content: "stories about algorithm ethics. \nthe BAMF case. \n\njohanna hartmann \n \n \n click for getting to the ressources",
+                german: "stories about algorithm ethics. \nder BAMF Fall. \n\nJohanna Hartmann \n \n \n Klicke, um zu Quellen und Ressourcen zu gelangen",
                 isImage: false,
                 scale: 0.2
             }

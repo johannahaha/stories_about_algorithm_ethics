@@ -48,11 +48,6 @@
 import Information from './Information.vue';
 
 import * as THREE from "three";
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-//import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
-//import { PointerLockControls} from 'three/examples/jsm/controls/PointerLockControls.js';
-//import { Curves } from 'three/examples//jsm/curves/CurveExtras.js';
-import { GUI } from 'three/examples/jsm/libs/dat.gui.module.js';
 
 //MY CLASSES
 //import { InformationElement } from './InformationElement.js';
@@ -69,13 +64,13 @@ import {InformationManager} from './InformationManager.js';
 
 //VARIABLES
 let scene, renderer
-let overviewControls, controls;
+let controls;
 
 
 let frame;
 
 //camera
-let camera, cameraHelper, cameraEye, overviewCamera;
+let camera, cameraHelper, cameraEye;
 //let cameraHelperOn = true; 
 
 let helperTubeGeometry;
@@ -84,9 +79,7 @@ let font;
 let models;
 let audios;
 let textures;
-//let ground;
-
-let guiParameters;
+//let ground
 
 let infoManager;
 let informationRunning = false;
@@ -241,11 +234,11 @@ export default {
         //scene.background = new THREE.Color(0xffffff);
         scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
-        overviewCamera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.01, 100000 );
-        overviewCamera.position.set( -50, 50, 200 );
+        // overviewCamera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.01, 100000 );
+        // overviewCamera.position.set( -50, 50, 200 );
         
         //path following camera
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000000);
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.y = 5;
         const listener = new THREE.AudioListener();
         camera.add( listener ); //stored as camera.children
@@ -303,10 +296,9 @@ export default {
         //scene.add(models[0].scene);
 
         container.appendChild(renderer.domElement);
-        //windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
 
         //CONTROLS
-        overviewControls = new OrbitControls(overviewCamera, renderer.domElement);
+        //overviewControls = new OrbitControls(overviewCamera, renderer.domElement);
         
 
         camera.rotation.order = 'YXZ';
@@ -330,22 +322,22 @@ export default {
         })
 
         //GUI
-        const gui = new GUI( { width: 300 } );
-        guiParameters = {
-			animationView: true
-        };
+        // const gui = new GUI( { width: 300 } );
+        // guiParameters = {
+		// 	animationView: true
+        // };
 
-		gui.add(guiParameters,'animationView' ).onChange( function () {
-			overviewControls.update();
-            if(guiParameters.animationView){
-                controls.startFollow();
-            }
-            else{
-                controls.stopFollow();
-                scene.fog = new THREE.FogExp2(scene.background, 0);
-            }
-			//this.animateCamera();
-		} );
+		// gui.add(guiParameters,'animationView' ).onChange( function () {
+		// 	overviewControls.update();
+        //     if(guiParameters.animationView){
+        //         controls.startFollow();
+        //     }
+        //     else{
+        //         controls.stopFollow();
+        //         scene.fog = new THREE.FogExp2(scene.background, 0);
+        //     }
+		// 	//this.animateCamera();
+		// } );
         this.windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
         window.addEventListener( 'resize', this.onWindowResize, false );
         window.addEventListener('endPath',this.endingPath);
@@ -389,7 +381,7 @@ export default {
             informationPhase = infoManager.informationPhase;
 			if (informationPhase){
 				controls.update(false);
-				overviewControls.update();
+				//overviewControls.update();
                 //console.log(camera.rotation);
 
                 if(!informationRunning){
@@ -424,12 +416,12 @@ export default {
                 }
 				controls.update(true);
                 infoManager.update(controls.segment);
-				overviewControls.update();
+				//overviewControls.update();
 			}
             path.update();
             //ground.update();
-            //renderer.render(scene,camera);
-			renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
+            renderer.render(scene,camera);
+			//renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
 		}
 		catch(err){
 			cancelAnimationFrame(frame);

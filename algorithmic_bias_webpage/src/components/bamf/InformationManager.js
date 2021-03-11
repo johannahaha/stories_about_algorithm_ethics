@@ -29,7 +29,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
     let scope = this;
 
-    let infoSegmentsHalf = [20,40,70,100,120,140,170,220,250,300,330,370,400,450,480,500,550,600,620,660,705,820,850,890,920,940,1000,1050,1080,1120,1200,1230,1300,1370,1410,1450,1490,1530,1580,1630,1670,1700,1730,1760,1800];
+    let infoSegmentsHalf = [20,40,70,100,120,140,170,220,250,300,330,370,400,450,480,500,550,600,620,660,705,820,850,890,920,940,1000,1050,1080,1120,1200,1230,1300,1370,1410,1450,1490,1530,1580,1630,1670,1695,1720,1750,1780,1800];
     //let infoSegmentsHalf = [20,40,1670,1710,1750,1800];
 
     let infoSegments = [];
@@ -352,8 +352,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             
         }
 
-        //#region done
-
         //TODO: bamf positioning next to path
         else if (infoNumber === infoSegmentsDone[2]){
             customViewingDist.set(-20,0,40);
@@ -400,9 +398,11 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             let info = new InformationElement(scope.scene,scope.font,infoPos,text);
             info.init();
             info.rotate("X",-Math.PI/2);
-
+            scope.camera.far = 1000000;
+            scope.camera.updateProjectionMatrix();
             customStartVector.set(0,100,0);
             camToObject(info.getMeshObject(),customStartVector,{duration:2,rotateCam:true,rotation:new THREE.Vector3(-Math.PI/2,0,0),onComplete: function(){
+                console.log(camera);
                 scope.controls.resetMouse()
             }});
             //scope.controls.enabled
@@ -422,6 +422,10 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                                 duration:1,
                                 density:0.002
                             })
+                            gsap.to(scope.camera,{
+                                far: 1000
+                            })
+                            scope.camera.updateProjectionMatrix();
                             scope.informationPhase = false;
                             window.removeEventListener('pointerdown',handler)
                         }
@@ -465,20 +469,19 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoFlyingToCam(7,{useQuaternion:false,viewingDist:customViewingDist,delay:2})
         }
 
-        //TODO: place audio at correc tspace
         else if(infoNumber === infoSegmentsDone[8]){
 
             customViewingDist.set(29.1,0,29.5);
 
             let obj = infoOverPath(8,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:Math.PI/2,height:-10});
 
-            addAudio("sof_rainbow01",obj,-0.2,1);
+            addAudio("sof_rainbow01.mp3",obj,-0.2,1);
             
-            addAudio("wef_rainbow01.wav",obj,-0.1,1);
+            addAudio("wef_rainbow01.mp3",obj,-0.1,1);
 
-            addAudio("irm_rainbow01.wav",obj,0,1);
+            addAudio("irm_rainbow01.mp3",obj,0,1);
             
-            addAudio("scm_rainbow01.wav",obj,0.1,1);
+            addAudio("scm_rainbow01.mp3",obj,0.1,1);
         }
        
         else if(infoNumber === infoSegmentsDone[9]){
@@ -492,9 +495,9 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             customViewingDist.set(24,-8,15);
             let obj = infoFlyingToCam(10,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:-Math.PI/2,infoRotAxis:"Y"})
 
-            addAudio("irm_rainbow01.wav",obj,0.1,1,0x143E4F);
+            addAudio("irm_rainbow01.mp3",obj,0.1,1,0x143E4F);
 
-            addAudio("scm_rainbow01.wav",obj,-0.1,1,0x9CBBCE);
+            addAudio("scm_rainbow01.mp3",obj,-0.1,1,0x9CBBCE);
 
         }
 
@@ -853,10 +856,15 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoAsHtml(42,{scale:1.6,position:customHtmlPos});
         }
 
-        else if (infoNumber === infoSegmentsDone[43]){
+        else if(infoNumber === infoSegmentsDone[43]){
+            customHtmlPos.set(0.5,0.5)
+            infoAsHtml(43,{scale:2,position:customHtmlPos});
+        }
+
+        else if (infoNumber === infoSegmentsDone[44]){
 
             infoPos.set(0, 9000, 0);
-            let text = scope.informations[43].content;
+            let text = scope.informations[44].content;
             let info = new InformationElement(scope.scene,scope.font,infoPos,text);
             info.init();
             info.rotate("X",-Math.PI/2);
@@ -879,9 +887,12 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 ease: "none",
                 x: -THREE.MathUtils.degToRad(90) + 0.5,
                 z: 0,
-                onStart: scope.controls.enabled = false
+                onStart: scope.controls.enabled = false,
+                onComplete: function(){
+                    scope.camera.far = 1000000;
+                    scope.camera.updateProjectionMatrix();
+                }
             })
-
             tl.to(scope.scene.fog,{duration:1,density:0},"-=1")
   
             tl.to( scope.camera.position, {
