@@ -29,7 +29,10 @@
                 </li>
             </ul>
         </div>
-        <button id="pause">pause</button>
+        
+        <div id="pause_button">
+            <button id="pause">pause</button>
+        </div>
         <Information 
         v-bind="htmlProps"
         :informations="informations"
@@ -353,6 +356,29 @@ export default {
 
 @import "@/assets/_config.scss";
 
+@include media-md{
+
+    #instructions{
+        width: 50vw;
+        font-size:2rem !important;
+
+        span{
+            font-size:1.5rem !important;
+        }
+
+        ul{
+            li{
+                font-size: 1.2rem !important;
+                padding: 1rem  !important;
+            }
+        }
+    }
+
+    #pause{
+        margin-right:1rem !important;
+    }
+}
+
 .bamf{
     min-height: 100%; 
     height: 100vh;
@@ -364,7 +390,7 @@ export default {
 
     #instructions {
         margin: 0 auto;
-        width: 50vw;
+        width: 90vw;
         height: 100vh;
         display: flex;
         flex-direction: column;
@@ -372,16 +398,14 @@ export default {
         background: $dark;
         color: $lightmiddle;
         text-align: center;
-        font-family: Arial;
-        font-size: 14px;
-        line-height: 24px;
+        font-size: 1rem;
 
         cursor: pointer;
 
         span{
             text-align: left;
             margin-bottom: 1rem;
-            font-size:1.8rem;
+            font-size:1.2rem;
             font-weight: 600;
         }
 
@@ -392,18 +416,24 @@ export default {
             padding-left: 0;
 
             li{
-                font-size: 1.2rem;
-                padding: 1rem;
+                font-size: 1rem;
+                padding: 0.5rem;
             }
         }
     }
 
-    #pause {
-        @include buttonStyle;
-        margin: 0.25rem;
-        padding: 0.5rem;
-        z-index:2;
+    #pause_button{
+        width: 100vw;
         position: absolute;
+        display:flex;
+
+        #pause {
+            @include buttonStyle;
+            margin: 0.5rem;
+            margin-left:auto;
+            padding: 0.5rem;
+            z-index:2;
+        }
     }
 }
 

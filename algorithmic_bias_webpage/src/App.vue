@@ -61,29 +61,37 @@ html,body{
 }
 
 @include media-md{
+
+    .header h1{
+        font-size: 2rem;
+
+        nav{
+            font-size: 1rem;
+        }
+    }
     
     #home div{
 
-      section{
-        padding-left: 15%;
-        padding-right: 15%;
-      }
+        section{
+            padding-left: 15%;
+            padding-right: 15%;
+        }
 
-      .bamf_intro_start_language{
-        display: flex;
-        flex-direction: row;
-        justify-content: center
-      }
+        .bamf_intro_start_language{
+            display: flex;
+            flex-direction: row;
+            justify-content: center
+        }
     }
 }
 
 @include media-lg{
     #home div{
 
-      section{
+    section{
         padding-left: 20%;
         padding-right: 20%;
-      }
+    }
 
     }
 }

@@ -54,7 +54,11 @@ export default {
         },
         //set fonr size
         style(){
-            return 'font-size: '+ this.scale + 'rem';
+            if (window.innerWidth < 768) {
+                return 'font-size: 1rem';
+            } else {
+                return 'font-size: '+ this.scale + 'rem';
+            }
         },
         //calc percentage for "xPercent" in gsap
         posPercentX(){

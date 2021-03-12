@@ -6,11 +6,11 @@
 
                 <div class="bamf_intro_start_language">
                     <div class="bamf_intro_start_language_item">
-                        The German Federal Office for Migration and Refugees (BAMF) uses an algorithm to identify the country of origin of refugees. How ethical is that? The exploration will take you about seven minutes. Please turn up your sound.<br>
+                        The German Federal Office for Migration and Refugees (BAMF) uses an algorithm to identify the country of origin of refugees. How ethical is that? The exploration will take you about seven minutes. Please turn up your sound. The experience works better on Computers / Laptops than on Phones.<br>
                         <button @click="startBamf(false)">Start exploring</button>
                     </div>
                     <div class="bamf_intro_start_language_item">
-                        Das Bundesamt für Migration und Flüchtlinge (BAMF) nutzt einen Algorithmus, um das Herkunftsland von Geflüchteten zu ermitteln. Wie ethisch ist das? Die Reise wird etwa sieben Minuten dauern. Bitte schalte den Ton an deinem Gerät an.<br>
+                        Das Bundesamt für Migration und Flüchtlinge (BAMF) nutzt einen Algorithmus, um das Herkunftsland von Geflüchteten zu ermitteln. Wie ethisch ist das? Die Reise wird etwa sieben Minuten dauern. Bitte schalte den Ton an deinem Gerät an. Die Erfahrung ist auf Computern / Laptops besser als auf Smartphones.<br>
                         <button @click="startBamf(true)">Beginne die Reise</button>
                     </div>
                 </div>
@@ -112,6 +112,7 @@ export default{
 <style lang="scss">
 @import "@/assets/_config.scss";
 
+
 .bamf_intro{
     background: $dark;
     position: absolute;
@@ -143,12 +144,10 @@ export default{
     h2{
         align-self: center;
         padding: 2rem 0;
-        //position: absolute;;
     }
 }
 
 #bamf_intro_references{
-    //height:100vh;
     width: 100vw;
     margin: 0 auto;
     padding-left: 5%;

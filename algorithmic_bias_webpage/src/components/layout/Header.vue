@@ -11,41 +11,59 @@
 <style scoped lang="scss">
 
 @import "@/assets/_config.scss";
-    .header{
-        color: $light;
-        margin: 0 auto;
-        padding-top: 1rem;
-        padding-left: 2rem;
-        display:flex;
-        flex-direction: row;
-        align-items: center;
-        position: absolute;
-        //position: relative;
-        z-index:1;
 
+@include media-md{
+
+    .header{
+
+        position: absolute;
         h1{
-            padding:0;
-            margin:0;
+            font-size: 1.5rem !important;
         }
 
-        .nav {
-            margin-left:2rem;
-        
-            a {
-                font-weight: bold;
-                color: $light;
-                text-decoration: none;
-                align-self: center;
+        nav{
+            font-size: 1rem !important;
+        }
+    }
+}
 
-                &.router-link-exact-active{
-                    color: $lightmiddle;
-                }
+.header{
+    color: $light;
+    margin: 0 auto;
+    padding-top: 1rem;
+    padding-left: 2rem;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    position: absolute;
+    z-index:1;
+
+    h1{
+        padding:0;
+        margin:0;
+        font-size:1rem;
+    }
+
+    .nav {
+        margin-left:2rem;
+        font-size:1rem;
+    
+        a {
+            font-weight: bold;
+            color: $light;
+            text-decoration: none;
+            align-self: center;
+
+            &.router-link-exact-active{
+                color: $lightmiddle;
             }
         }
     }
+}
 
-    a{
-    text-decoration: none;
-    color: $lightmiddle;
-    }
+a{
+text-decoration: none;
+color: $lightmiddle;
+}
+
 </style>
