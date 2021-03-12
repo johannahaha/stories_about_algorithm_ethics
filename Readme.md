@@ -16,13 +16,13 @@ including project plan submission
 
 ## Presentation:
 
-pdf file in this folder and in my repo
+pdf file in this folder and in my repo in /presentation
 
 ## Link to My Repo:
 
 [https://github.com/johannahaha/stories_about_algorithm_ethics](https://github.com/johannahaha/stories_about_algorithm_ethics)
 
-The code is in algorithmic_bias_webpage, this is also the subfolder that is deployed to netlify.
+The code is in /algorithmic_bias_webpage, this is also the subfolder that is deployed to netlify.
 
 To run the development version locally: download my repo and execute those commands and open localhost:8080
 

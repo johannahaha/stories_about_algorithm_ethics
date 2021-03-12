@@ -52,13 +52,13 @@ import Information from './Information.vue';
 import * as THREE from "three";
 
 //MY CLASSES
-import { PathLoader } from './loaders/PathLoader.js';
-import {InfoFontLoader} from './loaders/InfoFontLoader.js';
-import {ModelLoader} from './loaders/ModelLoader.js';
-import {AudioLoader} from './loaders/AudioLoader.js';
-import {TextureLoader} from './loaders/TextureLoader.js';
-import {PlayerControls} from './PlayerControls.js';
-import {InformationManager} from './InformationManager.js';
+import { PathLoader } from './js/loaders/PathLoader.js';
+import {InfoFontLoader} from './js/loaders/InfoFontLoader.js';
+import {ModelLoader} from './js/loaders/ModelLoader.js';
+import {AudioLoader} from './js/loaders/AudioLoader.js';
+import {TextureLoader} from './js/loaders/TextureLoader.js';
+import {PlayerControls} from './js/PlayerControls.js';
+import {InformationManager} from './js/InformationManager.js';
 //import {Ground} from './Ground.js'
 //#endregion
 
