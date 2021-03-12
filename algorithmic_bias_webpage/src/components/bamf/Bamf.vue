@@ -30,7 +30,7 @@ export default {
             {
                 id: 0,
                 content: "Imagine describing a picture. \nYour voice is analyzed by an algorithm. \nThis recognizes which dialect you may have. \nYou are more likely to stay if your dialect matches where you were born. \nAnd the person who decides whether you stay sees the result.",
-                german:"Stell dir vor, du beschreibst ein Bild. \nDeine Stimme wird von einem Algorithmus analysiert. \nDieser erkennt, welchen Dialekt Sie moeglicherweise haben. \nEs ist wahrscheinlicher, dass Sie bleiben koennen, wenn Ihr Dialekt zu Ihrem Geburtsort passt. \nUnd die Person, die entscheidet, ob Sie bleiben, sieht das Ergebnis.",
+                german:"Stell dir vor, du beschreibst ein Bild. \nDeine Stimme wird von einem Algorithmus analysiert. \nDieser erkennt, welchen Dialekt du moeglicherweise hast. \nEs ist wahrscheinlicher, dass du bleiben kannst, wenn dein Dialekt zu deinem Geburtsort passt. \nUnd die Person, die entscheidet, ob du bleibst, sieht das Ergebnis.",
                 isImage: false,
                 scale: 0.2
             },
@@ -205,7 +205,7 @@ export default {
             {
                 id: 25,
                 content: "This result should never be used alone for an asylum decision, \nbut it should serve as additional information or indication for the decision-maker.",
-                german: "Dieses Ergebnis sollte niemals allein fuer eine Asylentscheidung verwendet werden, \naber es sollte als zusaetzliche Information oder Indiz fuer den Entscheider*innen dienen.",
+                german: "Dieses Ergebnis sollte niemals allein fuer eine Asylentscheidung verwendet werden, \naber es sollte als zusaetzliche Information oder Indiz fuer den/die Entscheider*in dienen.",
                 isImage: false,
                 scale: 0.2
             },
@@ -226,7 +226,7 @@ export default {
             {
                 id: 28,
                 content: "Another interesting fact about the training documents is \nthat the sound-to-noise ratio (SNR) is marked as 'not relevant' in the documents. \nThis is an important measure of the quality of the sound \nwhich should be taken into account.",
-                german:"Eine weitere interessante Tatsache ueber die Trainingsdokumente ist, \ndass der Rauschabstand (SNR) in den Dokumenten als 'nicht relevant' markiert ist. \nDas ist ein wichtiges Masse fuer die Qualitaet des Klangs \n, die beruecksichtigt werden sollte.",
+                german:"Eine weitere interessante Tatsache ueber die Trainingsdokumente ist, \ndass der Rauschabstand (SNR) in den Dokumenten als 'nicht relevant' markiert ist. \nDas ist ein wichtiges Masse fuer die Qualitaet des Klangs, \ndie beruecksichtigt werden sollte.",
                 isImage: false,
                 scale: 0.2
             },
@@ -268,7 +268,7 @@ export default {
             },
             {
                 id: 34,
-                content: "You have to take into account \nwhere a person grew up, \ntheir level of education, \ntheir social group or family, \ntheir social class and \ntheire socialiuation. \nThe individual biography strongly influences the dialect.",
+                content: "You have to take into account \nwhere a person grew up, \ntheir level of education, \ntheir social group or family, \ntheir social class and \ntheire socialization. \nThe individual biography strongly influences the dialect.",
                 german:"Man muss beruecksichtigen, \nwo eine Person aufgewachsen ist, \nihren Bildungsstand, \n ihre soziale Gruppe oder ihre Familie, \nihre soziale Schicht und \nihre Sozialisierung. \nDie individuelle Biographie beeinflusst den Dialekt stark.",
                 isImage: false,
                 scale: 0.2

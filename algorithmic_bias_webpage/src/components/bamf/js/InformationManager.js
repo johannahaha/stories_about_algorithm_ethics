@@ -373,6 +373,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             let info = new InformationElement(scope.scene,scope.font,infoPos,text);
             info.init();
             info.rotate("X",-Math.PI/2);
+            info.bbox.scale.set(3,3,3);
             scope.camera.far = 1000000;
             scope.camera.updateProjectionMatrix();
             customStartVector.set(0,100,0);
