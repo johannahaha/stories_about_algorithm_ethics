@@ -30,8 +30,11 @@ export default {
         scale:{
             type: Number
         },
-        position: {
-            type: Vector2
+        x: {
+            type: Number
+        },
+        y: {
+            type: Number
         },
         isGerman: {
             type: Boolean
@@ -52,16 +55,17 @@ export default {
             return 'font-size: '+ this.scale + 'rem';
         },
         posPercentX(){
-            return -100 * this.position.x
+            console.log("recalcutlating percents");
+            return -100 * this.x;
         },
         posPercentY(){
-            return -100 * this.position.y
+            return -100 * this.y;
         },
         posX(){
-            return this.windowSize.x * this.position.x
+            return this.windowSize.x * this.x;
         },
         posY(){
-            return this.windowSize.y * this.position.y
+            return this.windowSize.y * this.y;
         }
     },
     methods: {
@@ -70,15 +74,20 @@ export default {
         gsap.set(el, {
             scaleX: 1,
             scaleY: 1,
-            opacity: 0
+            opacity: 0,
+            transformOrigin:"0% 0%"
         })
         },
         enterInfo(el,done){
+
+            // this.posPercentX =  -100 * this.position.x;
+            // this.posPercentY = -100 * this.position.y;
+            // this.posX = this.windowSize.x * this.position.x;
+            // this.posY = this.windowSize.y * this.position.y;
+
             gsap.to(el,{
-                onStart: console.log(this.posX,this.posY,this.posPercentX,this.posPercentY),
+                onStart: console.log("starting info",this.posX,this.posY,this.posPercentX,this.posPercentY),
                 duration: 1,
-                scaleX: 1,
-                scaleY: 1,
                 opacity:1,
                 x: this.posX,
                 y: this.posY,

@@ -108,7 +108,8 @@ export default {
         infoElement: false,
         infoId: 0,
         scale: 1,
-        position: new THREE.Vector2(0,0)
+        x:0,
+        y:0
       },
       windowSize: new THREE.Vector2(0,0)
     }
@@ -188,50 +189,18 @@ export default {
 		const shape = new THREE.Shape( points );
         let pathGeometry = new THREE.ExtrudeBufferGeometry( shape, extrudeSettings );
 
-        //MATERIAL
-        // const material = new THREE.MeshPhongMaterial( 
-        //   { color: 0xA64E2E } );
-        // const wireframeMaterial = new THREE.MeshBasicMaterial( 
-        //   { color: 0x000000, opacity: 0.3, wireframe: true, transparent: true } );
-        path.setupShader();
+        path.setupShader(); //this should later include the shaderMaterial, right now it is just a normal material
         let mesh = new THREE.Mesh( pathGeometry, path.material );
-
-        //BOX FOR SHADER TESTING
-        let geo = new THREE.BoxGeometry();
-        let box = new THREE.Mesh(geo, path.material);
-        scene.add(box);
-        
-
         mesh.scale.set(4, 4, 4);
-
-        //HELPERS
-        //let mesh2 = new THREE.Mesh(helperTubeGeometry,new THREE.MeshBasicMaterial({color:0xfff000}));
-        //mesh2.scale.set(4,4,4);
-        //mesh.add( wireframe );
-
-        //const wireframe = new THREE.Mesh( helperTubeGeometry, wireframeMaterial );
-
-        // BufferGeometryUtils.computeTangents(pathGeometry); //for helper function
-        // let helper = new VertexTangentsHelper( mesh, 10, 0x00ffff, 2 );
-        // parent.add(helper);
-
-        // let helper2 = new VertexNormalsHelper( mesh, 4, 0xff00ff, 2 );
-        // parent.add(helper2);
-
-
 		parent.add( mesh );
-        //parent.add( mesh2 );
+
     },
     init: function() {
-		console.log("I am in the init");
         let container = document.getElementById('container');
-        //if (firstLoop) {console.log("beginning direction ",direction);}
 
         //SCENE
         scene = new THREE.Scene();
-        //scene.background = new THREE.Color('#f43df1');
         scene.background = new THREE.Color(0x05181D);
-        //scene.background = new THREE.Color(0xffffff);
         scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
         // overviewCamera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.01, 100000 );
@@ -243,6 +212,7 @@ export default {
         const listener = new THREE.AudioListener();
         camera.add( listener ); //stored as camera.children
 
+        //LIGHT
         const light = new THREE.DirectionalLight( 0xDFEDF2, 0.7 );
         light.position.set( 500, 500, 0 ).normalize();
         scene.add( light );
@@ -253,33 +223,14 @@ export default {
 
         scene.add(new THREE.AmbientLight(0xDFEDF2,0.3))  
 
-        // FLOOR
-        //same as other geometry
-        // let planeGeometry = new THREE.PlaneBufferGeometry(10000, 20000);
-        // let planeMaterial = new THREE.MeshPhongMaterial({ color: 0x262626, depthWrite: false });
-        // let planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
-        // planeMesh.rotation.x = -Math.PI / 2;
-        // planeMesh.position.y = 0;
-        // planeMesh.receiveShadow = true;
-        //ground = new Ground();
-        //ground.init();
-        //scene.add(ground);
-
         //PARENT  FOR CAMERA
         let parent = new THREE.Object3D();
         scene.add(parent);
         parent.add(camera);
         cameraHelper = new THREE.CameraHelper( camera );
         scene.add( cameraHelper );
-        
-        // debug camera
 		cameraEye = new THREE.Mesh( new THREE.SphereBufferGeometry(5), new THREE.MeshBasicMaterial({color: 0xdddddd }));
 		parent.add( cameraEye );
-
-        //INFORMATION ELEMENT 
-        // let info = new InformationElement(scene,font,new THREE.Vector3(-40,0,40));
-        // info.init();
-
 		cameraHelper.visible = false;
 		cameraEye.visible = false;
     
@@ -288,24 +239,19 @@ export default {
         renderer.setSize(container.clientWidth, container.clientHeight);
         renderer.getContext().getExtension('OES_standard_derivatives');
         renderer.outputEncoding = THREE.sRGBEncoding
+        container.appendChild(renderer.domElement);
 
         //SVG path
         this.initPath(pathVertices,parent);
 
-        //console.log(models);
-        //scene.add(models[0].scene);
-
-        container.appendChild(renderer.domElement);
-
         //CONTROLS
-        //overviewControls = new OrbitControls(overviewCamera, renderer.domElement);
-        
-
         camera.rotation.order = 'YXZ';
         controls = new PlayerControls(parent,camera,renderer.domElement,helperTubeGeometry,cameraEye,cameraHelper);
 
+        //INFOMANAGER
         infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,models,audios,textures,this.isGerman,cameraHelper,cameraEye);
 
+        //INSTRUCTIONS HTML
         let menu = document.querySelector("#instructions");
 
         menu.addEventListener( 'click', function () {
@@ -321,27 +267,9 @@ export default {
 			menu.style.display = 'flex';
         })
 
-        //GUI
-        // const gui = new GUI( { width: 300 } );
-        // guiParameters = {
-		// 	animationView: true
-        // };
-
-		// gui.add(guiParameters,'animationView' ).onChange( function () {
-		// 	overviewControls.update();
-        //     if(guiParameters.animationView){
-        //         controls.startFollow();
-        //     }
-        //     else{
-        //         controls.stopFollow();
-        //         scene.fog = new THREE.FogExp2(scene.background, 0);
-        //     }
-		// 	//this.animateCamera();
-		// } );
         this.windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
         window.addEventListener( 'resize', this.onWindowResize, false );
         window.addEventListener('endPath',this.endingPath);
-        console.log("done with init");
 
     },
     onWindowResize: function() {
@@ -355,7 +283,6 @@ export default {
 
 	},
     endingPath: function(){
-        console.log("scene sending ending path");
         this.$emit("ending-path");
     },
     stopInformationPhase: function(){
@@ -381,19 +308,17 @@ export default {
             informationPhase = infoManager.informationPhase;
 			if (informationPhase){
 				controls.update(false);
-				//overviewControls.update();
-                //console.log(camera.rotation);
 
                 if(!informationRunning){
                     controls.stopFollow(infoManager.infoFollowPath);
                     informationRunning = true;
-                    //console.log("htmlInfo?",infoManager.htmlInformation);
 
                     if(infoManager.htmlInformation){
                         this.htmlProps.infoId = infoManager.htmlInfoId;
                         this.htmlProps.scale = infoManager.htmlScale;
-                        this.htmlProps.position = infoManager.htmlPosition;
-                        //console.log("html info registered");
+                        this.htmlProps.x = infoManager.htmlPosition.x;
+                        this.htmlProps.y = infoManager.htmlPosition.y;
+                        console.log("html info registered",this.htmlProps);
                         this.htmlProps.infoElement = true;
 
                         if(infoManager.infoFollowPath){
@@ -416,7 +341,6 @@ export default {
                 }
 				controls.update(true);
                 infoManager.update(controls.segment);
-				//overviewControls.update();
 			}
             path.update();
             //ground.update();
@@ -512,7 +436,6 @@ export default {
 #container {
     min-height: 100%; 
     height: 100vh;
-    //position: absolute;
     display: block;
 }
 

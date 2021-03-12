@@ -43,8 +43,8 @@ export default {
             },
             {
                 id: 2,
-                content: "It should recognize a person's Arabic dialect \nand should distinguish between, for example, Arabic Levantine and Egyptian Arabic.\n This should help to identify or verify the person's country of origin.",
-                german:"Es sollte den arabischen Dialekt einer Person erkennen \nund z. B. zwischen levantinischem und aegyptischem Arabisch unterscheiden.\n Dies sollte helfen, das Herkunftsland der Person zu identifizieren oder zu verifizieren.",
+                content: "It should recognize a person's Arabic dialect \nand should distinguish between, for example, Arabic Levantine and Egyptian Arabic.\nThis should help to identify or verify the person's country of origin.",
+                german:"Es sollte den arabischen Dialekt einer Person erkennen \nund z. B. zwischen levantinischem und aegyptischem Arabisch unterscheiden.\nDies sollte helfen, das Herkunftsland der Person zu identifizieren oder zu verifizieren.",
                 isImage: false,
                 scale: 0.1
             },
@@ -64,7 +64,7 @@ export default {
             },
             {
                 id: 5,
-                content: "Language has been used as a proxy for origin in asylum decisions in Germany before. \nThis took the form of language certificates. In such an examination, an Arabic language expert triggers, among other things, the use of regional expressions or local information in the person to identify the Arabic dialect and verify the country of origin.",
+                content: "Language has been used as a proxy for origin in asylum decisions in Germany before. \nThis took the form of language certificates. \nIn such an examination, an Arabic language expert triggers, among other things, \nthe use of regional expressions or local information in the person \nto identify the Arabic dialect and verify the country of origin.",
                 german:"Die Sprache wurde bei Asylentscheidungen in Deutschland schon frueher als Proxy fuer die Herkunft verwendet. \nDas geschah in Form von Sprachzertifikaten. \nBei einer solchen Untersuchung loest ein arabischer Sprachexperte unter anderem \ndie Verwendung regionale Ausdruecke oder lokale Informationen bei der Person aus, \num den arabischen Dialekt zu erkennen und das Herkunftsland zu verifizieren.",
                 isImage: false,
                 scale: 0.13
@@ -78,7 +78,7 @@ export default {
             },
             {
                 id: 7,
-                content: "Machine learning is a process of using mathematical methods to \recognize patterns in training data and checking them against test data. \nFor an Arabic dialect recognition algorithm, \nthe data is Arabic speech samples with dialect labels.",
+                content: "Machine learning is a process of using mathematical methods to \nrecognize patterns in training data and checking them against test data. \nFor an Arabic dialect recognition algorithm, \nthe data is Arabic speech samples with dialect labels.",
                 german:"Maschinelles Lernen ist ein Prozess, \nbei dem mit mathematischen Methoden Muster in Trainingsdaten \nerkannt und mit Testdaten ueberprueft werden. \nFuer einen Algorithmus zur Erkennung eines arabischen Dialekts sind die Daten \narabische Sprachproben mit Dialektbezeichnungen.",
                 isImage: false,
                 scale: 0.1
@@ -99,8 +99,8 @@ export default {
             },
             {
                 id: 10,
-                content: "After listening to thousands of such samples, \nit may be able to tell that the dark sphere is Irish and the light sphere is Scottish",
-                german:"Nach dem Anhoeren tausender solcher Proben kann es vielleicht erkennen, \n dass die dunkle Kugel irisch und die helle Kugel schottisch ist",
+                content: "After listening to thousands of such samples, \nit may be able to tell that \nthe dark sphere is Irish and the light sphere is Scottish",
+                german:"Nach dem Anhoeren tausender solcher Proben kann es vielleicht erkennen, \ndass die dunkle Kugel irisch und die helle Kugel schottisch ist",
                 isImage: false,
                 scale: 0.2
             },
@@ -177,20 +177,20 @@ export default {
             {
                 id: 21,
                 content: "The algorithm is only to be used for Arabic major dialects. \nJournalist Anna Biselli spoke with a refugee who speaks a Kurdish dialect and \nwhose speech sample nevertheless ran through the algorithm. \nHis dialect was recognised as 'Turkish'. \nThis could have been a reason for the decision to reject his asylum application. \n(the whole article is linked in the ressources)",
-                german: "Der Algorithmus ist nur für arabische Großdialekte zu verwenden. \nDie Journalistin Anna Biselli sprach mit einem Geflüchteten, der einen kurdischen Dialekt spricht und \n dessen Sprachprobe trotzdem durch den Algorithmus lief. \nSein Dialekt wurde als 'türkisch' erkannt. \nDas könnte ein Grund für die Entscheidung gewesen sein, seinen Asylantrag abzulehnen. \n(der ganze Artikel ist in den Ressourcen verlinkt)",
+                german: "Der Algorithmus ist nur für arabische Großdialekte zu verwenden. \nDie Journalistin Anna Biselli sprach mit einem Geflüchteten, der einen kurdischen Dialekt spricht und \ndessen Sprachprobe trotzdem durch den Algorithmus lief. \nSein Dialekt wurde als 'türkisch' erkannt. \nDas könnte ein Grund für die Entscheidung gewesen sein, seinen Asylantrag abzulehnen. \n(der ganze Artikel ist in den Ressourcen verlinkt)",
                 isImage: false,
                 scale: 0.15
             },
             {
                 id: 22,
                 content: "With stories like this, it is interesting to take a closer look \nat how the algorithm is used by decision makers of the BAMF. \nAnna Biselli published the training documents of the BAMF for the decision makers.",
-                german:"Bei Geschichten wie dieser ist es interessant, einen genaueren Blick darauf zu werfen, \n wie der Algorithmus von den Entscheider*innen des BAMF genutzt wird. \nAnna Biselli hat die Schulungsunterlagen des BAMF fuer die Entscheider*innen veroeffentlicht.",
+                german:"Bei Geschichten wie dieser ist es interessant, einen genaueren Blick darauf zu werfen, \nwie der Algorithmus von den Entscheider*innen des BAMF genutzt wird. \nAnna Biselli hat die Schulungsunterlagen des BAMF fuer die Entscheider*innen veroeffentlicht.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 23,
-                content: "The person for whom the algorithm is used must speak Arabic. \nSThey are to speak into a telephone and describe a given picture for about two minutes.",
+                content: "The person for whom the algorithm is used must speak Arabic. \nThey are to speak into a telephone and describe a given picture for about two minutes.",
                 german:"Die Person, fuer die der Algorithmus verwendet wird, muss arabisch sprechen. \nSie soll in ein Telefon sprechen und etwa zwei Minuten lang ein vorgegebenes Bild beschreiben.",
                 isImage: false,
                 scale: 0.15
@@ -218,15 +218,15 @@ export default {
             },
             {
                 id: 27,
-                content:"The algorithm was also used for people \nwho come from non-Arabic-speaking countries such as Kenya or Venezuela.",
-                german: "Der Algorithmus wurde außerdem fuer Personen verwendet, \ndie aus nicht-arabischsprachigen Laendern wie Kenia oder Venezuela stammen.",
+                content:"The algorithm was also used for people \nwho come from non-Arabic-speaking countries \nsuch as Kenya or Venezuela.",
+                german: "Der Algorithmus wurde außerdem fuer Personen verwendet, \ndie aus nicht-arabischsprachigen Laendern \nwie Kenia oder Venezuela stammen.",
                 isImage: false,
                 scale: 0.1
             },
             {
                 id: 28,
                 content: "Another interesting fact about the training documents is \nthat the sound-to-noise ratio (SNR) is marked as 'not relevant' in the documents. \nThis is an important measure of the quality of the sound \nwhich should be taken into account.",
-                german:"Eine weitere interessante Tatsache ueber die Trainingsdokumente ist, \n dass der Rauschabstand (SNR) in den Dokumenten als 'nicht relevant' markiert ist. \nDas ist ein wichtiges Maße fuer die Qualitaet des Klangs \n, die beruecksichtigt werden sollte.",
+                german:"Eine weitere interessante Tatsache ueber die Trainingsdokumente ist, \ndass der Rauschabstand (SNR) in den Dokumenten als 'nicht relevant' markiert ist. \nDas ist ein wichtiges Maße fuer die Qualitaet des Klangs \n, die beruecksichtigt werden sollte.",
                 isImage: false,
                 scale: 0.2
             },
@@ -254,14 +254,14 @@ export default {
             },
             {
                 id: 32,
-                content: "Looking at this map, we can see that \n the Arabic dialects are not bound by borders. \nCan we assume that a dialect refers to a country of origin at all?",
-                german:"Wenn man sich diese Karte ansieht, kann man erkennen, dass \n die arabischen Dialekte nicht an Grenzen gebunden sind. \nKoennen wir ueberhaupt davon ausgehen, dass sich ein Dialekt auf\n ein Herkunftsland bezieht?",
+                content: "Looking at this map, we can see that \nthe Arabic dialects are not bound by borders. \nCan we assume that a dialect refers \nto a country of origin at all?",
+                german:"Wenn man sich diese Karte ansieht, kann man erkennen, dass \ndie arabischen Dialekte nicht an Grenzen gebunden sind. \nKoennen wir ueberhaupt davon ausgehen, dass sich ein Dialekt auf\nein Herkunftsland bezieht?",
                 isImage: false,
                 scale: 0.1
             },
             {
                 id: 33,
-                content: "Moreover, a person does not automatically have the \n dialect of the region in which they were born. \nThe dialect is strongly connected with socialization.",
+                content: "Moreover, a person does not automatically have the \ndialect of the region in which they were born. \nThe dialect is strongly connected with socialization.",
                 german: "Außerdem hat eine Person nicht automatisch den Dialekt der Region, \nin der sie geboren wurde. \nDer Dialekt ist stark mit der Sozialisation verbunden.",
                 isImage: false,
                 scale: 0.2
@@ -282,7 +282,7 @@ export default {
             },
             {
                 id: 36,
-                content: "Often a dialect can also depend on social groups and be suppressed and unlearned by people, for example, \nto belong to a different group or to hide the fact \nthat they belong to a marginalized minority.",
+                content: "Often a dialect can also depend on social groups \nand be suppressed and unlearned by people, for example, \nto belong to a different group or to hide the fact \nthat they belong to a marginalized minority.",
                 german:"Oft kann ein Dialekt auch von sozialen Gruppen abhaengen \nund von Personen unterdrueckt und verlernt werden, \num z. B. zu einer anderen Gruppe zu gehoeren oder zu verbergen, \ndass sie einer marginalisierten Minderheit angehoeren.",
                 isImage: false,
                 scale: 0.2
@@ -296,8 +296,8 @@ export default {
             },
             {
                 id: 38,
-                content: "Therefore, the result of the algorithm could be explained by factors \n that are not directly related to the country of origin.",
-                german: "Daher koennte das Ergebnis des Algorithmus durch Faktoren \n erklaert werden, die nicht direkt mit dem Herkunftsland zusammenhaengen.",
+                content: "Therefore, the result of the algorithm could be explained by factors \nthat are not directly related to the country of origin.",
+                german: "Daher koennte das Ergebnis des Algorithmus durch Faktoren \nerklaert werden, die nicht direkt mit dem Herkunftsland zusammenhaengen.",
                 isImage: false,
                 scale: 0.2
             },
@@ -310,8 +310,8 @@ export default {
             },
             {
                 id: 40,
-                content: "If asylum is denied because the country of origin was found to be wrong,\n the person has only one week to file an appeal of that decision.\nWith that time frame, it is usually only possible for people \n who are already connected to nonprofit organizations \n or other people who can help.",
-                german:"Wenn Asyl abgelehnt wird, weil das Herkunftsland als falsch erkannt wurde, \n hat die Person nur eine Woche Zeit, um gegen diese Entscheidung zu klagen.\nMit diesem Zeitrahmen ist es meist nur fuer Menschen moeglich, \n die bereits mit gemeinnuetzigen Organisationen \n oder anderen Menschen, die helfen koennen, verbunden sind.",
+                content: "If asylum is denied because the country of origin was found to be wrong,\nthe person has only one week to file an appeal of that decision.\nWith that time frame, it is usually only possible for people \nwho are already connected to nonprofit organizations \nor other people who can help.",
+                german:"Wenn Asyl abgelehnt wird, weil das Herkunftsland als falsch erkannt wurde, \nhat die Person nur eine Woche Zeit, um gegen diese Entscheidung zu klagen.\nMit diesem Zeitrahmen ist es meist nur fuer Menschen moeglich, \ndie bereits mit gemeinnuetzigen Organisationen \noder anderen Menschen, die helfen koennen, verbunden sind.",
                 isImage: false,
                 scale: 0.2
             },
@@ -338,10 +338,17 @@ export default {
             },
             {
                 id: 44,
-                content: "stories about algorithm ethics. \nthe BAMF case. \n\njohanna hartmann \n \n \n click for getting to the ressources",
-                german: "stories about algorithm ethics. \nder BAMF Fall. \n\nJohanna Hartmann \n \n \n Klicke, um zu Quellen und Ressourcen zu gelangen",
+                content: "stories about algorithm ethics. \nthe BAMF case. \n\njohanna hartmann",
+                german: "stories about algorithm ethics. \nder BAMF Fall. \n\nJohanna Hartmann",
                 isImage: false,
                 scale: 0.2
+            },
+            {
+                id: 55,
+                content: "click for getting to the ressources",
+                german: "Klicke, um zu Quellen und Ressourcen zu gelangen",
+                isImage: false,
+                scale: 0.1
             }
         ]
         }

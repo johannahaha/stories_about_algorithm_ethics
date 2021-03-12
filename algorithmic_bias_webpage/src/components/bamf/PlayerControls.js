@@ -1,5 +1,3 @@
-//part of the code are from this class
-//https://github.com/within-unlimited/under-neon-lights/blob/master/release/src/mouse-controls.js
 //import * as THREE from "three";
 import {
 	EventDispatcher,
@@ -34,12 +32,9 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	let scope = this;
 
 	console.log(cameraEye,cameraHelper);
-	//this.domElement = domElement || window;
-	//this.domElement.isWindow = !domElement;
 	parent.rotation.reorder('YXZ');
 	camera.rotation.reorder( 'YXZ' );
 	const mouse = new Vector2();
-	//const target = new Vector2();
 	let destination = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
 	destination.reorder( 'YXZ' );
 
@@ -47,15 +42,12 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	rotationRadians.reorder( 'YXZ' );
 	let quaternion = new Quaternion();
 
-	//let destination = new Vector3();
-	//let lastDestination = new Vector3();
 	let lastCamRotation = new Vector3();
 	
 	let drag = 0.66;
 	let scale = 1;
 	// eslint-disable-next-line no-unused-vars
 	let dragging = false;
-	//console.log(dragging);
 	const HALF_PI = Math.PI// / 2;
 
 
@@ -65,10 +57,9 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 	const clock = new Clock();
 	let delta;
-	let speed = 0.04;//0.005;//0.04;//0.001;
+	let speed = 0.005;//0.04;//0.001;
 	
 	//follow path
-	let firstLoop = true;
 	let direction = new Vector3(0,0,0);
 	let binormal = new Vector3();
 	this.normal = new Vector3();
@@ -79,20 +70,15 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	const segments = this.helperTubeGeometry.tangents.length;
 	let pick,pickt,pickNext
 
-	// let euler = new Euler();
-	// let lastEuler = new Euler();
-	// let rotationDi= new Vector3();
-	// //let quaternion = new Quaternion();
-	//let destinationQuat = new Quaternion();
-
 	this.resetCam = true;
 
 	//TODO: onTouchMove for mobile devices
+	//part of this function are from this class
+	//https://github.com/within-unlimited/under-neon-lights/blob/master/release/src/mouse-controls.js
 	function onPointerMove( e ) {
 
 		if ( scope.enabled === false ) return;
 
-		//console.log("dragging mouse..");
 		e.preventDefault();
 
 		let x = e.clientX;
@@ -101,29 +87,22 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		let dx = (x - mouse.x) / windowSize.x;
 		let dy = (y - mouse.y) / windowSize.y;
 
-		//lastDestination.copy(destination);
-
 		destination.y += dx * scale;
 		destination.x += dy * scale;
 
 		mouse.set(x, y);
-
-
 	}
 
 	function onPointerDown ( e ) {
 
 		if ( scope.enabled === false ) return;
 
-		//e.preventDefault();
 	
 		mouse.set(e.clientX, e.clientY);
 	
 		scope.domElement.ownerDocument.addEventListener('pointermove', onPointerMove, false);
 		scope.domElement.ownerDocument.addEventListener('pointerup', onPointerUp, false);
 		dragging = true;
-
-		console.log(camera.quaternion);
 	}
 
 	function onPointerUp ( e ) {
@@ -142,8 +121,6 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		}
 		if ( scope.enableMouseControl === false ) return;
 
-		//console.log(destination);
-
 		let dx = clamp(destination.x,-HALF_PI,HALF_PI);
 		let dy = clamp(destination.y,-HALF_PI,HALF_PI);
 
@@ -154,30 +131,21 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		quaternion.setFromEuler(rotationRadians);
 
 		camera.quaternion.rotateTowards ( quaternion, 0.1 )
-		//camera.rotation.applyQuaternion(quaternion);
-		//camera.rotation.x += ( dx - camera.rotation.x ) * drag;
-		//camera.rotation.y += ( dy - camera.rotation.y ) * drag;
-
-		//if(camera.rotation.y > 3 || camera.rotation.y < -3) camera.rotation.y = 0;
-		//camera.rotation.z += ( dz - camera.rotation.z ) * drag;
-
-		//console.log(dx,dy,dz);
-		//console.log(camera.rotation.x)
 	
 
 	}
 
+
+	//this function is mainly from this three js example
+	//https://github.com/mrdoob/three.js/blob/master/examples/webgl_geometry_extrude_splines.html
 	function followPath(){
 		if ( scope.enabled === false ) return;
 		if ( scope.resetCam === false ) return;
 
-		//const segments = scope.helperTubeGeometry.tangents.length;
-        //if (firstLoop) {console.log("tangenten: ",scope.helperTubeGeometry.tangents);}
 		pickt = t * segments;
 		pick = Math.floor( pickt );
 
 		scope.segment = pick;
-        //if (firstLoop) {console.log("pick: ",pick);}
         pickNext = ( pick + 1 ) % segments;
 
 		//using delta to make animation more smooth
@@ -185,46 +153,27 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 		t += speed * delta;
         // animate camera along spline
-        //if (firstLoop) {console.log("direction ",direction);}
-        //if (firstLoop) {console.log("t: ",t);}
-        //if (firstLoop) {console.log("helperTubeGeometry: ",helperTubeGeometry.parameters);}
         scope.helperTubeGeometry.parameters.path.getPointAt( t, scope.position );
         scope.position.multiplyScalar( 4);
 
         // interpolation
-
-        //if (firstLoop) {console.log("binormals: ",helperTubeGeometry.binormals);}
         binormal.subVectors( scope.helperTubeGeometry.binormals[ pickNext ], scope.helperTubeGeometry.binormals[ pick ] );
         binormal.multiplyScalar( pickt - pick ).add( scope.helperTubeGeometry.binormals[ pick ] );
 
         //tangente copied into direction
-        //if (firstLoop) {console.log("t ",t);}
         scope.helperTubeGeometry.parameters.path.getTangentAt( t, direction );
 
-        //the bug is somewhere at the tangente, that sets the wrong direction. It works differently if the tube is in 3D
-        // so if one Z value is changed.
-
-        //if (firstLoop) {console.log("binormal ",binormal);}
-        //if (firstLoop) {console.log("direction ",direction);}
-
-        //normal.copy( binormal ).cross(direction);
-
-        //if the spine is not 3d (on one y level), this is always the normal.
+        //if the spine is not 3d (on one y level like this path), this is always the normal.
         scope.normal.x = 0;
         scope.normal.y = 1;
         scope.normal.z = 0;
-        //normal.copy(binormal);
 
-        // we move on a offset on its binormal
+        // add offset
         scope.position.add( scope.normal.clone().multiplyScalar( scope.offset ) );
 
-		//camera.rotation.y = -camRotationY;
-
         camera.position.copy( scope.position );
-        //cameraEye.position.copy( scope.position );
 
         // using arclength for stablization in look ahead
-
         scope.helperTubeGeometry.parameters.path.getPointAt( ( t + scope.lookFar / scope.helperTubeGeometry.parameters.path.getLength() ) % 1, lookAt );
         lookAt.multiplyScalar( 4);
 
@@ -232,20 +181,11 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
         if ( !lookAhead ){ 
 			lookAt.copy( scope.position ).add( direction );
         }
+
 		// Constructs a rotation matrix, looking from eye towards center oriented by the up vector. 
         camera.matrix.lookAt( camera.position, lookAt, scope.normal );
         camera.quaternion.setFromRotationMatrix( camera.matrix,camera.rotation.order );
 		lastCamRotation.copy(camera.rotation);
-
-		//rotateCam();
-
-
-        if (firstLoop) {
-          //console.log("end position: ",scope.position);
-          firstLoop = false;
-        }
-
-        //cameraHelper.update();
 
 	}	
 
@@ -283,8 +223,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 	this.startFollow = function (infoFollowPath){
 		if (infoFollowPath) return;
-		//console.log("starting follow");
-		//console.log(camera.rotation);
+
 		gsap.to(camera.rotation,{
 			duration: 0.5,
 			x:lastCamRotation.x,
@@ -295,20 +234,12 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 				scope.resetCam = true;
 			}
 		})
-		//clock.start();
 	}
 
 	this.resetMouse = function(destinationQuat = camera.quaternion){
 		mouse.set(0, 0);
-		//if(lastCamRotation.y > 2.8 && lastCamRotation.y < -2.8) lastCamRotation.y = 0;
-		//destination = new Euler(0,0,0);
-		//console.log("destination quat");
-		//console.log(JSON.parse(JSON.stringify(destinationQuat)));
 		destination.setFromQuaternion(destinationQuat);
 		destination.reorder( 'YXZ' );
-		// console.log("starting destination",destination);
-		// console.log("check this quat");
-		// console.log(JSON.parse(JSON.stringify(quaternion.setFromEuler(destination))));
 	}
 
 	this.getClock = function(){
@@ -316,17 +247,14 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	}
 
 	this.handleResize = function () {
-		console.log("resizing controls");
 		windowSize.x = scope.domElement.offsetWidth;
 		windowSize.y = scope.domElement.offsetHeight;
-		console.log(windowSize.x);
 	};
 
 	this.connect = function () {
 
 		scope.domElement.addEventListener( 'pointerdown', onPointerDown, false );
 		scope.domElement.addEventListener( 'resize', this.handleResize );
-		console.log("connected event listeners");
 		scope.enabled = true;
 	
 

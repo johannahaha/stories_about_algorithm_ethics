@@ -1,6 +1,6 @@
 <template>
     <header class= "header">
-        <h1>Algorithmic Bias</h1>
+        <h1>Stories about Algorithm Ethics </h1>
         <div class="nav">
             <router-link to="/">Home</router-link> |
             <router-link to="/about">About</router-link>

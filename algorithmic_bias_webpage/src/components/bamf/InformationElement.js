@@ -16,8 +16,9 @@ class InformationElement    {
     }
 
     init(){
-        //ADD TEXT
+        //add object
         if(this.isImage){
+            //right now, no information element is an image. but this might be useful for later
             this.obj = this.setupImage();
         }
         else {            
@@ -31,39 +32,37 @@ class InformationElement    {
 
     }
 
+    //Create invisible bounding box, that can be used for the Raycaster
     createBBox(color){
-        //BOUNDING BOX for clicking
+
         if (this.bbox !== undefined){
             this.scene.remove(this.bbox);
             this.bbox.geometry.dispose();
             this.bbox.material.dispose();
             this.bbox = undefined;
-            console.log("bbox hopefully undefined here: ",this.bbox)
         }
 
-        //this.obj.geometry.computeBoundingBox()
         const box3 = new THREE.Box3().setFromObject(this.obj);
-
 
         const dimensions = new THREE.Vector3().subVectors( box3.max, box3.min );
         if(dimensions.x === 0) dimensions.x=1;
         if(dimensions.y === 0) dimensions.y=1;
         if(dimensions.z === 0) dimensions.z=1;
 
-        const boxGeo = new THREE.BoxBufferGeometry(dimensions.x, dimensions.y, dimensions.z)//.scale(1.2,1.2,1.2);
+        const boxGeo = new THREE.BoxBufferGeometry(dimensions.x, dimensions.y, dimensions.z).scale(1.1,1.1,1.1);
 
         this.bbox = new THREE.Mesh(boxGeo, new THREE.MeshPhongMaterial( {color: color,visible:false,wireframe:true,wireframeLinewidth: 5} ));
 
+        //move to center of object
         this.bbox.position.copy(dimensions.addVectors(box3.min, box3.max).multiplyScalar( 0.5 ))
-
-        //const axesHelper = new THREE.AxesHelper( 5 );
-        //this.bbox.add( axesHelper );
+        
         this.scene.add(this.bbox);
     }
 
+    //create the text and add it so scene
     setupText(pLoadedFont){
         let text;
-        //this.loadFont().then( pLoadedFont => {
+
         const color = 0x9CBBCE;
         const matLite = new THREE.MeshPhongMaterial( {
             color: color,
@@ -77,7 +76,7 @@ class InformationElement    {
         geometry.scale(this.scale,this.scale,this.scale);
         geometry.computeBoundingBox();
 
-        //translate 0.5 in x direction. but I want all.
+        //translate 0.5 in x and y direction
         const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
         const yMid = 0.5 * ( geometry.boundingBox.max.y - geometry.boundingBox.min.y );
 
@@ -89,13 +88,6 @@ class InformationElement    {
         text.position.y += this.position.y;
         text.position.z += this.position.z;
 
-        //HELPER
-        // let sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(),new THREE.MeshBasicMaterial({color:0xff0000}))
-        // sphere.position.x = this.position.x;
-        // sphere.position.y = this.position.y;
-        // sphere.position.z = this.position.z;
-        // this.scene.add(sphere)
-        //console.log("returned text:", text);
         return text;
     }
 
@@ -103,6 +95,8 @@ class InformationElement    {
         return this.obj;
     }
 
+    //create image and add it to scene
+    //right now, no information element is an image. but this might be useful for later
     setupImage(){
         console.log("loading image");
         const manager = new THREE.LoadingManager();
@@ -145,7 +139,6 @@ class InformationElement    {
         if (axis === "X"){
             this.obj.rotateX(angle);
             this.bbox.rotateX(angle);
-            //this.bbox.rotateX(angle);
         }
         else if (axis === "Y"){
             this.obj.rotateY(angle);
@@ -154,7 +147,6 @@ class InformationElement    {
         else if (axis === "Z"){
             this.obj.rotateZ(angle);
             this.bbox.rotateZ(angle);
-            //this.bbox.rotateZ(angle);
         }
     }
 
