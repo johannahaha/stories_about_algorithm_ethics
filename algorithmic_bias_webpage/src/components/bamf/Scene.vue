@@ -45,12 +45,13 @@
 "use strict";
 
 //#region imports
+//VUE
 import Information from './Information.vue';
 
+//LIBRARIES
 import * as THREE from "three";
 
 //MY CLASSES
-//import { InformationElement } from './InformationElement.js';
 import { PathLoader } from './loaders/PathLoader.js';
 import {InfoFontLoader} from './loaders/InfoFontLoader.js';
 import {ModelLoader} from './loaders/ModelLoader.js';
@@ -61,34 +62,21 @@ import {InformationManager} from './InformationManager.js';
 //import {Ground} from './Ground.js'
 //#endregion
 
-
 //VARIABLES
 let scene, renderer
 let controls;
-
-
 let frame;
-
-//camera
-let camera, cameraHelper, cameraEye;
-//let cameraHelperOn = true; 
-
+let camera;
 let helperTubeGeometry;
 let pathVertices,path;
 let font;
 let models;
 let audios;
 let textures;
-//let ground
 
 let infoManager;
 let informationRunning = false;
 let informationPhase = false;
-
-// //TODO: resizin
-
-
-//#endregion
 
 export default {
     components: { Information },
@@ -121,9 +109,7 @@ export default {
         return path.init()
             .then((data) => {
                 path.createBorder(data);
-                console.log("I am in the scene then");
                 pathVertices = path.getVertices();
-                console.log(pathVertices);
             })
     },      
     preLoadFont: function (){
@@ -136,19 +122,15 @@ export default {
     preLoadModels: function(){
         let modelLoader = new ModelLoader();
         return modelLoader.init()
-        .then((m)  => {
-            console.log("model promise",m);
+        .then(()  => {
             models = modelLoader.getModels();
-            console.log("models saved",models);
         })
     },
     preLoadAudio: function(){
         let audioLoader = new AudioLoader();
         return audioLoader.init()
-        .then((res) => {
-            console.log("audio promise",res);
+        .then(() => {
             audios = audioLoader.getAudios();
-            console.log("audios saved",audios);
         })
     },
     preLoadTextures: function(){
@@ -227,12 +209,6 @@ export default {
         let parent = new THREE.Object3D();
         scene.add(parent);
         parent.add(camera);
-        cameraHelper = new THREE.CameraHelper( camera );
-        scene.add( cameraHelper );
-		cameraEye = new THREE.Mesh( new THREE.SphereBufferGeometry(5), new THREE.MeshBasicMaterial({color: 0xdddddd }));
-		parent.add( cameraEye );
-		cameraHelper.visible = false;
-		cameraEye.visible = false;
     
         //RENDERER
         renderer = new THREE.WebGLRenderer({antialias: true});
@@ -246,10 +222,10 @@ export default {
 
         //CONTROLS
         camera.rotation.order = 'YXZ';
-        controls = new PlayerControls(parent,camera,renderer.domElement,helperTubeGeometry,cameraEye,cameraHelper);
+        controls = new PlayerControls(parent,camera,renderer.domElement,helperTubeGeometry);
 
         //INFOMANAGER
-        infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,models,audios,textures,this.isGerman,cameraHelper,cameraEye);
+        infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,models,audios,textures,this.isGerman);
 
         //INSTRUCTIONS HTML
         let menu = document.querySelector("#instructions");
@@ -282,9 +258,12 @@ export default {
         this.windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
 
 	},
+    //emit event so that ressource can be displayed
     endingPath: function(){
         this.$emit("ending-path");
     },
+    //stop informationPhase and start following Path again.
+    //if applicable: deactivate html element
     stopInformationPhase: function(){
         controls.startFollow(infoManager.infoFollowPath);
         controls.update(true);
@@ -297,11 +276,6 @@ export default {
         this.scale = 1;
         window.removeEventListener( 'pointerdown',  infoManager.onPointerDownInfo);
     },  
-    animateCamera: function() {
-        scene.fog = new THREE.FogExp2(scene.background, 0);
-        cameraHelper.visible = true;
-        cameraEye.visible = true;
-    },
     animate: function() {
 		try{
 			frame = requestAnimationFrame(this.animate);
@@ -309,18 +283,20 @@ export default {
 			if (informationPhase){
 				controls.update(false);
 
+                //executed at the beginning of informationphase to stop controls
                 if(!informationRunning){
                     controls.stopFollow(infoManager.infoFollowPath);
                     informationRunning = true;
 
+                    //if html Information: update props and turn on vue component
                     if(infoManager.htmlInformation){
                         this.htmlProps.infoId = infoManager.htmlInfoId;
                         this.htmlProps.scale = infoManager.htmlScale;
                         this.htmlProps.x = infoManager.htmlPosition.x;
                         this.htmlProps.y = infoManager.htmlPosition.y;
-                        console.log("html info registered",this.htmlProps);
                         this.htmlProps.infoElement = true;
 
+                        //if following path while displaying html element
                         if(infoManager.infoFollowPath){
                             //Faking , that there is no information on the screen
                             //so that it keeps following the path
@@ -331,7 +307,6 @@ export default {
                             informationRunning = false;
                         }
                     }
-                    //console.log("starting InformationPhase, Controls stop")
                 }
 			}
 
@@ -342,11 +317,12 @@ export default {
 				controls.update(true);
                 infoManager.update(controls.segment);
 			}
-            path.update();
-            //ground.update();
+            //path.update(); //if shader
+            //ground.update(); // if shader
             renderer.render(scene,camera);
 			//renderer.render( scene, guiParameters.animationView === true ? camera : overviewCamera );
 		}
+        //catch animation error, so it is not running endlessly in error
 		catch(err){
 			cancelAnimationFrame(frame);
 			console.log("animation error", err);
@@ -355,19 +331,17 @@ export default {
     //#endregion
   },  
   mounted() {
+      //asynchronous preload everything, then go into init
       Promise.all([this.preLoadPath(),
       this.preLoadFont(),
       this.preLoadModels(),
       this.preLoadAudio(),
       this.preLoadTextures()])
-      .then(res => {
-        console.log(res);
+      .then(() => {
         this.init();
         this.preloading = true;
-        console.log("window",this.windowSize);
       })
-      .then(res => {
-          console.log("Let's go, animation",res)
+      .then(() => {
           this.animate()
       }) 
       //.catch(alert);

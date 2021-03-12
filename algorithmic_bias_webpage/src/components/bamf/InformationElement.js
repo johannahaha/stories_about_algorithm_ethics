@@ -59,7 +59,7 @@ class InformationElement    {
         this.scene.add(this.bbox);
     }
 
-    //create the text and add it so scene
+    //create the text and add it to scene
     setupText(pLoadedFont){
         let text;
 
@@ -98,7 +98,6 @@ class InformationElement    {
     //create image and add it to scene
     //right now, no information element is an image. but this might be useful for later
     setupImage(){
-        console.log("loading image");
         const manager = new THREE.LoadingManager();
             manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
                 console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
@@ -129,12 +128,11 @@ class InformationElement    {
         img.position.y = this.position.y;
         img.position.z = this.position.z;
 
-        console.log("img",img);
-
         return img;
 
     }
 
+    //rotate info element with angle around axis
     rotate(axis,angle){
         if (axis === "X"){
             this.obj.rotateX(angle);
@@ -150,6 +148,7 @@ class InformationElement    {
         }
     }
 
+    //translate element with vector
     translate(vec){
         this.obj.geometry.translate(vec.x,vec.y,vec.z);
         this.bbox.geometry.translate(vec.x,vec.y,vec.z);

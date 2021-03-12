@@ -6,11 +6,11 @@
 
                 <div class="bamf_intro_start_language">
                     <div class="bamf_intro_start_language_item">
-                        The German Federal Office for Migration and Refugees (BAMF) uses an algorithm to identify the country of origin of refugees. How ethical is that? <br>
+                        The German Federal Office for Migration and Refugees (BAMF) uses an algorithm to identify the country of origin of refugees. How ethical is that? The exploration will take you about seven minutes. Please turn up your sound.<br>
                         <button @click="startBamf(false)">Start exploring</button>
                     </div>
                     <div class="bamf_intro_start_language_item">
-                        Das Bundesamt für Migration und Flüchtlinge (BAMF) nutzt einen Algorithmus, um das Herkunftsland von Geflüchteten zu ermitteln. Wie ethisch ist das? <br>
+                        Das Bundesamt für Migration und Flüchtlinge (BAMF) nutzt einen Algorithmus, um das Herkunftsland von Geflüchteten zu ermitteln. Wie ethisch ist das? Die Reise wird etwa sieben Minuten dauern. Bitte schalte den Ton an deinem Gerät an.<br>
                         <button @click="startBamf(true)">Beginne die Reise</button>
                     </div>
                 </div>
@@ -76,37 +76,29 @@ export default{
     },
     methods: {
         scrollToElement(id){
-            // if(id === "bamf_intro_references"){
-            //     this.showReferences = true;
-            // }
-
             const el = document.getElementById(id);
-            console.log(el,id);
 
             if (el) {
-            // Use el.scrollIntoView() to instantly scroll to the element
                 el.scrollIntoView({behavior: 'smooth'});
             }
         },
+        //starting bamg element, setting the language
         startBamf(isGerman){
             this.german = isGerman;
-            console.log("german: ",this.german);
             this.startedBamf=true;
             document.body.classList.toggle('sketch');
         },
 
+        //scroll to ressources after ending path
         endingPath(){
-            console.log("introduction sending end path");
             this.startedBamf=false;
             document.body.classList.toggle('sketch');
             this.scrollToReference = true;
         }
     },
     updated(){
-        console.log("updated");
         if(this.scrollToReference){
             const el = document.getElementById("toreference");
-            console.log(el);
             this.scrollToReference = false;
             el.click();
 

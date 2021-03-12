@@ -11,10 +11,9 @@ import {
 import {gsap} from 'gsap';
 
 
-const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraEye, cameraHelper ) {
+const PlayerControls = function ( parent,camera, domElement , helperGeo ) {
 	if ( domElement === document ) console.error( 'PlayerControls: "document" should not be used as the target "domElement". Please use "renderer.domElement" instead.' );
 
-	console.log("instantiating player controls");
     this.domElement = domElement;
 	this.isLocked = false;
 	this.helperTubeGeometry = helperGeo;
@@ -30,36 +29,31 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	//
 
 	let scope = this;
-
-	console.log(cameraEye,cameraHelper);
 	parent.rotation.reorder('YXZ');
 	camera.rotation.reorder( 'YXZ' );
+
+	//VARIABLES FOR MOUSE ROATION
 	const mouse = new Vector2();
 	let destination = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
 	destination.reorder( 'YXZ' );
 
 	let rotationRadians = new Euler(camera.rotation.x,camera.rotation.y,camera.rotation.z);
 	rotationRadians.reorder( 'YXZ' );
-	let quaternion = new Quaternion();
 
+	let quaternion = new Quaternion();
 	let lastCamRotation = new Vector3();
-	
 	let drag = 0.66;
 	let scale = 1;
 	// eslint-disable-next-line no-unused-vars
 	let dragging = false;
 	const HALF_PI = Math.PI// / 2;
-
-
-
 	const windowSize = new Vector2( scope.domElement.offsetWidth, scope.domElement.offsetHeight);
 
-
+	//VARIABLES FOR FOLLOWING PATH
 	const clock = new Clock();
 	let delta;
 	let speed = 0.005;//0.04;//0.001;
 	
-	//follow path
 	let direction = new Vector3(0,0,0);
 	let binormal = new Vector3();
 	this.normal = new Vector3();
@@ -75,6 +69,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 	//TODO: onTouchMove for mobile devices
 	//part of this function are from this class
 	//https://github.com/within-unlimited/under-neon-lights/blob/master/release/src/mouse-controls.js
+	//set destination depending on mouse
 	function onPointerMove( e ) {
 
 		if ( scope.enabled === false ) return;
@@ -114,11 +109,9 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		dragging = false;
 	}
 
+	//rotate Cam with destination
 	function rotateCam(){
-		if ( scope.enabled === false ){
-			console.log("controls are not enabled")
-			return;
-		}
+		if ( scope.enabled === false )return;
 		if ( scope.enableMouseControl === false ) return;
 
 		let dx = clamp(destination.x,-HALF_PI,HALF_PI);
@@ -138,6 +131,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 	//this function is mainly from this three js example
 	//https://github.com/mrdoob/three.js/blob/master/examples/webgl_geometry_extrude_splines.html
+	//camera following tube geometry
 	function followPath(){
 		if ( scope.enabled === false ) return;
 		if ( scope.resetCam === false ) return;
@@ -193,6 +187,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		return Math.min(Math.max(v, min), max);
 	}
 
+	//called by Scene.vue, updating controls
 	this.update = function (isMoving){
 		if ( scope.enabled === false ) return;
 		if (isMoving){
@@ -210,17 +205,15 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		}
 	};
 
+	//stop following the path, start rotating with mouse
 	this.stopFollow = function (infoFollowPath){
 		if (infoFollowPath) return;
 		clock.stop();
 		scope.resetCam = false;
-		//console.log("stopping follow");
-		//console.log("lastcam",lastCamRotation);
-		//if(lastCamRotation.y > 2.9 && lastCamRotation.y < -2.9) lastCamRotation.y = 0;
 		scope.resetMouse();
-		//console.log(clock);
 	}
 
+	//start following the path, stop rotating with mouse
 	this.startFollow = function (infoFollowPath){
 		if (infoFollowPath) return;
 
@@ -236,21 +229,20 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 		})
 	}
 
+	//reset mouse position and destination
 	this.resetMouse = function(destinationQuat = camera.quaternion){
 		mouse.set(0, 0);
 		destination.setFromQuaternion(destinationQuat);
 		destination.reorder( 'YXZ' );
 	}
 
-	this.getClock = function(){
-		return clock;
-	}
-
+	//window resize
 	this.handleResize = function () {
 		windowSize.x = scope.domElement.offsetWidth;
 		windowSize.y = scope.domElement.offsetHeight;
 	};
 
+	//connect event handlers
 	this.connect = function () {
 
 		scope.domElement.addEventListener( 'pointerdown', onPointerDown, false );
@@ -260,6 +252,7 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo, cameraE
 
 	};
 
+	//dispose event handlers
 	this.dispose = function () {
 
 		scope.domElement.removeEventListener( 'pointerdown', onPointerDown, false );

@@ -32,8 +32,6 @@ class TextureLoader{
 
         let loading = await Promise.all(paths.map(async (path) => {
             await loader.loadAsync(path).then((texture) => {
-                console.log(path);
-                console.log(texture);
                 const material = new THREE.MeshBasicMaterial({
                     map: texture,
                 });

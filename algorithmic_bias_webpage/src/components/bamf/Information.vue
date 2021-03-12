@@ -41,6 +41,7 @@ export default {
         }
     },
     computed: {
+        //returns text in german or english
         content(){
             let text;
             if(this.isGerman){
@@ -51,19 +52,24 @@ export default {
             }
             return text;
         },
+        //set fonr size
         style(){
             return 'font-size: '+ this.scale + 'rem';
         },
+        //calc percentage for "xPercent" in gsap
         posPercentX(){
             console.log("recalcutlating percents");
             return -100 * this.x;
         },
+        //calc percentage for "yPercent" in gsap
         posPercentY(){
             return -100 * this.y;
         },
+        //calc position for "x" in gsap
         posX(){
             return this.windowSize.x * this.x;
         },
+        //calc position for "y" in gsap
         posY(){
             return this.windowSize.y * this.y;
         }
@@ -71,32 +77,21 @@ export default {
     methods: {
         //#region GSAP transitions
         beforeEnterInfo(el) {
-        gsap.set(el, {
-            scaleX: 1,
-            scaleY: 1,
-            opacity: 0,
-            transformOrigin:"0% 0%"
-        })
+            gsap.set(el, {
+                scaleX: 1,
+                scaleY: 1,
+                opacity: 0,
+                transformOrigin:"0% 0%"
+            })
         },
         enterInfo(el,done){
-
-            // this.posPercentX =  -100 * this.position.x;
-            // this.posPercentY = -100 * this.position.y;
-            // this.posX = this.windowSize.x * this.position.x;
-            // this.posY = this.windowSize.y * this.position.y;
-
             gsap.to(el,{
-                onStart: console.log("starting info",this.posX,this.posY,this.posPercentX,this.posPercentY),
                 duration: 1,
                 opacity:1,
                 x: this.posX,
                 y: this.posY,
                 xPercent:this.posPercentX,
                 yPercent:this.posPercentY,
-                //xPercent:this.position.x, 
-                //left:this.posPercentLeft, 
-                //yPercent:this.position.y, 
-                //top:this.posPercentTop, 
                 onComplete: done
             })
         },
@@ -106,7 +101,7 @@ export default {
                 scaleX: 0,
                 scaleY: 0,
                 y:0,
-                onComplete: this.onClose, done//this.stopInformationPhase,
+                onComplete: this.onClose, done
             })
         },
         onClose(){

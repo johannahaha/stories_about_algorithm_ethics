@@ -6,7 +6,7 @@ import {gsap} from 'gsap';
 import { InformationElement } from './InformationElement.js';
 import {AudioElement} from './AudioElement.js'
 
-let InformationManager = function(scene,domElement,camera,controls,informations,font,models,audios,textures,isGerman,cameraHelper,cameraEye){
+let InformationManager = function(scene,domElement,camera,controls,informations,font,models,audios,textures,isGerman){
     
     this.informationPhase = false;
     this.infoFollowPath = false;
@@ -24,27 +24,24 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     this.models = models;
     this.audios = audios;
     this.isGerman = isGerman;
-    this.cameraEye = cameraEye;
-    this.cameraHelper = cameraHelper;
 
     let scope = this;
 
-    let infoSegmentsHalf = [20,40,70,100,120,140,170,220,250,300,330,370,400,450,480,500,550,600,620,660,705,820,850,890,920,940,1000,1060,1090,1120,1200,1230,1300,1370,1410,1450,1490,1530,1580,1630,1670,1695,1720,1750,1780,1800];
-    //let infoSegmentsHalf = [1000,1060,1090,1120,1200,1230,1300,1370,1410,1450,1490,1530,1580,1630,1670,1695,1720,1750,1780,1800];
-    //let infoSegmentsHalf = [20,40,1670,1710,1750,1800];
+    //segments at which infos are displayed, will be *2 later
+    let infoSegmentsHalf = [20,40,70,100,120,140,170,220,250,300,330,370,400,450,480,500,550,600,620,660,705,820,850,890,920,940,1000,1060,1090,1120,1200,1230,1300,1370,1410,1450,1490,1530,1580,1630,1670,1695,1720,1750,1780,1800]
 
     let infoSegments = [];
     for (let i = 0; i < infoSegmentsHalf.length; i++) {
         infoSegments.push(infoSegmentsHalf[i]*2)   
     }
-    console.log("info Positions to check: ",infoSegments.length);
     let infoSegmentsDone = [];
     let infoPos = new THREE.Vector3();
 
+    //raycaster
     const mouse = new THREE.Vector2();
     const raycaster = new THREE.Raycaster();
 
-    const cam = new THREE.Vector3();
+    //vectors used for the animation
     const defaultStartVector = new THREE.Vector3(0,0,-30);
     const defaultViewingDist = new THREE.Vector3(0,0,50);
     const defaultHtmlPos = new THREE.Vector2(0,0);
@@ -54,6 +51,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     const aabb = new THREE.Box3();
     const lastCam = new THREE.Camera();
     
+    //camera goes to the center of an object, optionally also rotates
     function camToObject(object,viewingDist,{duration = 1, rotateCam = false, rotation = undefined,onComplete,handler}  = {} ){
   
           aabb.setFromObject( object );
@@ -68,9 +66,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 z: rotation.z,
                 onStart: function(){
                     scope.controls.enabled = false;
-                },
-                onUpdate: function() {
-                    scope.cameraHelper.update();
                 },
                 onComplete: function(){
                     if (typeof onComplete === 'function'){
@@ -90,10 +85,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             onStart: function(){
                 scope.controls.enabled = false;
             },
-            onUpdate: function() {
-                scope.cameraHelper.update();
-                scope.cameraEye.position.copy( scope.camera.position );
-            },
             onComplete: function(){
                 if (typeof onComplete === 'function'){
                     onComplete(object);
@@ -106,6 +97,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         }, ); 
       }
 
+    //Information Elements is displayed over path and cam is flying towards it
     function infoOverPath(id,{startVector = defaultStartVector,
                         useQuaternion = true,   
                         viewingDist = defaultViewingDist,
@@ -119,7 +111,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         
         if (useQuaternion){
             infoPos = startVector.applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
-            console.log("infoPos: ",infoPos);
         }
         else{
             infoPos.copy(camera.position);
@@ -175,6 +166,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         return info.getMeshObject();
     }
 
+    //information Element is flying towards cam
     function infoFlyingToCam(id,{startVector = defaultStartVector,
                                 viewingDist = defaultViewingDist,
                                 useQuaternion = true,   
@@ -244,15 +236,15 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         return info.getMeshObject();
     }
 
+    //display info as HTML, Scene.vue manages the rest to display Information.vue
     function infoAsHtml(id,{scale = 1, position = defaultHtmlPos}={}){
         scope.htmlInformation = true;
         scope.htmlInfoId = id;
         scope.htmlScale = scale;
         scope.htmlPosition = position;
-
-        cam.set(0,0,0);
     }
 
+    //add image at specific position
     function addImage(path,position,size){
         let texture = undefined;
         for (let i = 0; i < textures.length; i++) {
@@ -276,6 +268,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
     }
 
+    //add audio element to info element
     function addAudio(path,object,x,y,color = 0x9CBBCE){
         let audioFile = undefined;
         for (let i = 0; i < audios.length; i++) {
@@ -296,6 +289,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         }
     }
 
+    //dispatches event to show references
     function showingReferences() {
 
         const event = new CustomEvent("endPath",{ 
@@ -306,9 +300,11 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         scope.domElement.dispatchEvent(event);
     }
 
+    //main function of information handling
+    //manages what happens for each information
     function manageInfo(infoNumber){
 
-		if (infoNumber === infoSegmentsDone[44]){
+		if (infoNumber === infoSegmentsDone[0]){
             customViewingDist.set(0,0,50);
             infoOverPath(0,{useQuaternion:false,viewingDist:customViewingDist});
         }
@@ -381,7 +377,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             scope.camera.updateProjectionMatrix();
             customStartVector.set(0,100,0);
             camToObject(info.getMeshObject(),customStartVector,{duration:2,rotateCam:true,rotation:new THREE.Vector3(-Math.PI/2,0,0),onComplete: function(){
-                console.log(camera);
                 scope.controls.resetMouse()
             }});
 
@@ -548,7 +543,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
         else if(infoNumber === infoSegmentsDone[19]){
             customHtmlPos.set(0.8,0.8);
-            infoAsHtml(19,{position:customHtmlPos});
+            infoAsHtml(19,{position:customHtmlPos,scale:1.4});
             
         }
 
@@ -616,18 +611,14 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
             let rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),Math.PI/2);
             rotation.multiply(lastCam.quaternion);
-            console.log("rotation",rotation);
 
             gsap.to({},{
                 duration:1,
                 onStart: scope.controls.enabled = false,
                 onUpdate: function(){
-                    console.log(camera.quaternion.x);
                     scope.camera.quaternion.slerp(rotation,this.progress());
                 },
             })
-
-            console.log(scope.camera.quaternion);
 
             let objects = [];
             objects.push(info.bbox);
@@ -637,14 +628,12 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                     gsap.to({},{
                         duration:1,
                         onUpdate: function(){
-                            console.log(camera.quaternion.x);
                             scope.camera.quaternion.slerp(lastCam.quaternion,this.progress());
                         },
                         onComplete: function(){
                             scope.informationPhase = false;
                             document.removeEventListener('pointerdown',handler);
                             scope.controls.enabled = true;
-                            console.log("completed",scope.informationPhase);
                         }
                     })
                 //using bind this because it is higher order function
@@ -663,7 +652,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoPos.y = 2 + scope.controls.offset;
             infoPos.add(customViewingDist)
 
-            console.log("position image",infoPos);
             let img = addImage('bamf_training_p50_result.png',infoPos,new THREE.Vector3(1.7,2,0.2));
             img.rotateY(THREE.MathUtils.degToRad(50));
 
@@ -716,8 +704,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoPos.z += -3;
             infoPos.x += 5;
             infoPos.y = 2 + scope.controls.offset;
-
-            console.log("position image",infoPos);
 
             let img = addImage('map_arabian_dialects.png',infoPos,new THREE.Vector3(4,2.2,0.2));
             img.rotateY(THREE.MathUtils.degToRad(90));
@@ -788,7 +774,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
         //#endregion done
         else if(infoNumber === infoSegmentsDone[39]){
-            console.log("info 39");
             customViewingDist.set(60,0,15);
             infoOverPath(39,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(20)})
 
@@ -815,7 +800,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoAsHtml(43,{scale:2,position:customHtmlPos});
         }
 
-        else if (infoNumber === infoSegmentsDone[0]){
+        else if (infoNumber === infoSegmentsDone[44]){
 
             infoPos.set(0, 9000, 0);
             let text = scope.informations[44].content;

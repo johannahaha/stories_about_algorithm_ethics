@@ -36,26 +36,17 @@ class PathLoader {
         };
         const loader = new SVGLoader(manager);
         let loadedSvgData = await loader.loadAsync('/threeAssets/border.svg');
-        //console.log("I loaded this", svgData);
         return loadedSvgData;
 
     }
 
+    //create array of vertices from svg file 
     createBorder(data){
         const paths = data.paths;
-        console.log(paths);
-        //const group = new THREE.Group();
-        //console.log("path lenght", paths.length);
 
 		if (paths.length === 1){
 
 			const path = paths[0];
-
-			// const material = new THREE.MeshBasicMaterial( {
-			// 	color: path.color,
-			// 	side: THREE.DoubleSide,
-			// 	depthWrite: false
-			// } );
 
             const shapes = path.toShapes( true );
 
@@ -63,7 +54,6 @@ class PathLoader {
                 //create shape of svg points
                 const shape = shapes[0];
                 const geometry = new THREE.ShapeGeometry( shape );
-                console.log(geometry);
                 let switchedVertices = [];
                 let normals = [];
 
@@ -71,14 +61,19 @@ class PathLoader {
                 let mesh = new THREE.Mesh(geometry,new THREE.Material());
                 
                 let positionAttribute = mesh.geometry.getAttribute( 'position' );
-                //console.log("pos attribute",positionAttribute);
-
                 let localVertex = new THREE.Vector3();
 
                 for ( let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex ++ ) {
+                    //multiply each vertex with 3
                     localVertex.fromBufferAttribute( positionAttribute, vertexIndex ).multiplyScalar(3);
+
+                    //set x to svg.x 
                     switchedVertices.push(localVertex.x);
+
+                    //set y to 0
                     switchedVertices.push(0);
+
+                    //set z to svg.y
                     switchedVertices.push(localVertex.y);
 
                     normals.push(0);
@@ -86,50 +81,35 @@ class PathLoader {
                     normals.push(0);
 
                 }
-
                 mesh.geometry.setAttribute("position",new THREE.Float32BufferAttribute( switchedVertices, 3 ))
                 mesh.geometry.setAttribute("normal", THREE.Float32BufferAttribute( normals, 3 ))
-
-                //console.log(mesh.geometry);
-
 
                 //set center of vertices to zero with bounding box
                 mesh.geometry.computeBoundingBox();
                 let bb = mesh.geometry.boundingBox;
-                //console.log("bb",bb);
                 mesh.geometry.translate(-bb.max.x/2,0,-bb.max.z/2);
 
-                //transform this bufferGeoMesh to array of vectors
+
+                //transform this bufferGeoMesh to array of vertices
                 positionAttribute = mesh.geometry.getAttribute( 'position' );
                 for ( let vertexIndex = 0; vertexIndex < positionAttribute.count; vertexIndex ++ ) {
                     let v = localVertex.fromBufferAttribute( positionAttribute, vertexIndex )
                     this.vertices.push(new THREE.Vector3(v.x,v.y,v.z));
                 }    
-
-
+                //return array of vertices, that create a curve can be created from
                 return this.vertices;
             }
             else{
                 console.log("shape length is not one");
             }
-            //if shapes.length not = 1
-			// for ( let j = 0; j < shapes.length; j ++ ) {
-
-			// 	const shape = shapes[ j ];
-            //  const geometry = new THREE.ShapeGeometry( shape );
-            //  console.log(j, "geometry", geometry);
-			// 	const mesh = new THREE.Mesh( geometry, material );
-			// 	group.add( mesh );
-			// }
 
         }
         else{
             console.log("path length is not one");
         }
-        //console.log("group", group);
-		//scene.add( group );
     }
 
+    //sets material right now, later this could create a shaderMaterial
     setupShader(){
         //let shader = GlowingShader;
         //let shader = OuterGlowShader;
@@ -255,11 +235,13 @@ class PathLoader {
         // })
 
     }
+
+    //return array of vertices
     getVertices(){
-        //console.log("path vertices", this.vertices);
         return this.vertices;
     }
 
+    //update only for shaders
     update(){
       this.uniforms.time.value = this.clock.getElapsedTime();
     }

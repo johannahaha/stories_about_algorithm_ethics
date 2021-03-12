@@ -9,6 +9,7 @@ class AudioElement{
         this.color = color;
     }
 
+    //place audio sphere next to parent element
     place(listener,parent,{x = 0, y = 0, z=0,distance = 1} = {}){
         this.sound = new THREE.PositionalAudio( listener );
 
@@ -39,10 +40,12 @@ class AudioElement{
 
     }
 
+    //play audio
     play(){
         this.sound.play();
     }
 
+    //return mesh that audio is connected to
     getMesh(){
         return this.mesh;
     }

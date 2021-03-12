@@ -2,8 +2,6 @@
 
 import * as THREE from "three";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-//import {GlowingShader} from "./shaders/GlowingShader.js";
-//import {OuterGlowShader} from "./shaders/OuterGlowShader.js";
 
 class ModelLoader {
     constructor(){
@@ -36,8 +34,6 @@ class ModelLoader {
             const model = await loader.loadAsync(path);
             this.models.push(model);
           }));
-        //let model = await loader.loadAsync('/threeAssets/bamfschildneu.glb');
-        //this.models.push(model);
         return loading;
     }
 
