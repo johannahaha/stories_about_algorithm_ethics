@@ -6,7 +6,7 @@ import {gsap} from 'gsap';
 import { InformationElement } from './InformationElement.js';
 import {AudioElement} from './AudioElement.js'
 
-let InformationManager = function(scene,domElement,camera,controls,informations,font,models,audios,textures,isGerman){
+let InformationManager = function(scene,domElement,camera,controls,informations,font,audios,textures,isGerman){
     
     this.informationPhase = false;
     this.infoFollowPath = false;
@@ -21,7 +21,6 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     this.controls = controls;
     this.informations = informations;
     this.font = font;
-    this.models = models;
     this.audios = audios;
     this.isGerman = isGerman;
 
@@ -289,6 +288,17 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         }
     }
 
+    //emit event to change speed with the updated speed value
+    function changeSpeed(speedUpdate){
+        const event = new CustomEvent("changeSpeed",{ 
+            bubbles: true,
+            detail:  {
+                speed: speedUpdate
+        }});
+        console.log("emitting event so change speed", speedUpdate);
+        scope.domElement.dispatchEvent(event);
+    }
+
     //dispatches event to show references
     function showingReferences() {
 
@@ -333,24 +343,24 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoFlyingToCam(2,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI,infoRotAxis:"Y"});
 
             infoPos = new THREE.Vector3( 20, 20, -20 ).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
-            let bamf = models[0].scene;
+            //let bamf = models[0].scene;
 
             infoPos.copy(scope.camera.position);
-            infoPos.x += -40;
-            infoPos.y = -15;
-            infoPos.z += 50;
+            // infoPos.x += -40;
+            // infoPos.y = -15;
+            // infoPos.z += 50;
 
-            bamf.scale.set(10,10,10);
-            bamf.position.copy(infoPos);
-            bamf.rotateY(THREE.MathUtils.degToRad(100));
+            // bamf.scale.set(10,10,10);
+            // bamf.position.copy(infoPos);
+            // bamf.rotateY(THREE.MathUtils.degToRad(100));
 
-            gsap.from(bamf.position,{
+            gsap.from(infoPos,{
                 duration:1,
-                x: infoPos.x-100,
-                y: -15
+                x: infoPos.x -140,
+                y: infoPos.y -15,
+                z: infoPos.z -50
             })
-            scope.scene.add(bamf);
-
+            //scope.scene.add(bamf);
             
         }
 
@@ -419,6 +429,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             const angle = THREE.MathUtils.degToRad(120);
             customViewingDist.set(27,0,-9);
             infoOverPath(5,{useQuaternion:false,viewingDist: customViewingDist,infoRotAxis:"Y",infoRotAngle:angle})
+            changeSpeed(0.001);
         }
 
         //flying higher
@@ -442,6 +453,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         else if(infoNumber === infoSegmentsDone[7]){
             customViewingDist.set(-7.5,-7.5,-38);
             infoFlyingToCam(7,{useQuaternion:false,viewingDist:customViewingDist,delay:2})
+            changeSpeed(0.01);
         }
 
         else if(infoNumber === infoSegmentsDone[8]){
@@ -514,6 +526,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 duration:1,
                 density:0.002
             })
+            changeSpeed(0.005);
         }
 
         else if(infoNumber === infoSegmentsDone[16]){

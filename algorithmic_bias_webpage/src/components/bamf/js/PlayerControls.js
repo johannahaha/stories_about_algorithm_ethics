@@ -187,6 +187,11 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo ) {
 		return Math.min(Math.max(v, min), max);
 	}
 
+	this.setSpeed = function (pSpeed){
+		console.log("setting new speed in controls", pSpeed);
+		speed = pSpeed;
+	};
+
 	//called by Scene.vue, updating controls
 	this.update = function (isMoving){
 		if ( scope.enabled === false ) return;

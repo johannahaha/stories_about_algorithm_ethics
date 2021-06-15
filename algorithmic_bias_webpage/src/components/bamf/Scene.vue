@@ -57,7 +57,7 @@ import * as THREE from "three";
 //MY CLASSES
 import { PathLoader } from './js/loaders/PathLoader.js';
 import {InfoFontLoader} from './js/loaders/InfoFontLoader.js';
-import {ModelLoader} from './js/loaders/ModelLoader.js';
+//import {ModelLoader} from './js/loaders/ModelLoader.js';
 import {AudioLoader} from './js/loaders/AudioLoader.js';
 import {TextureLoader} from './js/loaders/TextureLoader.js';
 import {PlayerControls} from './js/PlayerControls.js';
@@ -73,7 +73,7 @@ let camera;
 let helperTubeGeometry;
 let pathVertices,path;
 let font;
-let models;
+//let models;
 let audios;
 let textures;
 
@@ -122,13 +122,13 @@ export default {
           font = loadedFont;
         })
     },
-    preLoadModels: function(){
-        let modelLoader = new ModelLoader();
-        return modelLoader.init()
-        .then(()  => {
-            models = modelLoader.getModels();
-        })
-    },
+    // preLoadModels: function(){
+    //     let modelLoader = new ModelLoader();
+    //     return modelLoader.init()
+    //     .then(()  => {
+    //         models = modelLoader.getModels();
+    //     })
+    // },
     preLoadAudio: function(){
         let audioLoader = new AudioLoader();
         return audioLoader.init()
@@ -197,6 +197,7 @@ export default {
         const listener = new THREE.AudioListener();
         camera.add( listener ); //stored as camera.children
 
+
         //LIGHT
         const light = new THREE.DirectionalLight( 0xDFEDF2, 0.7 );
         light.position.set( 500, 500, 0 ).normalize();
@@ -228,7 +229,21 @@ export default {
         controls = new PlayerControls(parent,camera,renderer.domElement,helperTubeGeometry);
 
         //INFOMANAGER
-        infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,models,audios,textures,this.isGerman);
+        infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,audios,textures,this.isGerman);
+
+        //SOUND
+        const globalSound = new THREE.Audio( listener );
+        let audioFile = undefined;
+        for (let i = 0; i < audios.length; i++) {
+            if(audios[i].path.includes('demosound.mp3')){
+                console.log(audios[i].path);
+                audioFile = audios[i].audio;
+            }
+        }
+        if(audioFile !== undefined){   
+            globalSound.setBuffer(audioFile);
+            globalSound.play();
+        }
 
         //INSTRUCTIONS HTML
         let menu = document.querySelector("#instructions");
@@ -249,6 +264,9 @@ export default {
         this.windowSize = new THREE.Vector2( renderer.domElement.offsetWidth, renderer.domElement.offsetHeight);
         window.addEventListener( 'resize', this.onWindowResize, false );
         window.addEventListener('endPath',this.endingPath);
+        window.addEventListener('changeSpeed',e => this.changeSpeed(e));
+
+        console.log("done with init");
 
     },
     onWindowResize: function() {
@@ -264,6 +282,11 @@ export default {
     //emit event so that ressource can be displayed
     endingPath: function(){
         this.$emit("ending-path");
+    },
+    //set the updated speed to controls, stored in the details of the event
+    changeSpeed: function(e){
+        console.log("received event so change speed", e.detail.speed);
+        controls.setSpeed(e.detail.speed);
     },
     //stop informationPhase and start following Path again.
     //if applicable: deactivate html element
@@ -337,7 +360,7 @@ export default {
       //asynchronous preload everything, then go into init
       Promise.all([this.preLoadPath(),
       this.preLoadFont(),
-      this.preLoadModels(),
+      //this.preLoadModels(),
       this.preLoadAudio(),
       this.preLoadTextures()])
       .then(() => {

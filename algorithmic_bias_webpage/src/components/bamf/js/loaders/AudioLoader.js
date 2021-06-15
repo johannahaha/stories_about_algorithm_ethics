@@ -8,7 +8,7 @@ class AudioLoader{
     }
 
     async init(){
-        let paths = ['/sound/sof_rainbow01.mp3','/sound/scm_rainbow01.mp3','/sound/wef_rainbow01.mp3','/sound/irm_rainbow01.mp3','/sound/irm_rainbow02.mp3'];
+        let paths = ['/sound/sof_rainbow01.mp3','/sound/scm_rainbow01.mp3','/sound/wef_rainbow01.mp3','/sound/irm_rainbow01.mp3','/sound/irm_rainbow02.mp3','/sound/demosound.mp3'];
 
         const manager = new THREE.LoadingManager();
         manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
