@@ -4,7 +4,7 @@
 import * as THREE from "three";
 import {gsap} from 'gsap';
 import { InformationElement } from './InformationElement.js';
-import {AudioElement} from './AudioElement.js'
+//import {AudioElement} from './AudioElement.js'
 
 let InformationManager = function(scene,domElement,camera,controls,informations,font,audios,textures,isGerman){
     
@@ -29,8 +29,8 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     //segments at which infos are displayed, will be *2 later
     // let infoSegmentsHalfBeforeUpdate = [20,40,70,100,120,140,170,220,250,300,330,370,400,450,480,500,550,600,620,660,705,820,850,890,920,940,1000,1060,1090,1120,1200,1230,1300,1370,1410,1450,1490,1530,1580,1630,1670,1695,1720,1750,1780,1800]
 
-    //let infoSegmentsHalf = [20,40,70,100,120,140,170,220,370,480,550,600,620,660,705,820,850,890,920,940,1000,1060,1090,1120,1200,1230,1300,1370,1410,1450,1490,1530,1580,1630,1670,1695,1720,1750,1780,1800]
-    let infoSegmentsHalf = [20,220,370,450,550,600,620,660,705,820,850,890,920,940,1000,1060,1090,1120,1200,1230,1300,1370,1410,1450,1490,1530,1580,1630,1670,1695,1720,1750,1780,1800]
+    //let infoSegmentsHalf = [20,40,70,100,120,140,170,220,370,450,550,600,650,670,690,700,920,980,1050,1070,1100,1120,1370,1530,1580,1630,1640,1650]
+    let infoSegmentsHalf = [20,220,370,690,700,920,980,1050,1070,1100,1120,1370,1530,1580,1630,1700,1750,1780,1800]
 
     let infoSegments = [];
     for (let i = 0; i < infoSegmentsHalf.length; i++) {
@@ -53,10 +53,10 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     const aabb = new THREE.Box3();
     const lastCam = new THREE.Camera();
 
-    const music1 = findAudio("music_1.mp3");
+    //const music1 = findAudio("music_1.mp3");
     const music2 = findAudio("music_2.mp3");
     const music3 = findAudio("music_3.mp3");
-    const music4 = findAudio("music_4.mp3");
+    //const music4 = findAudio("music_4.mp3");
     //const music5 = findAudio("music_5.mp3");
     
     //camera goes to the center of an object, optionally also rotates
@@ -279,25 +279,25 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     }
 
     //add audio element to info element
-    function addAudio(path,object,x,y,color = 0x9CBBCE){
-        let audioFile = undefined;
-        for (let i = 0; i < audios.length; i++) {
-            if(audios[i].path.includes(path)){
-                audioFile = audios[i].audio;
-            }
-        }
-        if(audioFile !== undefined){
-            let audio = new AudioElement(audioFile,color);
-            audio.place(camera.children[0],object,{x:x,y:y,z:-1,distance:1});
+    // function addAudio(path,object,x,y,color = 0x9CBBCE){
+    //     let audioFile = undefined;
+    //     for (let i = 0; i < audios.length; i++) {
+    //         if(audios[i].path.includes(path)){
+    //             audioFile = audios[i].audio;
+    //         }
+    //     }
+    //     if(audioFile !== undefined){
+    //         let audio = new AudioElement(audioFile,color);
+    //         audio.place(camera.children[0],object,{x:x,y:y,z:-1,distance:1});
 
-            window.addEventListener('pointerdown', (event) => scope.onPointerDownInfo(event, [audio.getMesh()], function(){
-                audio.play();
-            }.bind(this)));
-        }
-        else{
-            console.log("audio not found: ",path)
-        }
-    }
+    //         window.addEventListener('pointerdown', (event) => scope.onPointerDownInfo(event, [audio.getMesh()], function(){
+    //             audio.play();
+    //         }.bind(this)));
+    //     }
+    //     else{
+    //         console.log("audio not found: ",path)
+    //     }
+    // }
 
     //helper: axes
     function addAxesHelper(){
@@ -341,7 +341,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 		if (infoNumber === infoSegmentsDone[0]){
             customViewingDist.set(0,0,50);
             infoOverPath(0,{useQuaternion:false,viewingDist:customViewingDist,audio:music2});
-            changeSpeed(0.01);
+            changeSpeed(0.04);
         }
         //#region done
         // else if (infoNumber === infoSegmentsDone[1]){
@@ -489,18 +489,21 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
         else if(infoNumber === infoSegmentsDone[1]){
             customViewingDist.set(-7.5,-7.5,-38);
-            infoFlyingToCam(7,{useQuaternion:false,viewingDist:customViewingDist,delay:2,audio:music3});
+            infoFlyingToCam(7,{useQuaternion:false,viewingDist:customViewingDist,delay:0.5,audio:music3});
             gsap.to(scope.controls,{
                 duration: 5,
                 ease: "power3",
                 offset: 60,
-                lookFar:100
+                lookFar:100,
+                onComplete: function(){
+                    console.log("completed");
+                    changeSpeed(0.02);
+                }
             })
             gsap.to(scope.scene.fog,{
                 duration:1,
-                density:0.0005
+                density:0.003
             })
-            changeSpeed(0.02);
             addAxesHelper();
         }
 
@@ -510,60 +513,68 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
             infoOverPath(8,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:Math.PI/2,height:-10});
 
-            addAxesHelper();
         }
-        else if(infoNumber === infoSegmentsDone[3]){
-            //customHtmlPos.set(0.25,0.1);
-            customViewingDist.set(20,0,20);
-            infoOverPath(9,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:Math.PI/2,height:10});
-            addAxesHelper();
-        }
+        //#region done 2
+        // else if(infoNumber === infoSegmentsDone[9]){
+        //     //customHtmlPos.set(0.25,0.1);
+        //     customViewingDist.set(20,0,20);
+        //     infoOverPath(9,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:Math.PI/2,height:10});
+        //     addAxesHelper();
+        // }
 
-        else if(infoNumber === infoSegmentsDone[4]){
-            customViewingDist.set(50,-16,30);
-            let obj = infoFlyingToCam(10,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:-Math.PI/2,infoRotAxis:"Y",audio:music4})
+        // else if(infoNumber === infoSegmentsDone[10]){
+        //     customViewingDist.set(50,-16,30);
+        //     let obj = infoFlyingToCam(10,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:-Math.PI/2,infoRotAxis:"Y",audio:music4})
 
 
-            addAudio("sof_rainbow01.mp3",obj,-0.2,1);
+        //     addAudio("sof_rainbow01.mp3",obj,-0.2,1);
             
-            addAudio("wef_rainbow01.mp3",obj,-0.1,1);
+        //     addAudio("wef_rainbow01.mp3",obj,-0.1,1);
 
-            addAudio("irm_rainbow01.mp3",obj,0,1);
+        //     addAudio("irm_rainbow01.mp3",obj,0,1);
             
-            addAudio("scm_rainbow01.mp3",obj,0.1,1);
+        //     addAudio("scm_rainbow01.mp3",obj,0.1,1);
 
-        }
+        // }
 
-        else if(infoNumber === infoSegmentsDone[5]){
-
-
-            customViewingDist.set(-30,0,15);
-            const angle = THREE.MathUtils.degToRad(110)
-            let obj = infoFlyingToCam(11,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:angle,infoRotAxis:"Y",audio:music1});
+        // else if(infoNumber === infoSegmentsDone[11]){
 
 
-            addAudio("irm_rainbow01.mp3",obj,0.1,1,0x143E4F);
+        //     customViewingDist.set(-30,0,15);
+        //     const angle = THREE.MathUtils.degToRad(110)
+        //     let obj = infoFlyingToCam(11,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:angle,infoRotAxis:"Y",audio:music1,height:10});
 
-            addAudio("scm_rainbow01.mp3",obj,-0.1,1,0x9CBBCE);
-        }
 
-        else if(infoNumber === infoSegmentsDone[6]){
-            customViewingDist.set(-7,0,-30);
-            infoOverPath(12,{height:-20,useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI,infoRotAxis:"Y"});
-        }
+        //     addAudio("irm_rainbow01.mp3",obj,0.1,1,0x143E4F);
+
+        //     addAudio("scm_rainbow01.mp3",obj,-0.1,1,0x9CBBCE);
+        // }
+
+        // else if(infoNumber === infoSegmentsDone[12]){
+        //     customHtmlPos.set(0,0.8);
+        //     infoAsHtml(12,{scale:1.6,position:customHtmlPos});
+        //     //customViewingDist.set(-7,0,-30);
+        //     //infoOverPath(12,{height:-20,useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI,infoRotAxis:"Y"});
+        //     changeSpeed(0.002);
+        // }
         
-        else if(infoNumber === infoSegmentsDone[7]){
-            customViewingDist.set(10,0,30);
-            infoFlyingToCam(13,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI,infoRotAxis:"Y"});
-        }
+        // else if(infoNumber === infoSegmentsDone[13]){
+        //     customViewingDist.set(60,0,60);
+        //     const angle = THREE.MathUtils.degToRad(30)
+        //     infoOverPath(13,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:angle,infoRotAxis:"Y",height:-20});
+        //     addAxesHelper();
+        // }
+        //#endregion
 
-        else if(infoNumber === infoSegmentsDone[14]){
+        else if(infoNumber === infoSegmentsDone[3]){
             customHtmlPos.set(0,0.8)
             infoAsHtml(14,{scale:1.5,position:customHtmlPos})
+            scope.infoFollowPath = true;
+            changeSpeed(0.002);
         }
 
         //flying lower again
-        else if(infoNumber === infoSegmentsDone[15]){
+        else if(infoNumber === infoSegmentsDone[4]){
             customHtmlPos.set(0.5,0.5)
             infoAsHtml(15,{scale:1.5,position:customHtmlPos})
             scope.infoFollowPath = true;
@@ -572,144 +583,193 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 duration: 10,
                 ease: "power2",
                 offset: 15,
-                lookFar:30
+                lookFar:30,
+                onComplete: changeSpeed(0.03)
             })
             gsap.to(scope.scene.fog,{
                 duration:1,
                 density:0.002
             })
-            changeSpeed(0.005);
         }
 
-        else if(infoNumber === infoSegmentsDone[16]){
-            customViewingDist.set(20,0,20);
-            infoFlyingToCam(16,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:THREE.MathUtils.degToRad(230),infoRotAxis:"Y",moveInfoBack:false})
+        else if(infoNumber === infoSegmentsDone[5]){
+            customViewingDist.set(0,0,-55);
+            infoOverPath(16,{useQuaternion:false,viewingDist:customViewingDist,height:15,infoRotAngle:Math.PI,infoRotAxis:"Y"})
+            changeSpeed(0.005);
+
             
         }
 
-        else if(infoNumber === infoSegmentsDone[17]){
+        else if(infoNumber === infoSegmentsDone[6]){
 
-            customViewingDist.set(0,0,-80);
-            infoOverPath(17,{useQuaternion:false,viewingDist:customViewingDist,height:30,infoRotAngle:Math.PI,infoRotAxis:"Y"})
+            customViewingDist.set(0,0,30);
+            infoFlyingToCam(17,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:THREE.MathUtils.degToRad(210),infoRotAxis:"Y",moveInfoBack:false})
+    
+
+            infoPos.copy(camera.position);
+            infoPos.z += -6;
+            infoPos.x += 10;
+            infoPos.y = 2 + scope.controls.offset;
+
+            let img = addImage('map_arabian_dialects.png',infoPos,new THREE.Vector3(4,2.2,0.2));
+            img.rotateY(THREE.MathUtils.degToRad(70));
+
+            gsap.from(img.position,{
+                duration:2,
+                y:0,
+                x:infoPos - 10
+            })
+            addAxesHelper();
         }
 
-        else if(infoNumber === infoSegmentsDone[18]){
+        else if(infoNumber === infoSegmentsDone[7]){
             
             customViewingDist.set(10,0,-30);
             infoOverPath(18,{useQuaternion:false,viewingDist:customViewingDist,height:20,infoRotAngle:Math.PI,infoRotAxis:"Y"})
 
-            infoPos.copy(camera.position);
+            scope.infoFollowPath = true;
+            changeSpeed(0.002);
+            // infoPos.copy(camera.position);
 
-            let info = addImage('/img/bamf_training_p50_result.png',infoPos,new THREE.Vector3(3.4,4,0.2));
-            info.rotateY(THREE.MathUtils.degToRad(120));
+            // let info = addImage('/img/bamf_training_p50_result.png',infoPos,new THREE.Vector3(3.4,4,0.2));
+            // info.rotateY(THREE.MathUtils.degToRad(120));
 
-            camToObject(info,customViewingDist);
+            // camToObject(info,customViewingDist);
 
         }
 
-        else if(infoNumber === infoSegmentsDone[19]){
+        else if(infoNumber === infoSegmentsDone[8]){
             customHtmlPos.set(0.8,0.8);
             infoAsHtml(19,{position:customHtmlPos,scale:1.4});
             
         }
 
-        else if(infoNumber === infoSegmentsDone[20]){
+        else if(infoNumber === infoSegmentsDone[9]){
 
-            customViewingDist.set(0,0,20);
-            infoFlyingToCam(20,{useQuaternion:false,viewingDist:customViewingDist,height:30,infoRotAngle:THREE.MathUtils.degToRad(200),infoRotAxis:"Y",moveInfoBack:false})
+            customViewingDist.set(0,10,40);
+            infoFlyingToCam(20,{useQuaternion:false,viewingDist:customViewingDist,height:50,infoRotAngle:THREE.MathUtils.degToRad(210),infoRotAxis:"Y",moveInfoBack:false})
 
             
         }
 
-        else if(infoNumber === infoSegmentsDone[21]){
+        else if(infoNumber === infoSegmentsDone[10]){
+            customHtmlPos.set(0.2,0.8);
+            infoAsHtml(21,{position:customHtmlPos,scale:1.4});
+            // customViewingDist.set(-20,0,-20);
+            // const angle = THREE.MathUtils.degToRad(240)
+            // infoOverPath(21,{useQuaternion:false,viewingDist:customViewingDist,height:10,infoRotAngle:angle,infoRotAxis:"Y",rotateCam:true,rotation:new THREE.Vector3(0,Math.PI/2,0)})
 
-            customViewingDist.set(-20,0,-20);
-            const angle = THREE.MathUtils.degToRad(240)
-            infoOverPath(21,{useQuaternion:false,viewingDist:customViewingDist,height:10,infoRotAngle:angle,infoRotAxis:"Y",rotateCam:true,rotation:new THREE.Vector3(0,Math.PI/2,0)})
+            gsap.to(scope.controls,{
+                duration: 5,
+                ease: "power3",
+                offset: 60,
+                lookFar:100,
+                onComplete: changeSpeed(0.02)
+            })
+            gsap.to(scope.scene.fog,{
+                duration:1,
+                density:0.002
+            })
             
         }
 
-        else if(infoNumber === infoSegmentsDone[22]){
-           
-            customViewingDist.set(-30,0,-60);
-            infoOverPath(22,{useQuaternion:false,viewingDist:customViewingDist,height:70,infoRotAngle:THREE.MathUtils.degToRad(200),infoRotAxis:"Y"})
+        else if(infoNumber === infoSegmentsDone[11]){
+
+            customViewingDist.set(50,0,40);
+            infoOverPath(22,{useQuaternion:false,viewingDist:customViewingDist,height:20,infoRotAngle:THREE.MathUtils.degToRad(70),infoRotAxis:"Y"})
             
         }
 
-        else if(infoNumber === infoSegmentsDone[23]){
-            customViewingDist.set(0,0,50);
-            infoFlyingToCam(23,{useQuaternion:false,viewingDist:customViewingDist,height:8,infoRotAngle:Math.PI,infoRotAxis:"Y",moveInfoBack:false})
+        else if(infoNumber === infoSegmentsDone[12]){
+            customViewingDist.set(0,0,-50);
+            infoFlyingToCam(23,{useQuaternion:false,viewingDist:customViewingDist,height:8,infoRotAngle:THREE.MathUtils.degToRad(330),infoRotAxis:"Y",moveInfoBack:false})
+
+            gsap.to(scope.controls,{
+                duration: 5,
+                ease: "power3",
+                offset: 15,
+                lookFar:100,
+                onComplete: changeSpeed(0.005)
+            })
+            gsap.to(scope.scene.fog,{
+                duration:1,
+                density:0.002
+            })
+            addAxesHelper()
             
         }
         
-        else if(infoNumber === infoSegmentsDone[24]){
-            customHtmlPos.set(0.3,0.3);
-            infoAsHtml(24,{position:customHtmlPos})
+        else if(infoNumber === infoSegmentsDone[13]){
+            customViewingDist.set(-30,0,-50);
+            infoFlyingToCam(24,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:THREE.MathUtils.radToDeg(100),infoRotAxis:"Y"});
         }
 
-        else if(infoNumber === infoSegmentsDone[25]){
-            customViewingDist.set(-10,0,-35)
-            infoOverPath(25,{useQuaternion:false,viewingDist:customViewingDist,height:10,infoRotAngle:THREE.MathUtils.radToDeg(180),infoRotAxis:"Y"});
+        else if(infoNumber === infoSegmentsDone[14]){
+            customViewingDist.set(10,0,35)
+            infoOverPath(25,{useQuaternion:false,viewingDist:customViewingDist,height:10,infoRotAngle:THREE.MathUtils.radToDeg(50),infoRotAxis:"Y"});
             
         }
 
-        else if(infoNumber === infoSegmentsDone[26]){
-            customViewingDist.set(30,0,50);
-            infoFlyingToCam(26,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:THREE.MathUtils.radToDeg(300),infoRotAxis:"Y"});
+        else if(infoNumber === infoSegmentsDone[15]){
+            customViewingDist.set(30,0,15);
+            infoAsHtml(26,{scale:1.3,position:customHtmlPos});
+
+            scope.infoFollowPath = true;
             
         }
+        //#region special now out 
+        // else if(infoNumber === infoSegmentsDone[16]){
+        //     lastCam.copy(scope.camera);
 
-        else if(infoNumber === infoSegmentsDone[27]){
-            lastCam.copy(scope.camera);
+        //     infoPos.set(lastCam.position.x, 130, lastCam.position.z);
+        //     let text;
+        //     if(isGerman){
+        //         text = scope.informations[27].german;
+        //     }
+        //     else{
+        //         text = scope.informations[27].content;
+        //     }
+        //     let info = new InformationElement(scope.scene,scope.font,infoPos,text);
+        //     info.init();
+        //     info.rotate("Y",-Math.PI/2);
+        //     info.rotate("X",Math.PI/2);
 
-            infoPos.set(lastCam.position.x, 130, lastCam.position.z);
-            let text;
-            if(isGerman){
-                text = scope.informations[27].german;
-            }
-            else{
-                text = scope.informations[27].content;
-            }
-            let info = new InformationElement(scope.scene,scope.font,infoPos,text);
-            info.init();
-            info.rotate("Y",-Math.PI/2);
-            info.rotate("X",Math.PI/2);
+        //     let rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),Math.PI/2);
+        //     rotation.multiply(lastCam.quaternion);
 
-            let rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),Math.PI/2);
-            rotation.multiply(lastCam.quaternion);
+        //     gsap.to({},{
+        //         duration:1,
+        //         onStart: scope.controls.enabled = false,
+        //         onUpdate: function(){
+        //             scope.camera.quaternion.slerp(rotation,this.progress());
+        //         },
+        //     })
 
-            gsap.to({},{
-                duration:1,
-                onStart: scope.controls.enabled = false,
-                onUpdate: function(){
-                    scope.camera.quaternion.slerp(rotation,this.progress());
-                },
-            })
+        //     let objects = [];
+        //     objects.push(info.bbox);
 
-            let objects = [];
-            objects.push(info.bbox);
-
-            window.addEventListener('pointerdown',  function handler(event) {
-                scope.onPointerDownInfo(event, objects, function(){
-                    gsap.to({},{
-                        duration:1,
-                        onUpdate: function(){
-                            scope.camera.quaternion.slerp(lastCam.quaternion,this.progress());
-                        },
-                        onComplete: function(){
-                            scope.informationPhase = false;
-                            document.removeEventListener('pointerdown',handler);
-                            scope.controls.enabled = true;
-                        }
-                    })
-                //using bind this because it is higher order function
-                //https://stackoverflow.com/a/59060545
-                }.bind(this))}); 
+        //     window.addEventListener('pointerdown',  function handler(event) {
+        //         scope.onPointerDownInfo(event, objects, function(){
+        //             gsap.to({},{
+        //                 duration:1,
+        //                 onUpdate: function(){
+        //                     scope.camera.quaternion.slerp(lastCam.quaternion,this.progress());
+        //                 },
+        //                 onComplete: function(){
+        //                     scope.informationPhase = false;
+        //                     document.removeEventListener('pointerdown',handler);
+        //                     scope.controls.enabled = true;
+        //                 }
+        //             })
+        //         //using bind this because it is higher order function
+        //         //https://stackoverflow.com/a/59060545
+        //         }.bind(this))}); 
             
 
-        }
+        // }
+        ////#endregion
 
-        else if(infoNumber === infoSegmentsDone[28]){
+        else if(infoNumber === infoSegmentsDone[17]){
             customViewingDist.set(10,0,2);
             customHtmlPos.set(0.1,0.5);
             infoAsHtml(28,{position:customHtmlPos});
@@ -728,14 +788,14 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
         }
         
-        else if(infoNumber === infoSegmentsDone[29]){
+        else if(infoNumber === infoSegmentsDone[18]){
             customViewingDist.set(30,0,15);
             infoFlyingToCam(29,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(240)})
 
             
         }
 
-        else if(infoNumber === infoSegmentsDone[30]){
+        else if(infoNumber === infoSegmentsDone[19]){
             customViewingDist.set(30,0,50);
             infoFlyingToCam(30,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(240),moveInfoBack:false})
 
@@ -839,37 +899,41 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         }
 
         //#endregion done
-        else if(infoNumber === infoSegmentsDone[39]){
-            customViewingDist.set(60,0,15);
-            infoOverPath(39,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(20)})
+        else if(infoNumber === infoSegmentsDone[16]){
+            customViewingDist.set(30,0,15);
+            infoAsHtml(27,{scale:1.3,position:customHtmlPos});
 
-            showingReferences(); //delete later
+            scope.infoFollowPath = true;
+
+            //showingReferences(); //delete later
         }
 
-        else if(infoNumber === infoSegmentsDone[40]){
+        else if(infoNumber === infoSegmentsDone[17]){
             customHtmlPos.set(0.5,0.5)
-            infoAsHtml(40,{scale:1.3,position:customHtmlPos});
+            infoAsHtml(28,{scale:1.3,position:customHtmlPos});
+
+            scope.infoFollowPath = true;
         }
 
-        else if(infoNumber === infoSegmentsDone[41]){
-            customHtmlPos.set(0.5,0.5)
-            infoAsHtml(41,{scale:1.3,position:customHtmlPos});
-        }
+        // else if(infoNumber === infoSegmentsDone[18]){
+        //     customHtmlPos.set(0.5,0.5)
+        //     infoAsHtml(29,{scale:1.3,position:customHtmlPos});
+        // }
 
-        else if(infoNumber === infoSegmentsDone[42]){
-            customHtmlPos.set(0.5,0.5)
-            infoAsHtml(42,{scale:1.6,position:customHtmlPos});
-        }
+        // else if(infoNumber === infoSegmentsDone[19]){
+        //     customHtmlPos.set(0.5,0.5)
+        //     infoAsHtml(30,{scale:1.6,position:customHtmlPos});
+        // }
 
-        else if(infoNumber === infoSegmentsDone[43]){
-            customHtmlPos.set(0.5,0.5)
-            infoAsHtml(43,{scale:2,position:customHtmlPos});
-        }
+        // else if(infoNumber === infoSegmentsDone[20]){
+        //     customHtmlPos.set(0.5,0.5)
+        //     infoAsHtml(31,{scale:2,position:customHtmlPos});
+        // }
 
-        else if (infoNumber === infoSegmentsDone[44]){
+        else if (infoNumber === infoSegmentsDone[18]){
 
             infoPos.set(0, 9000, 0);
-            let text = scope.informations[0].content;
+            let text = scope.informations[29].content;
             let info = new InformationElement(scope.scene,scope.font,infoPos,text);
             info.init();
             info.rotate("X",-Math.PI/2);
@@ -920,26 +984,26 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
             }),"-=4";
 
-            // text = scope.informations[45].content;
-            // let info2 = new InformationElement(scope.scene,scope.font,infoPos,text);
-            // info2.init();
-            // info2.rotate("X",-Math.PI/2);
-            // info2.translate(customStartVector.set(0,0,-100));
+            text = scope.informations[45].content;
+            let info2 = new InformationElement(scope.scene,scope.font,infoPos,text);
+            info2.init();
+            info2.rotate("X",-Math.PI/2);
+            info2.translate(customViewingDist.set(0,0,-100));
 
-            // tl.from(info2.obj.position,{
-            //     duration:1,
-            //     y:0,
-            //     onComplete: function(){
-            //         let objects = [];
-            //         objects.push(info.bbox);
+            tl.from(info2.obj.position,{
+                duration:1,
+                y:0,
+                onComplete: function(){
+                    let objects = [];
+                    objects.push(info.bbox);
 
-            //         window.addEventListener('pointerdown',function(event){
-            //             scope.onPointerDownInfo(event, objects, function(){
-            //                 showingReferences();
-            //             })
-            //         })
-            //     }
-            // })
+                    window.addEventListener('pointerdown',function(event){
+                        scope.onPointerDownInfo(event, objects, function(){
+                            showingReferences();
+                        })
+                    })
+                }
+            })
         }
 
     }
@@ -981,6 +1045,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             let info = infoSegments.shift();
             infoSegmentsDone.push(info)
             this.informationPhase = true;
+            console.log(controlsSegment/2);
 
             //This can only be used with html informations, which makes sense.
             if(this.infoFollowPath){

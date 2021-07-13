@@ -237,7 +237,7 @@ export default {
         let audioFile = undefined;
         for (let i = 0; i < audios.length; i++) {
             if(audios[i].path.includes('globalwind.mp3')){
-                console.log(audios[i].path);
+                //console.log(audios[i].path);
                 audioFile = audios[i].audio;
             }
         }
@@ -288,7 +288,6 @@ export default {
     },
     //set the updated speed to controls, stored in the details of the event
     changeSpeed: function(e){
-        console.log("received event so change speed", e.detail.speed);
         controls.setSpeed(e.detail.speed);
     },
     //stop informationPhase and start following Path again.

@@ -188,7 +188,6 @@ const PlayerControls = function ( parent,camera, domElement , helperGeo ) {
 	}
 
 	this.setSpeed = function (pSpeed){
-		console.log("setting new speed in controls", pSpeed);
 		speed = pSpeed;
 	};
 

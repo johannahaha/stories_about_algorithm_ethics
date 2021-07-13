@@ -86,14 +86,14 @@ export default {
             {
                 id: 8,
                 content: "But what exactly is happening here? \nWhere are the potential problem areas? \nIs it ethical?",
-                german:"Doch was passiert hier genau? Oder wo liegen mögliche Problemstellen? Ist es ethisch?",
+                german:"Doch was passiert hier genau? \nWo liegen mögliche Problemstellen? \nIst es ethisch?",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 9,
-                content: "To get to the bottom of this, \nyou will first imagine that it is the English language. ",
-                german:"Um dem auf den Grund zu gehen, \nwirst du dir zunächst vorstellen, dass es sich um die englische Sprache handelt. ",
+                content: "To get to the bottom of this, \nyou will first imagine \nthat it is the English language. ",
+                german:"Um dem auf den Grund zu gehen, \nwirst du dir zunächst vorstellen, \ndass es sich um die englische Sprache handelt. ",
                 isImage: false,
                 scale: 0.2
             },
@@ -106,8 +106,8 @@ export default {
             },
             {
                 id: 11,
-                content: "If the algorithm could correctly determine enough of these training data, \nit has a model of English dialects. \nAfter that, it can detect that the blue ball is Irish \nand the light ball is Scottish. \nThat is called machine learning.",
-                german:"Wenn der Algorithmus genug von diesen Trainingsdaten richtig bestimmen konnte, hat er ein Modell von englischen Dialekten. \nDanach kann er zum Beispiel wissen, dass die blaue Kugel irisch ist und die helle Kugel schottisch. \nDas nennt man maschinelles Lernen",
+                content: "If the algorithm could correctly determine \nenough of these training data, \nit has a model of English dialects. \n\nThen, it can detect that the blue ball is Irish \nand the light ball is Scottish. \nThat is called machine learning.",
+                german:"Wenn der Algorithmus genug von diesen Trainingsdaten richtig bestimmen konnte, \nhat er ein Modell von englischen Dialekten. \nDanach kann er zum Beispiel wissen, dass die blaue Kugel irisch ist \nund die helle Kugel schottisch. \nDas nennt man maschinelles Lernen",
                 isImage: false,
                 scale: 0.2
             },
@@ -120,15 +120,15 @@ export default {
             },
             {
                 id: 13,
-                content: "On the other hand, this means that approximately every sixth language sample is incorrectly categorized.",
+                content: "On the other hand, this means that approximately \nevery sixth language sample is incorrectly categorized.",
                 german:"Andersrum bedeutet dass, dass etwa jede sechste Sprachprobe falsch zugeordnet wird.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 14,
-                content: "The algorithm has been used 10,000 times, \nso it was probably wrong for about 1500 people. That is a high number.",
-                german:"Der Algorithmus wurde bereits 10.000 Mal verwendet, \nlag also vermutlich etwa bei 1500 Personen falsch. Das ist eine hohe Zahl.",
+                content: "The algorithm has been used 10,000 times, \nso it was probably wrong for about 1500 people. \n\nThat is a high number.",
+                german:"Der Algorithmus wurde bereits 10.000 Mal verwendet, \nlag also vermutlich etwa bei 1500 Personen falsch. \n\nDas ist eine hohe Zahl.",
                 isImage: false,
                 scale: 0.2
             },
@@ -141,21 +141,21 @@ export default {
             },
             {
                 id: 16,
-                content: "You need to know that before this algorithm, experts made language certificates for some specific refugees. \nIn this process, a language expert talked to the person and elicited certain local expressions and descriptions by asking questions. \nThe algorithm does not use these local expressions specifically.",
-                german:"Dazu musst du wissen, dass vor diesem Algorithmus bei einigen Geflüchteten Sprachzertifikate angefertigt worden sind. \nDabei hat ein Sprachexperte sich mit der Person unterhalten und durch Nachfragen bestimmte lokale Ausdrucke und Beschreibungen hervorgerufen. \nDiese lokalen Ausdrücke verwendet der Algorithmus nicht gezielt.",
+                content: "You need to know that before this algorithm, \nexperts made language certificates for some specific refugees. \nIn this process, a language expert talked to the person and \nelicited certain local expressions and descriptions by asking questions. \nThe algorithm does not use these local expressions specifically.",
+                german:"Dazu musst du wissen, dass vor diesem Algorithmus \nbei einigen Geflüchteten Sprachzertifikate angefertigt worden sind. \nDabei hat ein Sprachexperte sich mit der Person unterhalten \nund durch Nachfragen bestimmte lokale Ausdrucke und Beschreibungen hervorgerufen. \nDiese lokalen Ausdrücke verwendet der Algorithmus nicht gezielt.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 17,
-                content: "Additionally, we cannot state that each country has one dialect. \nPeople speak dialects across borders. You'll see that when you look at this map.",
-                german:"Zusätzlich sind die Gebiete, in denen ein Dialekt gesprochen wird, nicht an Ländergrenzen gebunden. \nDas wirst du erkennen, wenn du dir diese Karte anschaust.",
+                content: "Additionally, we cannot state that \neach country has one dialect. \nPeople speak dialects across borders. \nYou'll see that when you look at this map.",
+                german:"Zusätzlich sind die Gebiete, \nin denen ein Dialekt gesprochen wird, \nnicht an Ländergrenzen gebunden. \nDas wirst du erkennen, wenn du dir diese Karte anschaust.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 18,
-                content: "So what can having a dialect even mean?",
+                content: "So what does having a dialect even mean?",
                 german:"Was kann so ein Dialekt also überhaupt bedeuten?",
                 isImage: false,
                 scale: 0.2
@@ -169,8 +169,8 @@ export default {
             },
             {
                 id: 20,
-                content: "It is crucial to consider where a person grew up, his level of education, his social group or family, his social class, and his socialization. \nThe individual biography, i.e. especially an escape, strongly influences the dialect.",
-                german:"Man muss berücksichtigen, wo eine Person aufgewachsen ist, ihren Bildungsstand, ihre soziale Gruppe oder ihre Familie, ihre soziale Schicht und ihre Sozialisierung. \nDie individuelle Biographie, also insbesondere eine Flucht, beeinflusst den Dialekt stark.",
+                content: "It is crucial to consider where a person grew up, \ntheir level of education, \ntheir social group or family, \ntheir social class, \nand their socialization. \nThe individual biography, i.e. especially an escape, \nstrongly influences the dialect.",
+                german:"Man muss berücksichtigen, \nwo eine Person aufgewachsen ist, \nihren Bildungsstand, \nihre soziale Gruppe oder ihre Familie, \nihre soziale Schicht und ihre Sozialisierung. \nDie individuelle Biographie, also insbesondere eine Flucht, \nbeeinflusst den Dialekt stark.",
                 isImage: false,
                 scale: 0.2
             },
@@ -204,8 +204,8 @@ export default {
             },
             {
                 id: 25,
-                content: "This deadline is hard to meet. \nRefugees need contacts with people who can help beforehand.",
-                german:"Diese Frist ist schwer einzuhalten. \nMan braucht vorher schon Kontakte zu Personen, die helfen können.",
+                content: "This deadline is hard to meet. \nRefugees need contacts with people \nwho can help beforehand.",
+                german:"Diese Frist ist schwer einzuhalten. \nMan braucht vorher schon Kontakte \nzu Personen, die helfen können.",
                 isImage: false,
                 scale: 0.2
             },
@@ -238,7 +238,7 @@ export default {
                 scale: 0.2
             },
             {
-                id: 55,
+                id: 45,
                 content: "click for getting to the ressources",
                 german: "Klicke, um zu Quellen und Ressourcen zu gelangen",
                 isImage: false,
