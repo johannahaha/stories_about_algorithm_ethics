@@ -1,9 +1,10 @@
 "use strict";
 
 import * as THREE from "three";
+//import {PositionalAudioHelper} from "three/examples/jsm/helpers/PositionalAudioHelper.js";
 
 class InformationElement    {
-    constructor(scene,font,position,content = "Das ist eine neue Information über das Bamf",isImage,scale=0.5){
+    constructor(scene,font,position,content = "Das ist eine neue Information über das Bamf",isImage,scale=0.5,audio){
         this.scene = scene;
         this.font = font;
         this.position = position;
@@ -13,6 +14,7 @@ class InformationElement    {
         }
         this.isImage = isImage;
         this.scale = scale;
+        this.audio = audio;
     }
 
     init(){
@@ -25,6 +27,21 @@ class InformationElement    {
             this.obj = this.setupText(this.font);
         }
 
+        if (this.audio != undefined){
+            //const sound = new THREE.PositionalAudio(this.scene.getObjectByName("listener"));
+            //sound.setBuffer(this.audio);
+            if (this.audio.isPlaying){
+                this.audio.stop();
+            }
+            this.audio.setRefDistance(30);
+            this.audio.setRolloffFactor(0.25);
+            this.audio.setVolume(2.0);
+            this.audio.setMaxDistance(60);
+
+            this.obj.add(this.audio);
+            //this.audio.play();
+
+        }
         this.scene.add(this.obj);
 
         //BOUNDING BOX for clicking

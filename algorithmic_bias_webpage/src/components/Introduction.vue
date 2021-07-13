@@ -59,7 +59,7 @@
 
 <script lang="ts">
 
-import Bamf from "./bamf/Bamf.vue"
+import Bamf from "./bamf/Bamf2.vue"
 
 export default{
     name: "Introduction",

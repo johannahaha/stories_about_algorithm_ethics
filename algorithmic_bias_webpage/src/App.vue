@@ -20,6 +20,7 @@ export default{
 
 <style lang="scss">
 @import "./assets/_config.scss";
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600&display=swap');
 
 *{
   margin: 0;
@@ -40,7 +41,7 @@ html,body{
 }
 
 #app {
-  font-family: Helvetica, sans-serif;
+  font-family: Work Sans, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

@@ -195,6 +195,7 @@ export default {
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         camera.position.y = 5;
         const listener = new THREE.AudioListener();
+        listener.name = "listener";
         camera.add( listener ); //stored as camera.children
 
 
@@ -235,14 +236,16 @@ export default {
         const globalSound = new THREE.Audio( listener );
         let audioFile = undefined;
         for (let i = 0; i < audios.length; i++) {
-            if(audios[i].path.includes('demosound.mp3')){
+            if(audios[i].path.includes('globalwind.mp3')){
                 console.log(audios[i].path);
                 audioFile = audios[i].audio;
             }
         }
         if(audioFile !== undefined){   
             globalSound.setBuffer(audioFile);
-            globalSound.play();
+            globalSound.setLoop(true);
+            globalSound.setVolume(0.5);
+            //globalSound.play();
         }
 
         //INSTRUCTIONS HTML

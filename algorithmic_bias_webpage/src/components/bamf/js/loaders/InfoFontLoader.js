@@ -31,7 +31,8 @@ class InfoFontLoader {
             console.log( 'There was an error loading ' + url );
         };
         const loader = new THREE.FontLoader(manager);
-        this.loadedFont = await loader.loadAsync('/threeAssets/helvetiker_regular.typeface.json');
+        //this.loadedFont = await loader.loadAsync('/threeAssets/helvetiker_regular.typeface.json');
+        this.loadedFont = await loader.loadAsync('/threeAssets/work_sans_regular.json');
         return this.loadedFont;
     }
 }
