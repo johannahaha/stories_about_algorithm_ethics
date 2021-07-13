@@ -238,7 +238,7 @@ export default {
                 scale: 0.2
             },
             {
-                id: 45,
+                id: 30,
                 content: "click for getting to the ressources",
                 german: "Klicke, um zu Quellen und Ressourcen zu gelangen",
                 isImage: false,

@@ -29,8 +29,8 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     //segments at which infos are displayed, will be *2 later
     // let infoSegmentsHalfBeforeUpdate = [20,40,70,100,120,140,170,220,250,300,330,370,400,450,480,500,550,600,620,660,705,820,850,890,920,940,1000,1060,1090,1120,1200,1230,1300,1370,1410,1450,1490,1530,1580,1630,1670,1695,1720,1750,1780,1800]
 
-    //let infoSegmentsHalf = [20,40,70,100,120,140,170,220,370,450,550,600,650,670,690,700,920,980,1050,1070,1100,1120,1370,1530,1580,1630,1640,1650]
-    let infoSegmentsHalf = [20,220,370,690,700,920,980,1050,1070,1100,1120,1370,1530,1580,1630,1700,1750,1780,1800]
+    //let infoSegmentsHalf = [20,40,70,100,120,140,170,220,370,450,550,600,650,670,690,700,920,980,1050,1070,1100,1120,1370,1530,1580,1630,1700,1730,1780,1800]
+    let infoSegmentsHalf = [20,220,370,690,700,920,980,1050,1070,1100,1120,1370,1530,1580,1630,1700,1730,1780,1800]
 
     let infoSegments = [];
     for (let i = 0; i < infoSegmentsHalf.length; i++) {
@@ -338,7 +338,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     function manageInfo(infoNumber){
 
         //done
-		if (infoNumber === infoSegmentsDone[0]){
+		if (infoNumber === infoSegmentsDone[18]){
             customViewingDist.set(0,0,50);
             infoOverPath(0,{useQuaternion:false,viewingDist:customViewingDist,audio:music2});
             changeSpeed(0.04);
@@ -654,7 +654,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
         else if(infoNumber === infoSegmentsDone[10]){
             customHtmlPos.set(0.2,0.8);
-            infoAsHtml(21,{position:customHtmlPos,scale:1.4});
+            infoAsHtml(21,{position:customHtmlPos,scale:1.7});
             // customViewingDist.set(-20,0,-20);
             // const angle = THREE.MathUtils.degToRad(240)
             // infoOverPath(21,{useQuaternion:false,viewingDist:customViewingDist,height:10,infoRotAngle:angle,infoRotAxis:"Y",rotateCam:true,rotation:new THREE.Vector3(0,Math.PI/2,0)})
@@ -689,7 +689,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 ease: "power3",
                 offset: 15,
                 lookFar:100,
-                onComplete: changeSpeed(0.005)
+                onComplete: changeSpeed(0.004)
             })
             gsap.to(scope.scene.fog,{
                 duration:1,
@@ -700,240 +700,47 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
         }
         
         else if(infoNumber === infoSegmentsDone[13]){
-            customViewingDist.set(-30,0,-50);
+            customViewingDist.set(30,0,-50);
             infoFlyingToCam(24,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:THREE.MathUtils.radToDeg(100),infoRotAxis:"Y"});
         }
 
         else if(infoNumber === infoSegmentsDone[14]){
+            console.log("25");
             customViewingDist.set(10,0,35)
-            infoOverPath(25,{useQuaternion:false,viewingDist:customViewingDist,height:10,infoRotAngle:THREE.MathUtils.radToDeg(50),infoRotAxis:"Y"});
+            infoOverPath(25,{useQuaternion:false,viewingDist:customViewingDist,height:10,infoRotAngle:THREE.MathUtils.radToDeg(60),infoRotAxis:"Y"});
             
         }
 
         else if(infoNumber === infoSegmentsDone[15]){
-            customViewingDist.set(30,0,15);
-            infoAsHtml(26,{scale:1.3,position:customHtmlPos});
-
-            scope.infoFollowPath = true;
-            
-        }
-        //#region special now out 
-        // else if(infoNumber === infoSegmentsDone[16]){
-        //     lastCam.copy(scope.camera);
-
-        //     infoPos.set(lastCam.position.x, 130, lastCam.position.z);
-        //     let text;
-        //     if(isGerman){
-        //         text = scope.informations[27].german;
-        //     }
-        //     else{
-        //         text = scope.informations[27].content;
-        //     }
-        //     let info = new InformationElement(scope.scene,scope.font,infoPos,text);
-        //     info.init();
-        //     info.rotate("Y",-Math.PI/2);
-        //     info.rotate("X",Math.PI/2);
-
-        //     let rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),Math.PI/2);
-        //     rotation.multiply(lastCam.quaternion);
-
-        //     gsap.to({},{
-        //         duration:1,
-        //         onStart: scope.controls.enabled = false,
-        //         onUpdate: function(){
-        //             scope.camera.quaternion.slerp(rotation,this.progress());
-        //         },
-        //     })
-
-        //     let objects = [];
-        //     objects.push(info.bbox);
-
-        //     window.addEventListener('pointerdown',  function handler(event) {
-        //         scope.onPointerDownInfo(event, objects, function(){
-        //             gsap.to({},{
-        //                 duration:1,
-        //                 onUpdate: function(){
-        //                     scope.camera.quaternion.slerp(lastCam.quaternion,this.progress());
-        //                 },
-        //                 onComplete: function(){
-        //                     scope.informationPhase = false;
-        //                     document.removeEventListener('pointerdown',handler);
-        //                     scope.controls.enabled = true;
-        //                 }
-        //             })
-        //         //using bind this because it is higher order function
-        //         //https://stackoverflow.com/a/59060545
-        //         }.bind(this))}); 
-            
-
-        // }
-        ////#endregion
-
-        else if(infoNumber === infoSegmentsDone[17]){
-            customViewingDist.set(10,0,2);
-            customHtmlPos.set(0.1,0.5);
-            infoAsHtml(28,{position:customHtmlPos});
-
-            infoPos.copy(camera.position);
-            infoPos.y = 2 + scope.controls.offset;
-            infoPos.add(customViewingDist)
-
-            let img = addImage('bamf_training_p50_result.png',infoPos,new THREE.Vector3(1.7,2,0.2));
-            img.rotateY(THREE.MathUtils.degToRad(50));
-
-            gsap.from(img.position,{
-                duration:1,
-                x:infoPos + 200
-            })
-
-        }
-        
-        else if(infoNumber === infoSegmentsDone[18]){
-            customViewingDist.set(30,0,15);
-            infoFlyingToCam(29,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(240)})
-
-            
-        }
-
-        else if(infoNumber === infoSegmentsDone[19]){
-            customViewingDist.set(30,0,50);
-            infoFlyingToCam(30,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(240),moveInfoBack:false})
-
-            
-        }
-
-        //flying higher
-        else if(infoNumber === infoSegmentsDone[31]){
+            console.log("26");
+            changeSpeed(0.002)
             customHtmlPos.set(0.5,0.5)
-            infoAsHtml(31,{position:customHtmlPos,scale:2});
+            infoAsHtml(26,{scale:2,position:customHtmlPos});
+
             scope.infoFollowPath = true;
-
-            gsap.to(scope.controls,{
-                duration: 10,
-                ease: "power4",
-                offset: 150,
-                lookFar: 500
-            });
-
-            gsap.to(scope.scene.fog,{
-                duration:1,
-                density:0.0001
-            });
-
-        }
-
-        else if(infoNumber === infoSegmentsDone[32]){
-            customViewingDist.set(-20,0,-15);
-            infoFlyingToCam(32,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(10)})
-
-            infoPos.copy(camera.position);
-            infoPos.z += -3;
-            infoPos.x += 5;
-            infoPos.y = 2 + scope.controls.offset;
-
-            let img = addImage('map_arabian_dialects.png',infoPos,new THREE.Vector3(4,2.2,0.2));
-            img.rotateY(THREE.MathUtils.degToRad(90));
-
-            gsap.from(img.position,{
-                duration:2,
-                y:0,
-                x:infoPos - 10
-            })
             
         }
 
-        else if(infoNumber === infoSegmentsDone[33]){
-            customViewingDist.set(-30,0,50);
-            infoOverPath(33,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(0)})
-
-            
-        }
-
-        else if(infoNumber === infoSegmentsDone[34]){
-            customViewingDist.set(30,0,15);
-            infoOverPath(34,{useQuaternion:false,height:-40,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(90)})
-
-            
-        }
-
-        else if(infoNumber === infoSegmentsDone[35]){
-            customHtmlPos.set(0.5,0.5)
-            infoAsHtml(35,{position:customHtmlPos});
-            scope.infoFollowPath = true;
-
-            
-        }
-
-        else if(infoNumber === infoSegmentsDone[36]){
-            customViewingDist.set(60,0,-30);
-            infoFlyingToCam(36,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:THREE.MathUtils.degToRad(300)})
-
-            
-        }
-
-        else if(infoNumber === infoSegmentsDone[37]){
-            customViewingDist.set(0,0,30);
-            infoOverPath(37,{useQuaternion:false,height:-20,viewingDist:customViewingDist})
-
-            
-        }
-
-        //flying lower again
-        else if(infoNumber === infoSegmentsDone[38]){
-            customHtmlPos.set(0.8,0.3)
-            infoAsHtml(38,{scale:1.5,position:customHtmlPos});
-            scope.infoFollowPath = true;
-
-            gsap.to(scope.controls,{
-                duration: 10,
-                ease: "power4",
-                offset: 15,
-                lookFar: 500
-            })
-            gsap.to(scope.scene.fog,{
-                duration:1,
-                density:0.002
-            })
-
-            
-        }
-
-        //#endregion done
         else if(infoNumber === infoSegmentsDone[16]){
-            customViewingDist.set(30,0,15);
-            infoAsHtml(27,{scale:1.3,position:customHtmlPos});
+            console.log("27");
+            customHtmlPos.set(0.5,0.5)
+            infoAsHtml(27,{scale:2,position:customHtmlPos});
 
             scope.infoFollowPath = true;
-
-            //showingReferences(); //delete later
         }
 
         else if(infoNumber === infoSegmentsDone[17]){
+            console.log("28");
             customHtmlPos.set(0.5,0.5)
-            infoAsHtml(28,{scale:1.3,position:customHtmlPos});
+            infoAsHtml(28,{scale:2,position:customHtmlPos});
 
-            scope.infoFollowPath = true;
         }
 
-        // else if(infoNumber === infoSegmentsDone[18]){
-        //     customHtmlPos.set(0.5,0.5)
-        //     infoAsHtml(29,{scale:1.3,position:customHtmlPos});
-        // }
-
-        // else if(infoNumber === infoSegmentsDone[19]){
-        //     customHtmlPos.set(0.5,0.5)
-        //     infoAsHtml(30,{scale:1.6,position:customHtmlPos});
-        // }
-
-        // else if(infoNumber === infoSegmentsDone[20]){
-        //     customHtmlPos.set(0.5,0.5)
-        //     infoAsHtml(31,{scale:2,position:customHtmlPos});
-        // }
-
-        else if (infoNumber === infoSegmentsDone[18]){
+        else if (infoNumber === infoSegmentsDone[0]){
 
             infoPos.set(0, 9000, 0);
             let text = scope.informations[29].content;
+            console.log("text: ",text);
             let info = new InformationElement(scope.scene,scope.font,infoPos,text);
             info.init();
             info.rotate("X",-Math.PI/2);
@@ -941,6 +748,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             aabb.setFromObject(info.getMeshObject() );
             customViewingDist.set(0,30,0);
             let center = aabb.getCenter( new THREE.Vector3() ).add(customViewingDist);
+            console.log("center: ",center);
 
             const tl = gsap.timeline();
             lastCam.copy(scope.camera);
@@ -954,6 +762,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 onComplete: function(){
                     scope.camera.far = 1000000;
                     scope.camera.updateProjectionMatrix();
+                    console.log("completed");
                 }
             })
             tl.to(scope.scene.fog,{duration:1,density:0},"-=1")
@@ -984,7 +793,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
             }),"-=4";
 
-            text = scope.informations[45].content;
+            text = scope.informations[30].content;
             let info2 = new InformationElement(scope.scene,scope.font,infoPos,text);
             info2.init();
             info2.rotate("X",-Math.PI/2);
