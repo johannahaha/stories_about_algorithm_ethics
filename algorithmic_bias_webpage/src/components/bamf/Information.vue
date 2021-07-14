@@ -62,7 +62,6 @@ export default {
         },
         //calc percentage for "xPercent" in gsap
         posPercentX(){
-            console.log("recalcutlating percents");
             return -100 * this.x;
         },
         //calc percentage for "yPercent" in gsap

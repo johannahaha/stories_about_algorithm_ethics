@@ -30,15 +30,15 @@ class InformationElement    {
         if (this.audio != undefined){
             //const sound = new THREE.PositionalAudio(this.scene.getObjectByName("listener"));
             //sound.setBuffer(this.audio);
-            if (this.audio.isPlaying){
-                this.audio.stop();
-            }
-            this.audio.setRefDistance(30);
-            this.audio.setRolloffFactor(0.25);
-            this.audio.setVolume(2.0);
-            this.audio.setMaxDistance(60);
+            // if (this.audio.isPlaying){
+            //     this.audio.stop();
+            // }
+            // this.audio.setRefDistance(30);
+            // this.audio.setRolloffFactor(0.25);
+            // this.audio.setVolume(2.0);
+            // this.audio.setMaxDistance(60);
 
-            this.obj.add(this.audio);
+            // this.obj.add(this.audio);
             //this.audio.play();
 
         }

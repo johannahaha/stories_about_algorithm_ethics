@@ -44,7 +44,7 @@ export default {
             {
                 id: 2,
                 content: "Maybe you've heard of algorithms and artificial intelligence \nthat make decisions about people - and make mistakes.",
-                german:"Vielleicht hast du auch schonmal von Algorithmen und Künstlicher Intelligenz gehört,\n die Entscheidungen über Menschen treffen - und dabei Fehler machen. ",
+                german:"Vielleicht hast du auch schonmal von Algorithmen und \nKünstlicher Intelligenz gehört, die \nEntscheidungen über Menschen treffen \n- und dabei Fehler machen. ",
                 isImage: false,
                 scale: 0.2
             },
@@ -58,14 +58,14 @@ export default {
             {
                 id: 4,
                 content: "In theory, this should distinguish, for example, \nwhether a person is more likely to come from Egypt or Syria. \nA person from Syria is eligible for asylum, a person from Egypt only rarely. \nThe result of the algorithm is an indication that flows into the asylum decision.",
-                german:"In der Theorie soll so zum Beispiel unterschieden werden, ob eine Person aus Ägypten oder aus Syrien kommt. \nEine Person aus Syrien ist asylberechtigt, eine Person aus Ägypten nur selten. \nDas Ergebnis des Algorithmus ist ein Indiz, der in die Asylentscheidung enfließt.",
+                german:"In der Theorie soll so zum Beispiel unterschieden werden, ob eine Person aus Ägypten oder aus Syrien kommt. \nEine Person aus Syrien ist asylberechtigt, eine Person aus Ägypten nur selten. \nDas Ergebnis des Algorithmus ist ein Indiz, das in die Asylentscheidung enfließt.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 5,
                 content: "For this purpose, the refugee speaks into \na microphone for two minutes and describes a picture. \nThe algorithm evaluates the speech. \nThe decision-maker at the Bamf receives the result.",
-                german:"Dazu spricht die geflüchtete Person zwei Minuten in ein Mikrofon und beschreibt ein Bild. \nDer Algorithmus wertet die Sprache aus. \nDer bzw. die Entscheider*in im Bamf erhält das Ergebnis.",
+                german:"Dazu spricht die geflüchtete Person zwei Minuten \nin ein Mikrofon und beschreibt ein Bild. \nDer Algorithmus wertet die Sprache aus. \nDer bzw. die Entscheider*in im Bamf erhält das Ergebnis.",
                 isImage: false,
                 scale: 0.2
             },
@@ -93,7 +93,7 @@ export default {
             {
                 id: 9,
                 content: "To get to the bottom of this, \nyou will first imagine \nthat it is the English language. ",
-                german:"Um dem auf den Grund zu gehen, \nwirst du dir zunächst vorstellen, \ndass es sich um die englische Sprache handelt. ",
+                german:"Um dem auf den Grund zu gehen, \nwirst du dir zunächst vorstellen, \ndass um Englisch geht. ",
                 isImage: false,
                 scale: 0.2
             },
@@ -107,7 +107,7 @@ export default {
             {
                 id: 11,
                 content: "If the algorithm could correctly determine \nenough of these training data, \nit has a model of English dialects. \n\nThen, it can detect that the blue ball is Irish \nand the light ball is Scottish. \nThat is called machine learning.",
-                german:"Wenn der Algorithmus genug von diesen Trainingsdaten richtig bestimmen konnte, \nhat er ein Modell von englischen Dialekten. \nDanach kann er zum Beispiel wissen, dass die blaue Kugel irisch ist \nund die helle Kugel schottisch. \nDas nennt man maschinelles Lernen",
+                german:"Wenn der Algorithmus genug von diesen Trainingsdaten \nrichtig bestimmen konnte, \nhat er ein Modell von englischen Dialekten. \nDanach kann er zum Beispiel wissen, dass die blaue Kugel \nirisch ist und die helle Kugel schottisch. \nDas nennt man maschinelles Lernen",
                 isImage: false,
                 scale: 0.2
             },
@@ -149,14 +149,14 @@ export default {
             {
                 id: 17,
                 content: "Additionally, we cannot state that \neach country has one dialect. \nPeople speak dialects across borders. \nYou'll see that when you look at this map.",
-                german:"Zusätzlich sind die Gebiete, \nin denen ein Dialekt gesprochen wird, \nnicht an Ländergrenzen gebunden. \nDas wirst du erkennen, wenn du dir diese Karte anschaust.",
+                german:"Zusätzlich sind die Gebiete, \nin denen ein Dialekt gesprochen wird, \nnicht an Ländergrenzen gebunden. \nSchau dir diese Karte an.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 18,
                 content: "So what does having a dialect even mean?",
-                german:"Was kann so ein Dialekt also überhaupt bedeuten?",
+                german:"Was kann so ein Dialekt \nalso überhaupt bedeuten?",
                 isImage: false,
                 scale: 0.2
             },
@@ -169,36 +169,36 @@ export default {
             },
             {
                 id: 20,
-                content: "It is crucial to consider where a person grew up, \ntheir level of education, \ntheir social group or family, \ntheir social class, \nand their socialization. \nThe individual biography, i.e. especially an escape, \nstrongly influences the dialect.",
-                german:"Man muss berücksichtigen, \nwo eine Person aufgewachsen ist, \nihren Bildungsstand, \nihre soziale Gruppe oder ihre Familie, \nihre soziale Schicht und ihre Sozialisierung. \nDie individuelle Biographie, also insbesondere eine Flucht, \nbeeinflusst den Dialekt stark.",
+                content: "It is crucial to consider where a person grew up, \ntheir level of education, \ntheir social group or family, \ntheir social class, and their socialization. \nThe individual biography, i.e. especially flight and migration, \ninfluences the dialect strongly .",
+                german:"Man muss berücksichtigen, wo eine Person aufgewachsen ist, \nihren Bildungsstand, ihre soziale Gruppe oder ihre Familie, \nihre soziale Schicht und ihre Sozialisierung. \nDie individuelle Biographie, also insbesondere eine Fluchtgeschichte, \nbeeinflusst den Dialekt stark.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 21,
-                content: "For example, a person who lived in Lebanon for a long time \nbefore coming to Germany might adopt words from that dialect.",
-                german:"Eine Person, die lange Zeit in Unterkünften im Libanon gelebt hat, \nbevor sie nach Deutschland kommt, könnte beispielsweise Wörter von diesem Dialekt übernehmen.",
+                content: "For example, a person who lived in Egypt for a long time \nbefore coming to Germany might adopt words from that dialect.",
+                german:"Eine Person, die lange Zeit in Unterkünften in Ägypten gelebt hat, \nbevor sie nach Deutschland kommt, könnte beispielsweise Wörter von diesem Dialekt übernehmen.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 22,
-                content: "Contrary to official regulations, journalist Anna Biselli's research showed that \ndecision-makers occasionally use the algorithm on people who do not speak Arabic at all.\n The algorithm then nevertheless attempts to assign the language to an Arabic dialect.",
-                german:"Recherchen der Journalistin Anna Biselli haben außerdem gezeigt, dass der Algorithmus entgegen offizieller Bestimmungen vereinzelt auch bei Personen verwendet wird,\n die gar kein arabisch sprechen. \nDer Algorithmus versucht dann trotzdem, die Sprache zu einem arabischen Dialekt zuzuordnen.",
+                content: "Contrary to official regulations, journalist Anna Biselli's research showed that \ndecision-makers occasionally use the algorithm on people who do not speak Arabic at all.\nThe algorithm then nevertheless attempts to assign the language to an Arabic dialect.",
+                german:"Recherchen der Journalistin Anna Biselli haben außerdem gezeigt, \ndass der Algorithmus entgegen offizieller Bestimmungen vereinzelt auch bei \nPersonen verwendet wird, die gar kein arabisch sprechen. Der Algorithmus \nversucht dann trotzdem, die Sprache zu einem arabischen Dialekt zuzuordnen.",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 23,
-                content: "These are all sources of error\nthat have severe consequences for the person concerned.",
-                german:"Das alles sind Fehlerquellen, \ndie schwere Konsequenzen für den betroffenen Menschen haben.",
+                content: "These are all sources of error\nthat have severe consequences for the person concerned. \nIn the case of a false country of origin, \nasylum is refused as 'obviously unfounded'.",
+                german:"Das alles sind Fehlerquellen, \ndie schwere Konsequenzen für den betroffenen Menschen haben. \nBei einem falschen Herkunftsland wird \ndas Asyl als 'offensichtlich unbegründet' abgelehnt",
                 isImage: false,
                 scale: 0.2
             },
             {
                 id: 24,
-                content: "If a person is denied asylum because of language, \nthey have only one week to appeal. \nThen they will be deported.",
-                german:"Wenn einer Person wegen der Sprache das Asyl abgelehnt wird, \nhat sie nur eine Woche Zeit zu klagen. \nDann wird sie abgeschoben.",
+                content: "If a person is denied asylum as 'obviously unfounded', \nthey have only one week to appeal. \nThen they will be deported.",
+                german:"Wenn einer Person das Asyl abgelehnt als 'offensichtlich unbegründet' wird, \nhat sie nur eine Woche Zeit zu klagen. \nDann wird sie abgeschoben.",
                 isImage: false,
                 scale: 0.2
             },
@@ -219,7 +219,7 @@ export default {
             {
                 id: 27,
                 content: "To date, decision-makers use this algorithm often in Asylum processes.",
-                german:"Bis heute wird er oft eingesetzt.",
+                german:"Bis heute setzen Entscheider*innen diesen Algorithmus in Asylentscheidungen ein.",
                 isImage: false,
                 scale: 0.2
             },

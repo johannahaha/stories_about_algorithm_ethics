@@ -233,20 +233,20 @@ export default {
         infoManager = new InformationManager(scene,renderer.domElement,camera,controls,this.informations,font,audios,textures,this.isGerman);
 
         //SOUND
-        const globalSound = new THREE.Audio( listener );
-        let audioFile = undefined;
-        for (let i = 0; i < audios.length; i++) {
-            if(audios[i].path.includes('globalwind.mp3')){
-                //console.log(audios[i].path);
-                audioFile = audios[i].audio;
-            }
-        }
-        if(audioFile !== undefined){   
-            globalSound.setBuffer(audioFile);
-            globalSound.setLoop(true);
-            globalSound.setVolume(0.5);
-            //globalSound.play();
-        }
+        // const globalSound = new THREE.Audio( listener );
+        // let audioFile = undefined;
+        // for (let i = 0; i < audios.length; i++) {
+        //     if(audios[i].path.includes('globalwind.mp3')){
+        //         //console.log(audios[i].path);
+        //         audioFile = audios[i].audio;
+        //     }
+        // }
+        // if(audioFile !== undefined){   
+        //     globalSound.setBuffer(audioFile);
+        //     globalSound.setLoop(true);
+        //     globalSound.setVolume(0.5);
+        //     //globalSound.play();
+        // }
 
         //INSTRUCTIONS HTML
         let menu = document.querySelector("#instructions");

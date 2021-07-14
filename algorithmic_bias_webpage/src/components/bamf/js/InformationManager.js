@@ -4,7 +4,7 @@
 import * as THREE from "three";
 import {gsap} from 'gsap';
 import { InformationElement } from './InformationElement.js';
-//import {AudioElement} from './AudioElement.js'
+import {AudioElement} from './AudioElement.js'
 
 let InformationManager = function(scene,domElement,camera,controls,informations,font,audios,textures,isGerman){
     
@@ -29,8 +29,8 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     //segments at which infos are displayed, will be *2 later
     // let infoSegmentsHalfBeforeUpdate = [20,40,70,100,120,140,170,220,250,300,330,370,400,450,480,500,550,600,620,660,705,820,850,890,920,940,1000,1060,1090,1120,1200,1230,1300,1370,1410,1450,1490,1530,1580,1630,1670,1695,1720,1750,1780,1800]
 
-    //let infoSegmentsHalf = [20,40,70,100,120,140,170,220,370,450,550,600,650,670,690,700,920,980,1050,1070,1100,1120,1370,1530,1580,1630,1700,1730,1780,1800]
-    let infoSegmentsHalf = [20,220,370,690,700,920,980,1050,1070,1100,1120,1370,1530,1580,1630,1700,1730,1780,1800]
+    let infoSegmentsHalf = [20,40,70,100,120,140,170,220,260,400,550,600,650,670,690,700,920,980,1050,1070,1100,1120,1370,1530,1580,1630,1700,1735,1770,1800]
+    //let infoSegmentsHalf = [20,220,370,690,700,920,980,1050,1070,1100,1120,1370,1530,1580,1630,1700,1730,1780,1800]
 
     let infoSegments = [];
     for (let i = 0; i < infoSegmentsHalf.length; i++) {
@@ -47,17 +47,17 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     const defaultStartVector = new THREE.Vector3(0,0,-30);
     const defaultViewingDist = new THREE.Vector3(0,0,50);
     const defaultHtmlPos = new THREE.Vector2(0,0);
-    //const customStartVector = new THREE.Vector3();
+    const customStartVector = new THREE.Vector3();
     const customViewingDist = new THREE.Vector3();
     const customHtmlPos = new THREE.Vector2();
     const aabb = new THREE.Box3();
     const lastCam = new THREE.Camera();
 
-    //const music1 = findAudio("music_1.mp3");
-    const music2 = findAudio("music_2.mp3");
-    const music3 = findAudio("music_3.mp3");
-    //const music4 = findAudio("music_4.mp3");
-    //const music5 = findAudio("music_5.mp3");
+    // const music1 = findAudio("music_1.mp3");
+    // const music2 = findAudio("music_2.mp3");
+    // const music3 = findAudio("music_3.mp3");
+    // const music4 = findAudio("music_4.mp3");
+    // const music5 = findAudio("music_5.mp3");
     
     //camera goes to the center of an object, optionally also rotates
     function camToObject(object,viewingDist,{duration = 1, rotateCam = false, rotation = undefined,onComplete,handler}  = {} ){
@@ -279,37 +279,37 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     }
 
     //add audio element to info element
-    // function addAudio(path,object,x,y,color = 0x9CBBCE){
-    //     let audioFile = undefined;
-    //     for (let i = 0; i < audios.length; i++) {
-    //         if(audios[i].path.includes(path)){
-    //             audioFile = audios[i].audio;
-    //         }
-    //     }
-    //     if(audioFile !== undefined){
-    //         let audio = new AudioElement(audioFile,color);
-    //         audio.place(camera.children[0],object,{x:x,y:y,z:-1,distance:1});
+    function addAudio(path,object,x,y,color = 0x9CBBCE){
+        let audioFile = undefined;
+        for (let i = 0; i < audios.length; i++) {
+            if(audios[i].path.includes(path)){
+                audioFile = audios[i].audio;
+            }
+        }
+        if(audioFile !== undefined){
+            let audio = new AudioElement(audioFile,color);
+            audio.place(camera.children[0],object,{x:x,y:y,z:-1,distance:1});
 
-    //         window.addEventListener('pointerdown', (event) => scope.onPointerDownInfo(event, [audio.getMesh()], function(){
-    //             audio.play();
-    //         }.bind(this)));
-    //     }
-    //     else{
-    //         console.log("audio not found: ",path)
-    //     }
-    // }
+            window.addEventListener('pointerdown', (event) => scope.onPointerDownInfo(event, [audio.getMesh()], function(){
+                audio.play();
+            }.bind(this)));
+        }
+        else{
+            console.log("audio not found: ",path)
+        }
+    }
 
     //helper: axes
-    function addAxesHelper(){
-        let helperGeo = new THREE.SphereBufferGeometry(0.03);
-        let helper = new THREE.Mesh(helperGeo, new THREE.MeshBasicMaterial({color:0xff0000}));
-        helper.position.x = camera.position.x + 0.5;
-        helper.position.y = camera.position.y;
-        helper.position.z = camera.position.z + 0.5;
-        scene.add(helper);
-        var axesHelper = new THREE.AxesHelper(1);
-        helper.add( axesHelper );
-    }
+    // function addAxesHelper(){
+    //     let helperGeo = new THREE.SphereBufferGeometry(0.03);
+    //     let helper = new THREE.Mesh(helperGeo, new THREE.MeshBasicMaterial({color:0xff0000}));
+    //     helper.position.x = camera.position.x + 0.5;
+    //     helper.position.y = camera.position.y;
+    //     helper.position.z = camera.position.z + 0.5;
+    //     scene.add(helper);
+    //     var axesHelper = new THREE.AxesHelper(1);
+    //     helper.add( axesHelper );
+    // }
 
     //emit event to change speed with the updated speed value
     function changeSpeed(speedUpdate){
@@ -338,158 +338,148 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
     function manageInfo(infoNumber){
 
         //done
-		if (infoNumber === infoSegmentsDone[18]){
+		if (infoNumber === infoSegmentsDone[0]){
             customViewingDist.set(0,0,50);
-            infoOverPath(0,{useQuaternion:false,viewingDist:customViewingDist,audio:music2});
-            changeSpeed(0.04);
+            infoOverPath(0,{useQuaternion:false,viewingDist:customViewingDist});
         }
-        //#region done
-        // else if (infoNumber === infoSegmentsDone[1]){
-        //     customHtmlPos.set(0,0.3);
-        //     infoAsHtml(1,{scale:3,position:customHtmlPos});
+
+        else if (infoNumber === infoSegmentsDone[1]){
+            customHtmlPos.set(0,0.3);
+            infoAsHtml(1,{scale:3,position:customHtmlPos});
 
 
-        //     // infoPos.copy(camera.position);
-        //     // infoPos.y += 2;
-        //     // infoPos.z += -20;
+            // infoPos.copy(camera.position);
+            // infoPos.y += 2;
+            // infoPos.z += -20;
 
-        //     //let img = addImage('/img/bamf_training_p50_result.png',infoPos,new THREE.Vector3(3.4,4,0.2));
+            //let img = addImage('/img/bamf_training_p50_result.png',infoPos,new THREE.Vector3(3.4,4,0.2));
 
-        //     // gsap.from(infoPos,{
-        //     //     duration:1,
-        //     //     y:60
-        //     // })
+            // gsap.from(infoPos,{
+            //     duration:1,
+            //     y:60
+            // })
             
-        // }
+        }
 
-        // else if (infoNumber === infoSegmentsDone[2]){
-        //     customViewingDist.set(-20,0,40);
-        //     infoFlyingToCam(2,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI,infoRotAxis:"Y",audio:music1});
+        else if (infoNumber === infoSegmentsDone[2]){
+            customViewingDist.set(-20,0,40);
+            infoFlyingToCam(2,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI,infoRotAxis:"Y"});
 
-        //     infoPos = new THREE.Vector3( 20, 20, -20 ).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
-        //     //let bamf = models[0].scene;
+            infoPos = new THREE.Vector3( 20, 20, -20 ).applyQuaternion( scope.camera.quaternion ).add( scope.camera.position );
 
-        //     infoPos.copy(scope.camera.position);
-        //     // infoPos.x += -40;
-        //     // infoPos.y = -15;
-        //     // infoPos.z += 50;
+            infoPos.copy(scope.camera.position);
 
-        //     // bamf.scale.set(10,10,10);
-        //     // bamf.position.copy(infoPos);
-        //     // bamf.rotateY(THREE.MathUtils.degToRad(100));
-
-        //     gsap.from(infoPos,{
-        //         duration:1,
-        //         x: infoPos.x -140,
-        //         y: infoPos.y -15,
-        //         z: infoPos.z -50
-        //     })
-        //     //scope.scene.add(bamf);
+            gsap.from(infoPos,{
+                duration:1,
+                x: infoPos.x -140,
+                y: infoPos.y -15,
+                z: infoPos.z -50
+            })
             
-        // }
+        }
 
-        // //global see german border
-        // else if(infoNumber === infoSegmentsDone[3]){
-        //     gsap.to(scope.scene.fog,{
-        //         duration:1,
-        //         density:0
-        //     })
-        //     lastCam.copy(scope.camera);
+        //global see german border
+        else if(infoNumber === infoSegmentsDone[3]){
+            gsap.to(scope.scene.fog,{
+                duration:1,
+                density:0
+            })
+            lastCam.copy(scope.camera);
 
-        //     infoPos.set(lastCam.position.x, 5000, lastCam.position.z);
-        //     let text;
-        //     if(isGerman){
-        //         text = scope.informations[3].german;
-        //     }
-        //     else{
-        //         text = scope.informations[3].content;
-        //     }
-        //     let info = new InformationElement(scope.scene,scope.font,infoPos,text);
-        //     info.init();
-        //     info.rotate("X",-Math.PI/2);
-        //     info.bbox.scale.set(3,3,3);
-        //     scope.camera.far = 1000000;
-        //     scope.camera.updateProjectionMatrix();
-        //     customStartVector.set(0,100,0);
-        //     camToObject(info.getMeshObject(),customStartVector,{audio:music5,duration:2,rotateCam:true,rotation:new THREE.Vector3(-Math.PI/2,0,0),onComplete: function(){
-        //         scope.controls.resetMouse()
-        //     }});
+            infoPos.set(lastCam.position.x, 5000, lastCam.position.z);
+            let text;
+            if(isGerman){
+                text = scope.informations[3].german;
+            }
+            else{
+                text = scope.informations[3].content;
+            }
+            let info = new InformationElement(scope.scene,scope.font,infoPos,text);
+            info.init();
+            info.rotate("X",-Math.PI/2);
+            info.bbox.scale.set(3,3,3);
+            scope.camera.far = 1000000;
+            scope.camera.updateProjectionMatrix();
+            customStartVector.set(0,150,0);
+            camToObject(info.getMeshObject(),customStartVector,{duration:2,rotateCam:true,rotation:new THREE.Vector3(-Math.PI/2,0,0),onComplete: function(){
+                scope.controls.resetMouse()
+            }});
 
-        //     let objects = [];
-        //     objects.push(info.bbox);
+            let objects = [];
+            objects.push(info.bbox);
 
-        //     window.addEventListener('pointerdown', function handler(event) {
-        //         scope.onPointerDownInfo(event, objects, function(){
-        //             gsap.to( scope.camera.position,{
-        //                 duration: 2,
-        //                 ease: "power4",
-        //                 x: lastCam.position.x,
-        //                 y: lastCam.position.y,
-        //                 z: lastCam.position.z,
-        //                 onComplete: function(){
-        //                     gsap.to(scope.scene.fog,{
-        //                         duration:1,
-        //                         density:0.002
-        //                     })
-        //                     gsap.to(scope.camera,{
-        //                         far: 1000
-        //                     })
-        //                     scope.camera.updateProjectionMatrix();
-        //                     scope.informationPhase = false;
-        //                     window.removeEventListener('pointerdown',handler)
-        //                 }
-        //             })
-        //     //using bind this because it is higher order function
-        //     //https://stackoverflow.com/a/59060545
-        //     }.bind(this))}); 
-        // }
+            window.addEventListener('pointerdown', function handler(event) {
+                scope.onPointerDownInfo(event, objects, function(){
+                    gsap.to( scope.camera.position,{
+                        duration: 2,
+                        ease: "power4",
+                        x: lastCam.position.x,
+                        y: lastCam.position.y,
+                        z: lastCam.position.z,
+                        onComplete: function(){
+                            gsap.to(scope.scene.fog,{
+                                duration:1,
+                                density:0.002
+                            })
+                            gsap.to(scope.camera,{
+                                far: 1000
+                            })
+                            scope.camera.updateProjectionMatrix();
+                            scope.informationPhase = false;
+                            window.removeEventListener('pointerdown',handler)
+                        }
+                    })
+            //using bind this because it is higher order function
+            //https://stackoverflow.com/a/59060545
+            }.bind(this))}); 
+        }
 
-        // else if(infoNumber === infoSegmentsDone[4]){
-        //     customHtmlPos.set(0.5,0.2)
-        //     infoAsHtml(4,{scale:1,position:customHtmlPos});
-        // }
+        else if(infoNumber === infoSegmentsDone[4]){
+            customHtmlPos.set(0.5,0.2)
+            infoAsHtml(4,{scale:1.2,position:customHtmlPos});
+        }
 
-        // else if(infoNumber === infoSegmentsDone[5]){
-        //     const angle = THREE.MathUtils.degToRad(120);
-        //     customViewingDist.set(35,0,-11);
-        //     infoOverPath(5,{useQuaternion:false,viewingDist: customViewingDist,infoRotAxis:"Y",infoRotAngle:angle,audio:music1})
-        //     //changeSpeed(0.001);
-        // }
+        else if(infoNumber === infoSegmentsDone[5]){
+            const angle = THREE.MathUtils.degToRad(120);
+            customViewingDist.set(35,0,-11);
+            infoOverPath(5,{useQuaternion:false,viewingDist: customViewingDist,infoRotAxis:"Y",infoRotAngle:angle})
+            //changeSpeed(0.001);
+        }
 
-        // //image
-        // else if(infoNumber === infoSegmentsDone[6]){
-        //     customHtmlPos.set(0.1,0.9);
-        //     infoAsHtml(6,{scale:2,position:customHtmlPos});
+        //image result
+        else if(infoNumber === infoSegmentsDone[6]){
+            customHtmlPos.set(0.1,0.9);
+            infoAsHtml(6,{scale:2,position:customHtmlPos});
 
-        //     infoPos.copy(camera.position);
-        //     infoPos.y += 2;
-        //     infoPos.z += -20;
+            infoPos.copy(camera.position);
+            infoPos.y += 2;
+            infoPos.z += -20;
 
-        //     let img = addImage('/img/bamf_training_p50_result.png',infoPos,new THREE.Vector3(3.4,4,0.2));
+            let img = addImage('/img/bamf_training_p50_result.png',infoPos,new THREE.Vector3(3.4,4,0.2));
 
-        //     gsap.from(img.position,{
-        //         duration:1,
-        //         y:60
-        //     })
-           
-        //     //scope.infoFollowPath = true;
+            gsap.from(img.position,{
+                duration:1,
+                y:60
+            })
+        
+        }
 
-        //     // gsap.to(scope.controls,{
-        //     //     duration: 10,
-        //     //     ease: "power3",
-        //     //     offset: 60,
-        //     //     lookFar:100
-        //     // })
-        //     // gsap.to(scope.scene.fog,{
-        //     //     duration:1,
-        //     //     density:0.0005
-        //     // })
-        // }
-        //#endregion
-
-        else if(infoNumber === infoSegmentsDone[1]){
+        else if(infoNumber === infoSegmentsDone[7]){
             customViewingDist.set(-7.5,-7.5,-38);
-            infoFlyingToCam(7,{useQuaternion:false,viewingDist:customViewingDist,delay:0.5,audio:music3});
+            infoFlyingToCam(7,{useQuaternion:false,viewingDist:customViewingDist,delay:0.5});
+        }
+
+        //flying high
+        //faster
+        else if(infoNumber === infoSegmentsDone[8]){
+
+            customHtmlPos.set(0.5,0.5)
+            infoAsHtml(8,{scale:2,position:customHtmlPos})
+
+            customViewingDist.set(-40,0,-40);
+
+            scope.infoFollowPath = true;
+
             gsap.to(scope.controls,{
                 duration: 5,
                 ease: "power3",
@@ -504,103 +494,96 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
                 duration:1,
                 density:0.003
             })
-            addAxesHelper();
-        }
 
-        else if(infoNumber === infoSegmentsDone[2]){
+            //infoOverPath(8,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:Math.PI/2,height:-10});
 
-            customViewingDist.set(40,0,40);
-
-            infoOverPath(8,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:Math.PI/2,height:-10});
+            //infoFlyingToCam(8,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:Math.PI/2,height:-10});
 
         }
-        //#region done 2
-        // else if(infoNumber === infoSegmentsDone[9]){
-        //     //customHtmlPos.set(0.25,0.1);
-        //     customViewingDist.set(20,0,20);
-        //     infoOverPath(9,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:Math.PI/2,height:10});
-        //     addAxesHelper();
-        // }
 
-        // else if(infoNumber === infoSegmentsDone[10]){
-        //     customViewingDist.set(50,-16,30);
-        //     let obj = infoFlyingToCam(10,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:-Math.PI/2,infoRotAxis:"Y",audio:music4})
+        else if(infoNumber === infoSegmentsDone[9]){
+            //customHtmlPos.set(0.25,0.1);
+            customViewingDist.set(20,0,20);
+            infoOverPath(9,{useQuaternion:false,viewingDist:customViewingDist,infoRotAxis:"Y",infoRotAngle:Math.PI/2,height:10});
+        }
+
+        else if(infoNumber === infoSegmentsDone[10]){
+            customViewingDist.set(50,-16,30);
+            let obj = infoFlyingToCam(10,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:-Math.PI/2,infoRotAxis:"Y"})
 
 
-        //     addAudio("sof_rainbow01.mp3",obj,-0.2,1);
+            addAudio("sof_rainbow01.mp3",obj,-0.2,1);
             
-        //     addAudio("wef_rainbow01.mp3",obj,-0.1,1);
+            addAudio("wef_rainbow01.mp3",obj,-0.1,1);
 
-        //     addAudio("irm_rainbow01.mp3",obj,0,1);
+            addAudio("irm_rainbow01.mp3",obj,0,1);
             
-        //     addAudio("scm_rainbow01.mp3",obj,0.1,1);
+            addAudio("scm_rainbow01.mp3",obj,0.1,1);
 
-        // }
-
-        // else if(infoNumber === infoSegmentsDone[11]){
-
-
-        //     customViewingDist.set(-30,0,15);
-        //     const angle = THREE.MathUtils.degToRad(110)
-        //     let obj = infoFlyingToCam(11,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:angle,infoRotAxis:"Y",audio:music1,height:10});
-
-
-        //     addAudio("irm_rainbow01.mp3",obj,0.1,1,0x143E4F);
-
-        //     addAudio("scm_rainbow01.mp3",obj,-0.1,1,0x9CBBCE);
-        // }
-
-        // else if(infoNumber === infoSegmentsDone[12]){
-        //     customHtmlPos.set(0,0.8);
-        //     infoAsHtml(12,{scale:1.6,position:customHtmlPos});
-        //     //customViewingDist.set(-7,0,-30);
-        //     //infoOverPath(12,{height:-20,useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI,infoRotAxis:"Y"});
-        //     changeSpeed(0.002);
-        // }
-        
-        // else if(infoNumber === infoSegmentsDone[13]){
-        //     customViewingDist.set(60,0,60);
-        //     const angle = THREE.MathUtils.degToRad(30)
-        //     infoOverPath(13,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:angle,infoRotAxis:"Y",height:-20});
-        //     addAxesHelper();
-        // }
-        //#endregion
-
-        else if(infoNumber === infoSegmentsDone[3]){
-            customHtmlPos.set(0,0.8)
-            infoAsHtml(14,{scale:1.5,position:customHtmlPos})
-            scope.infoFollowPath = true;
-            changeSpeed(0.002);
         }
 
-        //flying lower again
-        else if(infoNumber === infoSegmentsDone[4]){
-            customHtmlPos.set(0.5,0.5)
-            infoAsHtml(15,{scale:1.5,position:customHtmlPos})
+        else if(infoNumber === infoSegmentsDone[11]){
+
+
+            customViewingDist.set(-30,0,15);
+            const angle = THREE.MathUtils.degToRad(110)
+            let obj = infoFlyingToCam(11,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:angle,infoRotAxis:"Y",height:10});
+
+
+            addAudio("irm_rainbow01.mp3",obj,0.1,1,0x143E4F);
+
+            addAudio("scm_rainbow01.mp3",obj,-0.1,1,0x9CBBCE);
+        }
+
+        //slower and flying lower
+        else if(infoNumber === infoSegmentsDone[12]){
+            customHtmlPos.set(0,0.8);
+            infoAsHtml(12,{scale:1.6,position:customHtmlPos});
+            //customViewingDist.set(-7,0,-30);
+            //infoOverPath(12,{height:-20,useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:Math.PI,infoRotAxis:"Y"});
             scope.infoFollowPath = true;
             //make duration longer later
             gsap.to(scope.controls,{
-                duration: 10,
-                ease: "power2",
+                duration: 5,
+                ease: "SlowMo",
                 offset: 15,
                 lookFar:30,
-                onComplete: changeSpeed(0.03)
+                onComplete: changeSpeed(0.002)
             })
             gsap.to(scope.scene.fog,{
                 duration:1,
                 density:0.002
             })
         }
+        
+        else if(infoNumber === infoSegmentsDone[13]){
+            customViewingDist.set(60,0,60);
+            const angle = THREE.MathUtils.degToRad(30)
+            infoOverPath(13,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:angle,infoRotAxis:"Y",height:5});
+        }
 
-        else if(infoNumber === infoSegmentsDone[5]){
+        else if(infoNumber === infoSegmentsDone[14]){
+            customHtmlPos.set(0,0.8)
+            infoAsHtml(14,{scale:1.5,position:customHtmlPos})
+            scope.infoFollowPath = true;
+        }
+
+        //faster
+        else if(infoNumber === infoSegmentsDone[15]){
+            customHtmlPos.set(0.5,0.5)
+            infoAsHtml(15,{scale:1.5,position:customHtmlPos})
+            changeSpeed(0.03);
+        }
+
+        //normal speed
+        else if(infoNumber === infoSegmentsDone[16]){
             customViewingDist.set(0,0,-55);
             infoOverPath(16,{useQuaternion:false,viewingDist:customViewingDist,height:15,infoRotAngle:Math.PI,infoRotAxis:"Y"})
             changeSpeed(0.005);
-
-            
         }
 
-        else if(infoNumber === infoSegmentsDone[6]){
+        //map
+        else if(infoNumber === infoSegmentsDone[17]){
 
             customViewingDist.set(0,0,30);
             infoFlyingToCam(17,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:THREE.MathUtils.degToRad(210),infoRotAxis:"Y",moveInfoBack:false})
@@ -609,25 +592,29 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             infoPos.copy(camera.position);
             infoPos.z += -6;
             infoPos.x += 10;
-            infoPos.y = 2 + scope.controls.offset;
+            infoPos.y = 60;
+
+            console.log(infoPos);
 
             let img = addImage('map_arabian_dialects.png',infoPos,new THREE.Vector3(4,2.2,0.2));
             img.rotateY(THREE.MathUtils.degToRad(70));
 
-            gsap.from(img.position,{
-                duration:2,
-                y:0,
-                x:infoPos - 10
+            gsap.to(img.position,{
+                onStart: console.log("moving image"),
+                ease: "SlowMo",
+                duration:3,
+                y:17,
+                onComplete: console.log("moved image",img.position),
             })
-            addAxesHelper();
         }
 
-        else if(infoNumber === infoSegmentsDone[7]){
+        //slower
+        else if(infoNumber === infoSegmentsDone[18]){
             
             customViewingDist.set(10,0,-30);
             infoOverPath(18,{useQuaternion:false,viewingDist:customViewingDist,height:20,infoRotAngle:Math.PI,infoRotAxis:"Y"})
 
-            scope.infoFollowPath = true;
+            //scope.infoFollowPath = true;
             changeSpeed(0.002);
             // infoPos.copy(camera.position);
 
@@ -638,23 +625,27 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
         }
 
-        else if(infoNumber === infoSegmentsDone[8]){
+        else if(infoNumber === infoSegmentsDone[19]){
             customHtmlPos.set(0.8,0.8);
             infoAsHtml(19,{position:customHtmlPos,scale:1.4});
-            
+            scope.infoFollowPath = true;
         }
 
-        else if(infoNumber === infoSegmentsDone[9]){
+        else if(infoNumber === infoSegmentsDone[20]){
 
             customViewingDist.set(0,10,40);
             infoFlyingToCam(20,{useQuaternion:false,viewingDist:customViewingDist,height:50,infoRotAngle:THREE.MathUtils.degToRad(210),infoRotAxis:"Y",moveInfoBack:false})
 
+            //infoOverPath(20,{useQuaternion:false,viewingDist:customViewingDist,height:-20,infoRotAngle:THREE.MathUtils.degToRad(210),infoRotAxis:"Y",moveInfoBack:false})
+
             
         }
 
-        else if(infoNumber === infoSegmentsDone[10]){
+        //higher, slower
+        else if(infoNumber === infoSegmentsDone[21]){
             customHtmlPos.set(0.2,0.8);
             infoAsHtml(21,{position:customHtmlPos,scale:1.7});
+            scope.infoFollowPath = true;
             // customViewingDist.set(-20,0,-20);
             // const angle = THREE.MathUtils.degToRad(240)
             // infoOverPath(21,{useQuaternion:false,viewingDist:customViewingDist,height:10,infoRotAngle:angle,infoRotAxis:"Y",rotateCam:true,rotation:new THREE.Vector3(0,Math.PI/2,0)})
@@ -673,70 +664,70 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             
         }
 
-        else if(infoNumber === infoSegmentsDone[11]){
+        else if(infoNumber === infoSegmentsDone[22]){
 
             customViewingDist.set(50,0,40);
             infoOverPath(22,{useQuaternion:false,viewingDist:customViewingDist,height:20,infoRotAngle:THREE.MathUtils.degToRad(70),infoRotAxis:"Y"})
             
         }
 
-        else if(infoNumber === infoSegmentsDone[12]){
+        //normal speed
+        else if(infoNumber === infoSegmentsDone[23]){
             customViewingDist.set(0,0,-50);
             infoFlyingToCam(23,{useQuaternion:false,viewingDist:customViewingDist,height:8,infoRotAngle:THREE.MathUtils.degToRad(330),infoRotAxis:"Y",moveInfoBack:false})
-
-            gsap.to(scope.controls,{
-                duration: 5,
-                ease: "power3",
-                offset: 15,
-                lookFar:100,
-                onComplete: changeSpeed(0.004)
-            })
-            gsap.to(scope.scene.fog,{
-                duration:1,
-                density:0.002
-            })
-            addAxesHelper()
+            changeSpeed(0.004)
             
         }
         
-        else if(infoNumber === infoSegmentsDone[13]){
+        else if(infoNumber === infoSegmentsDone[24]){
             customViewingDist.set(30,0,-50);
             infoFlyingToCam(24,{useQuaternion:false,viewingDist:customViewingDist,infoRotAngle:THREE.MathUtils.radToDeg(100),infoRotAxis:"Y"});
         }
 
-        else if(infoNumber === infoSegmentsDone[14]){
+        else if(infoNumber === infoSegmentsDone[25]){
             console.log("25");
             customViewingDist.set(10,0,35)
             infoOverPath(25,{useQuaternion:false,viewingDist:customViewingDist,height:10,infoRotAngle:THREE.MathUtils.radToDeg(60),infoRotAxis:"Y"});
             
         }
 
-        else if(infoNumber === infoSegmentsDone[15]){
-            console.log("26");
+        //lower and slower
+        else if(infoNumber === infoSegmentsDone[26]){
             changeSpeed(0.002)
             customHtmlPos.set(0.5,0.5)
             infoAsHtml(26,{scale:2,position:customHtmlPos});
 
             scope.infoFollowPath = true;
+
+            gsap.to(scope.controls,{
+                duration: 5,
+                ease: "SlowMo",
+                offset: 15,
+                lookFar:100,
+            })
+            gsap.to(scope.scene.fog,{
+                duration:1,
+                density:0.002
+            })
             
         }
 
-        else if(infoNumber === infoSegmentsDone[16]){
-            console.log("27");
+        else if(infoNumber === infoSegmentsDone[27]){
             customHtmlPos.set(0.5,0.5)
             infoAsHtml(27,{scale:2,position:customHtmlPos});
 
             scope.infoFollowPath = true;
         }
 
-        else if(infoNumber === infoSegmentsDone[17]){
-            console.log("28");
+        else if(infoNumber === infoSegmentsDone[28]){
             customHtmlPos.set(0.5,0.5)
             infoAsHtml(28,{scale:2,position:customHtmlPos});
 
+            scope.infoFollowPath = true;
+
         }
 
-        else if (infoNumber === infoSegmentsDone[0]){
+        else if (infoNumber === infoSegmentsDone[29]){
 
             infoPos.set(0, 9000, 0);
             let text = scope.informations[29].content;
@@ -797,7 +788,7 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
             let info2 = new InformationElement(scope.scene,scope.font,infoPos,text);
             info2.init();
             info2.rotate("X",-Math.PI/2);
-            info2.translate(customViewingDist.set(0,0,-100));
+            info2.translate(customStartVector.set(0,0,-150));
 
             tl.from(info2.obj.position,{
                 duration:1,
@@ -817,18 +808,18 @@ let InformationManager = function(scene,domElement,camera,controls,informations,
 
     }
 
-    function findAudio(path){
-        let audioFile = undefined;
-        for (let i = 0; i < audios.length; i++) {
-            if(audios[i].path.includes(path)){
-                console.log(audios[i].path);
-                audioFile = audios[i].audio;
-            }
-        }
-        const sound = new THREE.PositionalAudio(scope.scene.getObjectByName("listener"));
-        sound.setBuffer(audioFile);
-        return sound;
-    }
+    // function findAudio(path){
+    //     let audioFile = undefined;
+    //     for (let i = 0; i < audios.length; i++) {
+    //         if(audios[i].path.includes(path)){
+    //             console.log(audios[i].path);
+    //             audioFile = audios[i].audio;
+    //         }
+    //     }
+    //     const sound = new THREE.PositionalAudio(scope.scene.getObjectByName("listener"));
+    //     sound.setBuffer(audioFile);
+    //     return sound;
+    // }
 
     this.onPointerDownInfo = function(event,obj,onIntersection){
         mouse.x = ( event.offsetX / window.innerWidth ) * 2 - 1;

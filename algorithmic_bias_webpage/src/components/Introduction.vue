@@ -2,15 +2,16 @@
     <div> 
         <div class=bamf_intro v-if="!startedBamf"> 
             <section id=bamf_intro_start>
+                <h2>the BAMF case</h2>
                 <h2>arabic dialect recognition algorithm</h2>
 
                 <div class="bamf_intro_start_language">
                     <div class="bamf_intro_start_language_item">
-                        The German Federal Office for Migration and Refugees (BAMF) uses an algorithm to identify the country of origin of refugees. How ethical is that? The exploration will take you about seven minutes. Please turn up your sound. The experience works better on Computers / Laptops than on Phones.<br>
+                        The German Federal Office for Migration and Refugees (BAMF) uses an algorithm to identify the country of origin of refugees. How ethical is that? The journey will take you about five minutes. If you are using a phone, I recommend to switch to a tablet / laptop / computer.<br>
                         <button @click="startBamf(false)">Start exploring</button>
                     </div>
                     <div class="bamf_intro_start_language_item">
-                        Das Bundesamt für Migration und Flüchtlinge (BAMF) nutzt einen Algorithmus, um das Herkunftsland von Geflüchteten zu ermitteln. Wie ethisch ist das? Die Reise wird etwa sieben Minuten dauern. Bitte schalte den Ton an deinem Gerät an. Die Erfahrung ist auf Computern / Laptops besser als auf Smartphones.<br>
+                        Das Bundesamt für Migration und Flüchtlinge (BAMF) nutzt einen Algorithmus, um das Herkunftsland von Geflüchteten zu ermitteln. Wie ethisch ist das? Die Reise wird etwa fünf Minuten dauern. Falls du ein Smartphone verwendest, wechsle lieber auf Tablet / Laptop / Computer.<br>
                         <button @click="startBamf(true)">Beginne die Reise</button>
                     </div>
                 </div>
@@ -19,18 +20,34 @@
             <section id="bamf_intro_references"> 
 
                 <button @click="scrollToElement('bamf_intro_start')"> Back to Project </button>
+                <h2> by Johanna Hartmann </h2>
                 
-                <h2>References and Ressources</h2>
+                <h2>BAMF: Research and Articles by Anna Biselli (Deutsch)</h2>
 
                 <ul>
-                    <li>AlgorithmWatch. (2020). Automating Society Report 2020. AlgorithmWatch gGmbH. <a href="https://automatingsociety.algorithmwatch.org">https://automatingsociety.algorithmwatch.org</a></li>
-
-                    <li>Biselli, Anna. (2017, March 17). Software, die an der Realität scheitern muss. Zeit Online. <a href="https://www.zeit.de/digital/internet/2017-03/bamf-asylbewerber-sprach-analyse-software-computerlinguistik ">https://www.zeit.de/digital/internet/2017-03/bamf-asylbewerber-sprach-analyse-software-computerlinguistik </a> 
+                    <li>Biselli, Anna. (2017, March 17). <b>Software, die an der Realität scheitern muss</b>. Zeit Online. <a href="https://www.zeit.de/digital/internet/2017-03/bamf-asylbewerber-sprach-analyse-software-computerlinguistik ">https://www.zeit.de/digital/internet/2017-03/bamf-asylbewerber-sprach-analyse-software-computerlinguistik </a> 
                     </li>
 
-                    <li>Biselli, Anna. (2018, August 20). Eine Software des BAMF bringt Menschen in Gefahr. Vice. <a href="https://www.vice.com/de/article/a3q8wj/fluechtlinge-bamf-sprachanalyse-software-entscheidet-asyl">https://www.vice.com/de/article/a3q8wj/fluechtlinge-bamf-sprachanalyse-software-entscheidet-asyl</a></li>
+                    <li>Biselli, Anna. (2018, August 20). <b>Software des BAMF bringt Menschen in Gefahr</b>. Vice. <a href="https://www.vice.com/de/article/a3q8wj/fluechtlinge-bamf-sprachanalyse-software-entscheidet-asyl">https://www.vice.com/de/article/a3q8wj/fluechtlinge-bamf-sprachanalyse-software-entscheidet-asyl</a></li>
 
-                    <li>Biselli, Anna. (2018, December 28). Die IT-Tools des BAMF: Fehler vorprogrammiert. Netzpolitik.org. <a href="https://netzpolitik.org/2018/die-it-tools-des-bamf-fehler-vorprogrammiert/">https://netzpolitik.org/2018/die-it-tools-des-bamf-fehler-vorprogrammiert/</a></li>
+                    <li>Biselli, Anna. (2018, December 28). <b>Die IT-Tools des BAMF: Fehler vorprogrammiert</b>. Netzpolitik.org. <a href="https://netzpolitik.org/2018/die-it-tools-des-bamf-fehler-vorprogrammiert/">https://netzpolitik.org/2018/die-it-tools-des-bamf-fehler-vorprogrammiert/</a></li>
+                </ul>
+
+                <h2>Recommendations: Algorithmic Bias (English & Deutsch)</h2>
+
+                <ul>
+                    <li> <b>AlgorithmWatch</b> "is a non-profit research and advocacy organization that is committed to watch, unpack and analyze automated decision-making (ADM) systems and their impact on society." Have a look at their Automating Society Report for Algorithmic Bias in Europe. <a href="https://automatingsociety.algorithmwatch.org">https://automatingsociety.algorithmwatch.org</a> auch auf Deutsch.</li>
+
+                    <li><b>Coded Bias</b>  "explores the fallout of MIT Media Lab researcher Joy Buolamwini’s discovery that facial recognition does not see dark-skinned faces accurately, and her journey to push for the first-ever legislation in the U.S. to govern against bias in the algorithms that impact us all." <br> Kantayya, S. (Director). (2020). Coded Bias [Film]. 7th Empire Media. <a href="https://www.codedbias.com">https://www.codedbias.com</a> Deutsch: Vorprogrammierte Diskriminierung. Netflix. </li>
+
+                    <li><b>Algorithmic Justice League</b> "is an organization that combines art and research to illuminate the social implications and harms of artificial intelligence." Have a look at their <a href="https://www.ajl.org/library/home">library</a> for a lot of interesting books and resources. <a href="https://www.ajl.org">https://www.ajl.org</a></li>
+
+                    <li><b>ACM FAcct</b>: Conference on Fairness, Accountability, and Transparency. "A computer science conference with a cross-disciplinary focus that brings together researchers and practitioners interested in fairness, accountability, and transparency in socio-technical systems." <a href="https://facctconference.org/index.html">https://facctconference.org/index.html</a></li>
+                </ul>
+
+                <h2>BAMF: Official Documents and Inquiries (Deutsch)</h2>
+
+                <ul>
 
                     <li>Bundesamt für Migration und Flüchtlinge. (2019). Digitalisierungsagenda 2020. <a href="https://www.bamf.de/DE/Themen/Digitalisierung/Digitalisierungsagenda/digitalisierungsagenda-node.html">https://www.bamf.de/DE/Themen/Digitalisierung/Digitalisierungsagenda/digitalisierungsagenda-node.html</a>  </li>
 
@@ -150,8 +167,8 @@ export default{
 #bamf_intro_references{
     width: 100vw;
     margin: 0 auto;
-    padding-left: 5%;
-    padding-right: 5%;
+    padding: 5%;
+    padding-top: 0;
     display:block;
     position: relative;
 
